@@ -54,7 +54,7 @@
   #cam{ position:fixed; inset:0; display:none; background:#000; }
   #cam.active{ display:block; }
   video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-  svg#guide{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  canvas#guide{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
   .topbar{
     position:absolute; top:calc(14px + env(safe-area-inset-top,0px)); left:14px; right:14px;
     display:flex; justify-content:space-between; align-items:center; z-index:5;
@@ -102,7 +102,7 @@
 
 <div id="cam">
   <video id="video" playsinline autoplay muted></video>
-  <svg id="guide" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+  <canvas id="guide"></canvas>
   <svg id="levelSvg" viewBox="0 0 100 100" preserveAspectRatio="none">
     <line x1="20" y1="50" x2="80" y2="50" stroke="rgba(255,255,255,0.4)" stroke-width="0.5" stroke-dasharray="1.5,1.5"/>
     <line id="liveLine" x1="20" y1="50" x2="80" y2="50" stroke-width="0.8" stroke="var(--warn)"/>
@@ -118,9 +118,9 @@
 <script>
 const SHOTS = [
   { id:'portrait', name:'Portrait', desc:'One person, upright', ratio:[3,4],
-    tip:'Line up head, shoulders and legs inside the outline. Korean style: phone slightly above eye level, chin down a touch, soft light, gentle head tilt.' },
+    tip:'Keep the head below the dashed headroom line — about 30% empty space above it. Eyes on the eye line, never crop at the chin, waist is a safe crop point.' },
   { id:'group', name:'Group', desc:'Several people', ratio:[4,3],
-    tip:'Each person stands inside one outline, evenly spaced. Korean style: shoot a little from above so everyone looks slimmer and taller.' },
+    tip:'Keep every head below the dashed headroom line, evenly spaced. Korean style: shoot a little from above so everyone looks slimmer and taller.' },
   { id:'macro', name:'Close-up', desc:'Small details', ratio:[1,1],
     tip:'Korean style: use a cup, book or flower as a prop for a natural, candid feel. Fill the circle, shoot at a soft 45° angle.' },
 ];
@@ -169,77 +169,192 @@ allowBtn.onclick = async () => {
   }
 };
 
-function drawGuide(shot){
-  guide.innerHTML = '';
-  const ns = 'http://www.w3.org/2000/svg';
-  const addLine = (x1,y1,x2,y2,dash)=>{
-    const l = document.createElementNS(ns,'line');
-    l.setAttribute('x1',x1); l.setAttribute('y1',y1);
-    l.setAttribute('x2',x2); l.setAttribute('y2',y2);
-    l.setAttribute('stroke','rgba(255,255,255,0.55)');
-    l.setAttribute('stroke-width','0.3');
-    if(dash) l.setAttribute('stroke-dasharray','1.2,1.2');
-    guide.appendChild(l);
-  };
-  const addFigure = (x, headY, scale)=>{
-    // thin stand-here silhouette: head, shoulders/torso, hips, legs
-    const r = 3.4*scale;
-    const shY = headY + r*1.5;   // shoulder line
-    const shW = 7.5*scale;
-    const hipY = shY + 15*scale;
-    const hipW = 5*scale;
-    const footY = Math.min(96, hipY + 19*scale);
-    const footW = 6*scale;
-    const stroke = 'rgba(255,255,255,0.5)';
-    const dash = '1,1.4';
-    const c = document.createElementNS(ns,'circle');
-    c.setAttribute('cx',x); c.setAttribute('cy',headY); c.setAttribute('r',r);
-    c.setAttribute('fill','none'); c.setAttribute('stroke',stroke);
-    c.setAttribute('stroke-width','0.4'); c.setAttribute('stroke-dasharray',dash);
-    guide.appendChild(c);
-    const seg = (x1,y1,x2,y2)=>{
-      const l = document.createElementNS(ns,'line');
-      l.setAttribute('x1',x1); l.setAttribute('y1',y1);
-      l.setAttribute('x2',x2); l.setAttribute('y2',y2);
-      l.setAttribute('stroke',stroke); l.setAttribute('stroke-width','0.4');
-      l.setAttribute('stroke-dasharray',dash);
-      guide.appendChild(l);
-    };
-    seg(x-shW,shY, x+shW,shY);              // shoulders
-    seg(x-shW,shY, x-hipW,hipY);            // torso side (left)
-    seg(x+shW,shY, x+hipW,hipY);            // torso side (right)
-    seg(x-hipW,hipY, x+hipW,hipY);          // hips
-    seg(x-hipW*0.55,hipY, x-footW*0.55,footY); // left leg
-    seg(x+hipW*0.55,hipY, x+footW*0.55,footY); // right leg
-  };
-  // rule of thirds grid, always
-  addLine(33.3,0,33.3,100); addLine(66.6,0,66.6,100);
-  addLine(0,33.3,100,33.3); addLine(0,66.6,100,66.6);
+let currentShot = null;
 
-  if(shot.id==='macro'){
-    const c = document.createElementNS(ns,'circle');
-    c.setAttribute('cx',50); c.setAttribute('cy',50); c.setAttribute('r',22);
-    c.setAttribute('fill','none'); c.setAttribute('stroke','rgba(255,255,255,0.6)');
-    c.setAttribute('stroke-width','0.4'); c.setAttribute('stroke-dasharray','1.5,1.5');
-    guide.appendChild(c);
+function drawFigure(ctx, cx, headCy, r, full){
+  const eyeY      = headCy - r*0.10;
+  const chinY     = headCy + r*1.20;
+  const neckY     = chinY + r*0.22;
+  const shoulderY = neckY + r*0.18;
+  const shoulderW = r*2.5;
+  const waistY    = shoulderY + r*2.30;
+  const waistW    = shoulderW*0.82;
+
+  ctx.save();
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.strokeStyle = 'rgba(255,255,255,0.58)';
+  ctx.lineWidth = 1.6;
+  ctx.setLineDash([6,6]);
+
+  // head
+  ctx.beginPath();
+  ctx.ellipse(cx, headCy, r, r*1.22, 0, 0, Math.PI*2);
+  ctx.stroke();
+
+  // eye line — where the eyes should sit
+  ctx.setLineDash([3,4]);
+  ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+  ctx.lineWidth = 1.1;
+  ctx.beginPath();
+  ctx.moveTo(cx - r*1.5, eyeY); ctx.lineTo(cx + r*1.5, eyeY);
+  ctx.stroke();
+
+  ctx.setLineDash([6,6]);
+  ctx.strokeStyle = 'rgba(255,255,255,0.58)';
+  ctx.lineWidth = 1.6;
+
+  // neck
+  ctx.beginPath();
+  ctx.moveTo(cx - r*0.28, chinY); ctx.lineTo(cx - r*0.32, shoulderY);
+  ctx.moveTo(cx + r*0.28, chinY); ctx.lineTo(cx + r*0.32, shoulderY);
+  ctx.stroke();
+
+  // shoulders
+  ctx.beginPath();
+  ctx.moveTo(cx - shoulderW/2, shoulderY + r*0.2);
+  ctx.quadraticCurveTo(cx, shoulderY - r*0.2, cx + shoulderW/2, shoulderY + r*0.2);
+  ctx.stroke();
+
+  // torso tapering to waist
+  ctx.beginPath();
+  ctx.moveTo(cx - shoulderW/2, shoulderY + r*0.2);
+  ctx.quadraticCurveTo(cx - waistW*0.55, shoulderY + (waistY-shoulderY)*0.55, cx - waistW/2, waistY);
+  ctx.moveTo(cx + shoulderW/2, shoulderY + r*0.2);
+  ctx.quadraticCurveTo(cx + waistW*0.55, shoulderY + (waistY-shoulderY)*0.55, cx + waistW/2, waistY);
+  ctx.stroke();
+
+  const warn = (y, label)=>{
+    ctx.save();
+    ctx.strokeStyle = 'rgba(224,110,100,0.85)';
+    ctx.fillStyle = 'rgba(240,150,140,0.95)';
+    ctx.lineWidth = 1.1;
+    ctx.setLineDash([5,4]);
+    ctx.beginPath();
+    ctx.moveTo(cx - shoulderW*0.9, y); ctx.lineTo(cx + shoulderW*0.9, y);
+    ctx.stroke();
+    ctx.font = '600 10px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = 5;
+    ctx.fillText(label, cx, y - 6);
+    ctx.restore();
+  };
+
+  if(!full){
+    // bust framing: chin is a hard "don't crop", waist is a safe crop line
+    warn(chinY, "don't crop the chin");
+    ctx.save();
+    ctx.setLineDash([4,5]);
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    ctx.moveTo(cx - waistW*0.75, waistY); ctx.lineTo(cx + waistW*0.75, waistY);
+    ctx.stroke();
+    ctx.font = '600 10px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = 5;
+    ctx.fillText('safe crop at waist', cx, waistY + 14);
+    ctx.restore();
+  } else {
+    const hipY = waistY + r*0.28;
+    const hipW = waistW*0.95;
+    const legLen = r*4.2;
+    const footY = hipY + legLen;
+    const kneeY = hipY + legLen*0.48;
+    const ankleY = footY - r*0.15;
+    const legSpread = r*0.58;
+
+    ctx.beginPath();
+    ctx.moveTo(cx - hipW*0.3, hipY);
+    ctx.quadraticCurveTo(cx - legSpread - r*0.08, hipY + legLen*0.55, cx - legSpread, footY - r*0.12);
+    ctx.moveTo(cx + hipW*0.3, hipY);
+    ctx.quadraticCurveTo(cx + legSpread + r*0.08, hipY + legLen*0.55, cx + legSpread, footY - r*0.12);
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.ellipse(cx - legSpread, footY, r*0.32, r*0.11, 0, 0, Math.PI*2);
+    ctx.ellipse(cx + legSpread, footY, r*0.32, r*0.11, 0, 0, Math.PI*2);
+    ctx.stroke();
+
+    warn(kneeY, "don't crop at knees");
+    warn(ankleY, "don't crop at ankles");
   }
-  if(shot.id==='group'){
-    addFigure(25, 30, 0.62);
-    addFigure(50, 26, 0.68);
-    addFigure(75, 30, 0.62);
+  ctx.restore();
+}
+
+function drawHeadroom(ctx, w, h){
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 1.2;
+  ctx.setLineDash([8,6]);
+  ctx.beginPath();
+  ctx.moveTo(0, h*0.30); ctx.lineTo(w, h*0.30);
+  ctx.stroke();
+  ctx.font = '600 10px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.textAlign = 'left';
+  ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = 5;
+  ctx.fillText('leave ~30% empty above the head', 10, h*0.30 - 8);
+  ctx.restore();
+}
+
+function drawGuide(shot){
+  currentShot = shot;
+  const w = guide.clientWidth, h = guide.clientHeight;
+  if(!w || !h) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  guide.width = Math.round(w*dpr); guide.height = Math.round(h*dpr);
+  const ctx = guide.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+
+  // rule of thirds, always
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.32)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5,7]);
+  ctx.beginPath();
+  ctx.moveTo(w/3,0); ctx.lineTo(w/3,h);
+  ctx.moveTo(w*2/3,0); ctx.lineTo(w*2/3,h);
+  ctx.moveTo(0,h/3); ctx.lineTo(w,h/3);
+  ctx.moveTo(0,h*2/3); ctx.lineTo(w,h*2/3);
+  ctx.stroke();
+  ctx.restore();
+
+  if(shot.id === 'macro'){
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([6,6]);
+    ctx.beginPath();
+    ctx.arc(w/2, h/2, Math.min(w,h)*0.28, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.restore();
   }
-  if(shot.id==='portrait'){
-    addLine(50,0,50,100,true);
-    addFigure(50, 16, 1.15);
+  if(shot.id === 'portrait'){
+    drawHeadroom(ctx, w, h);
+    const r = w*0.095;
+    const headCy = h*0.30 + r*1.22;   // head top sits right on the 30% line
+    drawFigure(ctx, w*0.5, headCy, r, false);
+  }
+  if(shot.id === 'group'){
+    drawHeadroom(ctx, w, h);
+    const r = w*0.05;
+    const headCy = h*0.30 + r*1.22;
+    drawFigure(ctx, w*0.25, headCy + h*0.015, r*0.9, false);
+    drawFigure(ctx, w*0.50, headCy,           r,     false);
+    drawFigure(ctx, w*0.75, headCy + h*0.015, r*0.9, false);
   }
 }
+window.addEventListener('resize', ()=>{ if(currentShot) drawGuide(currentShot); });
 
 async function openCamera(shot){
   shotLabel.textContent = shot.name;
   tip.textContent = shot.tip;
-  drawGuide(shot);
   menuEl.classList.remove('active');
   camEl.classList.add('active');
+  drawGuide(shot);
   if(!stream){
     try{
       stream = await navigator.mediaDevices.getUserMedia({
