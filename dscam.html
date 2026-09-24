@@ -20,9 +20,25 @@
     background:radial-gradient(120% 90% at 50% 0%,#141a25 0%,#0b0f17 60%)}
   .menu-wrap{padding:calc(env(safe-area-inset-top) + 34px) 20px calc(env(safe-area-inset-bottom) + 34px)}
   .menu-wrap h1{margin:0 0 8px;font-size:26px;line-height:1.15;letter-spacing:-.4px;color:#fff}
-  .menu-wrap .sub{margin:0 0 6px;font-size:14px;line-height:1.45;color:#8892a6;max-width:32ch}
+  .menu-wrap .sub{margin:0 0 6px;font-size:14px;line-height:1.45;color:#8892a6;max-width:34ch}
   .menu-wrap .kicker{font-size:11px;font-weight:600;letter-spacing:2px;
     text-transform:uppercase;color:#60a5fa;margin:0 0 12px;opacity:.9}
+
+  /* Aspect ratio selector (menu) */
+  .ratio-row{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    margin-top:18px;padding:12px 14px;border-radius:14px;
+    background:linear-gradient(180deg,#151b26 0%,#101620 100%);
+    border:1px solid rgba(255,255,255,.06)}
+  .ratio-row-label{font-size:12px;font-weight:600;letter-spacing:.4px;
+    text-transform:uppercase;color:#8892a6}
+  .ratio-seg{display:flex;gap:4px;padding:3px;border-radius:10px;
+    background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.06)}
+  .ratio-seg button{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;
+    color:#8892a6;transition:all .12s ease;letter-spacing:.3px}
+  .ratio-seg button.active{background:#60a5fa;color:#0b0f17;
+    box-shadow:0 0 12px rgba(96,165,250,.5)}
+  .ratio-seg button:active{transform:scale(.95)}
+
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
   @media(min-width:560px){.grid{grid-template-columns:repeat(3,1fr)}}
   .card{display:flex;flex-direction:column;align-items:flex-start;gap:10px;
@@ -41,33 +57,44 @@
   #overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
 
   .topbar{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;
-    justify-content:space-between;gap:12px;
+    justify-content:space-between;gap:10px;
     padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;
     background:linear-gradient(to bottom,rgba(0,0,0,.55),transparent)}
   .icon-btn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
     background:rgba(0,0,0,.42);backdrop-filter:blur(8px);font-size:19px;
-    border:1px solid rgba(255,255,255,.14);color:#fff}
+    border:1px solid rgba(255,255,255,.14);color:#fff;flex-shrink:0}
   .icon-btn:active{background:rgba(255,255,255,.18)}
-  .mode-chip{font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
-    padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.42);
-    backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);color:#fff}
+
+  .chip-group{display:flex;gap:8px;align-items:center;flex-wrap:nowrap;overflow:hidden}
+  .mode-chip{font-size:11.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+    padding:8px 12px;border-radius:999px;background:rgba(0,0,0,.42);
+    backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);color:#fff;
+    white-space:nowrap}
+  .ratio-chip{font-size:12px;font-weight:700;letter-spacing:.4px;
+    padding:8px 12px;border-radius:999px;
+    background:rgba(96,165,250,.22);backdrop-filter:blur(8px);
+    border:1px solid rgba(96,165,250,.55);color:#bfdbfe;
+    white-space:nowrap;transition:transform .1s ease}
+  .ratio-chip:active{transform:scale(.94);background:rgba(96,165,250,.35)}
 
   .status{position:absolute;top:calc(env(safe-area-inset-top) + 66px);left:50%;
     transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:8px;
     padding:8px 16px;border-radius:999px;font-size:12.5px;font-weight:600;
     letter-spacing:.4px;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);
     border:1px solid rgba(255,255,255,.14);white-space:nowrap;color:#e6eaf2;
-    transition:background .2s,border-color .2s}
-  .status .dot{width:8px;height:8px;border-radius:50%;background:#fff;transition:background .2s}
+    transition:background .2s,border-color .2s;max-width:70vw;overflow:hidden;text-overflow:ellipsis}
+  .status .dot{width:8px;height:8px;border-radius:50%;background:#fff;transition:background .2s;flex-shrink:0}
   .status.ok{background:rgba(96,165,250,.22);border-color:rgba(96,165,250,.7)}
   .status.ok .dot{background:#60a5fa;box-shadow:0 0 12px #60a5fa}
 
   .bottombar{position:absolute;left:0;right:0;bottom:0;z-index:3;display:flex;
-    flex-direction:column;align-items:center;gap:16px;
+    flex-direction:column;align-items:center;gap:14px;
     padding:26px 20px calc(env(safe-area-inset-bottom) + 26px);
     background:linear-gradient(to top,rgba(0,0,0,.72),transparent)}
-  .tip{max-width:34ch;text-align:center;font-size:13.5px;line-height:1.5;color:#dde3ee;
+  .tip{max-width:36ch;text-align:center;font-size:13px;line-height:1.5;color:#dde3ee;
     text-shadow:0 1px 6px rgba(0,0,0,.8)}
+  .hint{font-size:11.5px;line-height:1.4;color:#8892a6;text-align:center;
+    max-width:34ch;text-shadow:0 1px 4px rgba(0,0,0,.8);margin-top:-4px}
   .shutter{width:74px;height:74px;border-radius:50%;
     border:3px solid rgba(255,255,255,.9);
     display:grid;place-items:center;background:rgba(255,255,255,.12);transition:transform .1s}
@@ -97,8 +124,17 @@
 <div id="menuScreen" class="screen active">
   <div class="menu-wrap">
     <p class="kicker">Framing Guide</p>
-    <h1>Where should the person stand?</h1>
-    <p class="sub">A shaded top band shows the headroom to leave blank. Faint lines below mark where the eyes, shoulders and crop points should sit.</p>
+    <h1>Find the spot, then shoot</h1>
+    <p class="sub">Line up the person using the guides, then switch to your phone camera and match the same frame.</p>
+
+    <div class="ratio-row">
+      <span class="ratio-row-label">Frame ratio</span>
+      <div class="ratio-seg" id="ratioSegMenu">
+        <button data-ratio="9:16" class="active">9:16</button>
+        <button data-ratio="3:4">3:4</button>
+      </div>
+    </div>
+
     <div class="grid" id="modeGrid"></div>
   </div>
 </div>
@@ -110,7 +146,10 @@
 
   <div class="topbar">
     <button class="icon-btn" id="backBtn" aria-label="Back">✕</button>
-    <div class="mode-chip" id="modeLabel">Portrait</div>
+    <div class="chip-group">
+      <div class="mode-chip" id="modeLabel">Portrait</div>
+      <button class="ratio-chip" id="ratioChip" aria-label="Cycle aspect ratio">9:16</button>
+    </div>
     <button class="icon-btn" id="flipBtn" aria-label="Switch camera">⇄</button>
   </div>
 
@@ -120,6 +159,7 @@
 
   <div class="bottombar">
     <div class="tip" id="tipText"></div>
+    <div class="hint" id="hintText">Match this frame in your phone camera app</div>
     <button class="shutter" id="shutterBtn" aria-label="Take photo"><span></span></button>
     <button class="link-btn" id="permBtn" hidden>Tap to enable the tilt guide</button>
   </div>
@@ -139,9 +179,6 @@
 <script>
 /* =========================================================
    SHOT TYPES
-   ---------------------------------------------------------
-   bands : shaded zones. Typically the top headroom band.
-   lines : thin anchor lines the person should hit.
    ========================================================= */
 const MODES = {
   portrait: {
@@ -157,7 +194,6 @@ const MODES = {
       { y: 0.90, label: 'WAIST · safe crop',  kind: 'safe'   }
     ]
   },
-
   selfie: {
     label: 'Selfie', icon: '🤳', guide: 'lines',
     desc: 'Solo · high angle, 30% headroom',
@@ -171,7 +207,6 @@ const MODES = {
       { y: 0.86, label: 'WAIST · safe crop',  kind: 'safe'   }
     ]
   },
-
   halfBody: {
     label: 'Half body', icon: '🧍', guide: 'lines',
     desc: 'Waist up · 30% headroom',
@@ -186,7 +221,6 @@ const MODES = {
       { y: 0.94, label: 'WAIST · safe crop',   kind: 'safe'   }
     ]
   },
-
   closeUp: {
     label: 'Close-up', icon: '🙂', guide: 'circle',
     desc: 'Face fills the frame',
@@ -200,7 +234,6 @@ const MODES = {
       { y: 0.85, label: 'CHEST · safe crop',  kind: 'safe'   }
     ]
   },
-
   group: {
     label: 'Group', icon: '👨‍👩‍👧', guide: 'lines',
     desc: 'Everyone in one eye line',
@@ -214,17 +247,10 @@ const MODES = {
       { y: 0.88, label: 'WAIST · safe crop',      kind: 'safe'   }
     ]
   },
-
-  /* ---------------------------------------------------------
-     FULL BODY — now with 30% headroom, body spans 30% → 96%
-     Anatomical proportions (7.5 heads tall):
-       head 30%→39% · eyes 35% · shoulders 43%
-       waist 56% · knees 78% · ankles 92% · feet 96%
-     --------------------------------------------------------- */
   fullBody: {
     label: 'Full body', icon: '🕴️', guide: 'lines',
     desc: 'Head to toe · 30% headroom',
-    tip: 'Top 30% is empty headroom — keep it blank for an airy, editorial look. Head top on the anchor. Never crop at knees or ankles. Waist is a safe crop.',
+    tip: 'Top 30% is empty headroom — keep it blank for an airy, editorial look. Head top on the anchor. Never crop at knees or ankles.',
     targetRoll: 0, targetElevation: -2,
     bands: [ { y1: 0.00, y2: 0.30, label: 'HEADROOM · LEAVE BLANK', kind: 'blank' } ],
     lines: [
@@ -237,7 +263,6 @@ const MODES = {
       { y: 0.96, label: 'FEET — leave floor',   kind: 'key'    }
     ]
   },
-
   landscape: {
     label: 'Landscape', icon: '🏔️', guide: 'landscape',
     desc: 'Scenic · level horizon',
@@ -249,7 +274,6 @@ const MODES = {
       { y: 0.66, label: 'LOWER THIRD · horizon', kind: 'key' }
     ]
   },
-
   food: {
     label: 'Food', icon: '🍜', guide: 'food',
     desc: '45° or overhead',
@@ -276,8 +300,11 @@ const shotImg       = document.getElementById('shotImg');
 const saveBtn       = document.getElementById('saveBtn');
 const statusPill    = document.getElementById('statusPill');
 const statusText    = document.getElementById('statusText');
+const ratioChip     = document.getElementById('ratioChip');
+const ratioSegMenu  = document.getElementById('ratioSegMenu');
 
 let currentMode   = null;
+let currentRatio  = '9:16';   // '9:16' | '3:4'
 let stream        = null;
 let facingMode    = 'environment';
 let rollCW        = 0;
@@ -285,6 +312,40 @@ let elevation     = 0;
 let tiltActive    = false;
 let tiltAttached  = false;
 let rafId         = null;
+
+/* =========================================================
+   RATIO
+   ========================================================= */
+function setRatio(r) {
+  currentRatio = r;
+  ratioChip.textContent = r;
+  ratioSegMenu.querySelectorAll('button').forEach(b =>
+    b.classList.toggle('active', b.dataset.ratio === r)
+  );
+}
+
+ratioChip.addEventListener('click', () => {
+  setRatio(currentRatio === '9:16' ? '3:4' : '9:16');
+});
+
+ratioSegMenu.querySelectorAll('button').forEach(b => {
+  b.addEventListener('click', () => setRatio(b.dataset.ratio));
+});
+
+/* Given the canvas w×h and desired aspect (width/height, portrait),
+   return the rectangle the photo will actually cover, centred. */
+function getFrame(w, h, ratio) {
+  const target = ratio === '3:4' ? 3 / 4 : 9 / 16;
+  let fw, fh;
+  if (w / h > target) {
+    // canvas wider than target → pillarbox
+    fh = h; fw = h * target;
+  } else {
+    // canvas taller/narrower → letterbox
+    fw = w; fh = w / target;
+  }
+  return { x: (w - fw) / 2, y: (h - fh) / 2, w: fw, h: fh };
+}
 
 /* =========================================================
    MENU
@@ -433,17 +494,25 @@ function drawOverlay() {
   const m = MODES[currentMode];
   if (!m) return;
 
-  drawGrid(ctx, w, h);
-  (m.bands || []).forEach(b => drawBand(ctx, w, h, b));
-  (m.lines || []).forEach(l => drawRefLine(ctx, w, h, l));
+  const frame = getFrame(w, h, currentRatio);
 
-  if (m.guide === 'circle') drawCircle(ctx, w, h, 0.50, 0.50, 0.34);
-  if (m.guide === 'food')   drawCircle(ctx, w, h, 0.50, 0.47, 0.32);
+  // Dim outside the frame, then draw the crisp frame border + corner marks
+  drawFrameMask(ctx, w, h, frame);
+
+  // All guides drawn inside the frame
+  drawGrid(ctx, frame);
+  (m.bands || []).forEach(b => drawBand(ctx, frame, b));
+  (m.lines || []).forEach(l => drawRefLine(ctx, frame, l));
+
+  if (m.guide === 'circle') drawCircle(ctx, frame, 0.50, 0.50, 0.34);
+  if (m.guide === 'food')   drawCircle(ctx, frame, 0.50, 0.47, 0.32);
 
   const rollAligned = tiltActive && Math.abs(rollCW - m.targetRoll) < 2;
   if (m.guide === 'landscape') {
-    drawHorizonLine(ctx, w, h, m.targetRoll, rollAligned);
+    drawHorizonLine(ctx, frame, m.targetRoll, rollAligned);
   }
+
+  // Pitch meter stays at screen edge (it's UI, not part of the frame)
   drawPitchMeter(ctx, w, h, m.targetElevation);
   updateStatus(m, rollAligned);
 }
@@ -471,26 +540,83 @@ function tag(ctx, text, x, y, color, align, size) {
   ctx.restore();
 }
 
-function drawGrid(ctx, w, h) {
+/* =========================================================
+   FRAME MASK  — dims outside the photo area
+   ========================================================= */
+function drawFrameMask(ctx, w, h, f) {
+  ctx.save();
+
+  // Dim everything outside the frame
+  ctx.fillStyle = 'rgba(0,0,0,.58)';
+  ctx.fillRect(0, 0, w, f.y);                                  // top
+  ctx.fillRect(0, f.y + f.h, w, h - f.y - f.h);                // bottom
+  ctx.fillRect(0, f.y, f.x, f.h);                              // left
+  ctx.fillRect(f.x + f.w, f.y, w - f.x - f.w, f.h);            // right
+
+  // Thin frame border
+  ctx.strokeStyle = 'rgba(255,255,255,.42)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(f.x + 0.5, f.y + 0.5, f.w - 1, f.h - 1);
+
+  // Corner marks (blue) — clear visual anchor for the frame
+  const cm = 22;
+  ctx.strokeStyle = 'rgba(96,165,250,.95)';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'square';
+  ctx.shadowColor = 'rgba(96,165,250,.6)';
+  ctx.shadowBlur = 6;
+
+  const corners = [
+    [f.x,         f.y,         1,  1],
+    [f.x + f.w,   f.y,        -1,  1],
+    [f.x,         f.y + f.h,   1, -1],
+    [f.x + f.w,   f.y + f.h,  -1, -1]
+  ];
+  corners.forEach(([x, y, sx, sy]) => {
+    ctx.beginPath();
+    ctx.moveTo(x + sx * cm, y);
+    ctx.lineTo(x, y);
+    ctx.lineTo(x, y + sy * cm);
+    ctx.stroke();
+  });
+
+  // Tiny ratio label at top-left inside the frame
+  ctx.font = '700 10.5px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
+  ctx.fillStyle = 'rgba(191,219,254,.95)';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.shadowColor = 'rgba(0,0,0,.95)';
+  ctx.shadowBlur = 5;
+  ctx.fillText(currentRatio, f.x + 10, f.y + 10);
+
+  ctx.restore();
+}
+
+/* =========================================================
+   GRID (inside frame)
+   ========================================================= */
+function drawGrid(ctx, f) {
   ctx.save();
   ctx.strokeStyle = 'rgba(255,255,255,.10)';
   ctx.lineWidth = 1;
   ctx.setLineDash([5, 7]);
   ctx.beginPath();
   for (let i = 1; i < 3; i++) {
-    ctx.moveTo(w * i / 3, 0); ctx.lineTo(w * i / 3, h);
-    ctx.moveTo(0, h * i / 3); ctx.lineTo(w, h * i / 3);
+    ctx.moveTo(f.x + f.w * i / 3, f.y);
+    ctx.lineTo(f.x + f.w * i / 3, f.y + f.h);
+    ctx.moveTo(f.x, f.y + f.h * i / 3);
+    ctx.lineTo(f.x + f.w, f.y + f.h * i / 3);
   }
   ctx.stroke();
   ctx.restore();
 }
 
 /* =========================================================
-   SHADED BAND  — the headroom / "leave blank" zone
+   SHADED BAND (inside frame)
    ========================================================= */
-function drawBand(ctx, w, h, def) {
-  const y1 = h * def.y1;
-  const y2 = h * def.y2;
+function drawBand(ctx, f, def) {
+  const y1 = f.y + f.h * def.y1;
+  const y2 = f.y + f.h * def.y2;
   const bandH = y2 - y1;
   if (bandH <= 0) return;
 
@@ -504,21 +630,21 @@ function drawBand(ctx, w, h, def) {
     grad.addColorStop(0, 'rgba(239,68,68,.16)');
     grad.addColorStop(1, 'rgba(239,68,68,.04)');
   } else {
-    grad.addColorStop(0, 'rgba(255,255,255,.09)');
-    grad.addColorStop(1, 'rgba(255,255,255,.02)');
+    grad.addColorStop(0, 'rgba(255,255,255,.11)');
+    grad.addColorStop(1, 'rgba(255,255,255,.03)');
   }
   ctx.fillStyle = grad;
-  ctx.fillRect(0, y1, w, bandH);
+  ctx.fillRect(f.x, y1, f.w, bandH);
 
   // Faint diagonal hatch
   ctx.save();
   ctx.beginPath();
-  ctx.rect(0, y1, w, bandH);
+  ctx.rect(f.x, y1, f.w, bandH);
   ctx.clip();
   ctx.strokeStyle = 'rgba(255,255,255,.05)';
   ctx.lineWidth = 1;
   const step = 18;
-  for (let x = -h; x < w + h; x += step) {
+  for (let x = f.x - bandH; x < f.x + f.w + bandH; x += step) {
     ctx.beginPath();
     ctx.moveTo(x, y1);
     ctx.lineTo(x + bandH, y2);
@@ -530,37 +656,37 @@ function drawBand(ctx, w, h, def) {
   const labelColor =
     def.kind === 'safe'  ? '#86efac' :
     def.kind === 'avoid' ? '#fca5a5' :
-                            'rgba(255,255,255,.78)';
-  tag(ctx, def.label, w / 2, labelY, labelColor, 'center', 11);
+                            'rgba(255,255,255,.85)';
+  tag(ctx, def.label, f.x + f.w / 2, labelY, labelColor, 'center', 11);
 
   ctx.restore();
 }
 
 /* =========================================================
-   REFERENCE LINE  — anchors + crop markers
+   REFERENCE LINE (inside frame)
    ========================================================= */
-function drawRefLine(ctx, w, h, def) {
-  const y = h * def.y;
+function drawRefLine(ctx, f, def) {
+  const y = f.y + f.h * def.y;
 
   let stroke, label, dash, thickness;
   if (def.kind === 'anchor') {
-    stroke = 'rgba(255,255,255,.85)';
-    label = 'rgba(255,255,255,.95)';
+    stroke = 'rgba(255,255,255,.88)';
+    label = 'rgba(255,255,255,.98)';
     dash = [];
-    thickness = 1.6;
+    thickness = 1.7;
   } else if (def.kind === 'safe') {
-    stroke = 'rgba(34,197,94,.85)';
+    stroke = 'rgba(34,197,94,.88)';
     label = '#86efac';
     dash = [8, 6];
     thickness = 1.5;
   } else if (def.kind === 'avoid') {
-    stroke = 'rgba(239,68,68,.85)';
+    stroke = 'rgba(239,68,68,.88)';
     label = '#fca5a5';
     dash = [6, 5];
     thickness = 1.5;
   } else {
-    stroke = 'rgba(255,255,255,.75)';
-    label = 'rgba(255,255,255,.92)';
+    stroke = 'rgba(255,255,255,.78)';
+    label = 'rgba(255,255,255,.95)';
     dash = [8, 6];
     thickness = 1.3;
   }
@@ -572,24 +698,27 @@ function drawRefLine(ctx, w, h, def) {
   ctx.shadowColor = 'rgba(0,0,0,.7)';
   ctx.shadowBlur = 4;
   ctx.beginPath();
-  ctx.moveTo(0, y);
-  ctx.lineTo(w, y);
+  ctx.moveTo(f.x, y);
+  ctx.lineTo(f.x + f.w, y);
   ctx.stroke();
 
+  // end ticks
   ctx.setLineDash([]);
   ctx.lineWidth = thickness + 0.4;
   ctx.beginPath();
-  ctx.moveTo(10, y - 4); ctx.lineTo(10, y + 4);
-  ctx.moveTo(w - 10, y - 4); ctx.lineTo(w - 10, y + 4);
+  ctx.moveTo(f.x + 8, y - 4);         ctx.lineTo(f.x + 8, y + 4);
+  ctx.moveTo(f.x + f.w - 8, y - 4);   ctx.lineTo(f.x + f.w - 8, y + 4);
   ctx.stroke();
 
+  // label pill inside the frame, left-aligned
   ctx.font = '600 10.5px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
   const textW = ctx.measureText(def.label).width;
   const padX = 7, pillH = 16;
-  const bx = 18, by = y - pillH / 2;
+  const bx = f.x + 16;
+  const by = y - pillH / 2;
 
   roundRect(ctx, bx - 1, by, textW + padX * 2, pillH, 8);
-  ctx.fillStyle = 'rgba(0,0,0,.55)';
+  ctx.fillStyle = 'rgba(0,0,0,.58)';
   ctx.fill();
 
   ctx.fillStyle = label;
@@ -603,16 +732,18 @@ function drawRefLine(ctx, w, h, def) {
 }
 
 /* =========================================================
-   HORIZON LEVEL LINE  (landscape only)
+   HORIZON LEVEL LINE (inside frame)
    ========================================================= */
-function drawHorizonLine(ctx, w, h, targetRoll, aligned) {
-  const cy = h * 0.52;
-  const half = Math.hypot(w, h) * 0.62;
+function drawHorizonLine(ctx, f, targetRoll, aligned) {
+  const cx = f.x + f.w / 2;
+  const cy = f.y + f.h * 0.52;
+  const half = Math.hypot(f.w, f.h) * 0.62;
   const tint = aligned ? '96,165,250' : '255,255,255';
   const baseAlpha = aligned ? 0.90 : 0.55;
 
+  // dashed ghost
   ctx.save();
-  ctx.translate(w / 2, cy);
+  ctx.translate(cx, cy);
   ctx.rotate(targetRoll * Math.PI / 180);
   ctx.setLineDash([16, 14]);
   ctx.lineWidth = 1.3;
@@ -622,8 +753,9 @@ function drawHorizonLine(ctx, w, h, targetRoll, aligned) {
   ctx.stroke();
   ctx.restore();
 
+  // live line
   ctx.save();
-  ctx.translate(w / 2, cy);
+  ctx.translate(cx, cy);
   ctx.rotate((tiltActive ? rollCW : targetRoll) * Math.PI / 180);
   const grad = ctx.createLinearGradient(-half, 0, half, 0);
   grad.addColorStop(0.00, `rgba(${tint},0)`);
@@ -639,8 +771,9 @@ function drawHorizonLine(ctx, w, h, targetRoll, aligned) {
   ctx.stroke();
   ctx.restore();
 
+  // centre tick
   ctx.save();
-  ctx.translate(w / 2, cy);
+  ctx.translate(cx, cy);
   ctx.rotate((tiltActive ? rollCW : targetRoll) * Math.PI / 180);
   ctx.beginPath();
   ctx.arc(0, 0, 4.5, 0, Math.PI * 2);
@@ -652,7 +785,7 @@ function drawHorizonLine(ctx, w, h, targetRoll, aligned) {
 }
 
 /* =========================================================
-   PITCH METER
+   PITCH METER (screen-fixed)
    ========================================================= */
 function drawPitchMeter(ctx, w, h, target) {
   const range = 60;
@@ -713,14 +846,15 @@ function drawPitchMeter(ctx, w, h, target) {
 }
 
 /* =========================================================
-   CIRCLE (close-up / food)
+   CIRCLE (inside frame)
    ========================================================= */
-function drawCircle(ctx, w, h, cxF, cyF, rF) {
+function drawCircle(ctx, f, cxF, cyF, rF) {
   ctx.save();
-  const cx = w * cxF, cy = h * cyF;
-  const r = Math.min(w, h) * rF;
+  const cx = f.x + f.w * cxF;
+  const cy = f.y + f.h * cyF;
+  const r = Math.min(f.w, f.h) * rF;
 
-  ctx.strokeStyle = 'rgba(255,255,255,.75)';
+  ctx.strokeStyle = 'rgba(255,255,255,.78)';
   ctx.lineWidth = 1.6;
   ctx.setLineDash([8, 7]);
   ctx.beginPath();
@@ -761,7 +895,7 @@ function updateStatus(m, rollAligned) {
 }
 
 /* =========================================================
-   CAPTURE
+   CAPTURE  — crops to the chosen ratio
    ========================================================= */
 document.getElementById('shutterBtn').addEventListener('click', capture);
 
@@ -771,19 +905,27 @@ function capture() {
 
   const dw = camScreen.clientWidth, dh = camScreen.clientHeight;
   const scale = Math.max(dw / vw, dh / vh);
-  const sw = Math.min(vw, dw / scale);
-  const sh = Math.min(vh, dh / scale);
-  const sx = (vw - sw) / 2;
-  const sy = (vh - sh) / 2;
+  const offsetX = (dw - vw * scale) / 2;
+  const offsetY = (dh - vh * scale) / 2;
 
-  const outScale = Math.min(1, 1600 / sw);
+  const frame = getFrame(dw, dh, currentRatio);
+
+  // Convert screen-frame to video coords
+  const vfx = (frame.x - offsetX) / scale;
+  const vfy = (frame.y - offsetY) / scale;
+  const vfw = frame.w / scale;
+  const vfh = frame.h / scale;
+
   const out = document.createElement('canvas');
-  out.width  = Math.round(sw * outScale);
-  out.height = Math.round(sh * outScale);
+  out.width  = Math.round(vfw);
+  out.height = Math.round(vfh);
 
   const octx = out.getContext('2d');
-  if (facingMode === 'user') { octx.translate(out.width, 0); octx.scale(-1, 1); }
-  octx.drawImage(video, sx, sy, sw, sh, 0, 0, out.width, out.height);
+  if (facingMode === 'user') {
+    octx.translate(out.width, 0);
+    octx.scale(-1, 1);
+  }
+  octx.drawImage(video, vfx, vfy, vfw, vfh, 0, 0, out.width, out.height);
 
   const url = out.toDataURL('image/jpeg', 0.92);
   shotImg.src = url;
