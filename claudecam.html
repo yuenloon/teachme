@@ -118,9 +118,9 @@
 <script>
 const SHOTS = [
   { id:'portrait', name:'Portrait', desc:'One person, upright', ratio:[3,4],
-    tip:'Korean style: hold the phone slightly above eye level, chin down a touch — slims the face. Soft light, gentle head tilt, hand near the jaw.' },
+    tip:'Line up head, shoulders and legs inside the outline. Korean style: phone slightly above eye level, chin down a touch, soft light, gentle head tilt.' },
   { id:'group', name:'Group', desc:'Several people', ratio:[4,3],
-    tip:'Korean style: shoot a little from above so everyone looks slimmer and taller. Keep the group centered, even gaps on both sides.' },
+    tip:'Each person stands inside one outline, evenly spaced. Korean style: shoot a little from above so everyone looks slimmer and taller.' },
   { id:'macro', name:'Close-up', desc:'Small details', ratio:[1,1],
     tip:'Korean style: use a cup, book or flower as a prop for a natural, candid feel. Fill the circle, shoot at a soft 45° angle.' },
 ];
@@ -181,13 +181,41 @@ function drawGuide(shot){
     if(dash) l.setAttribute('stroke-dasharray','1.2,1.2');
     guide.appendChild(l);
   };
+  const addFigure = (x, headY, scale)=>{
+    // thin stand-here silhouette: head, shoulders/torso, hips, legs
+    const r = 3.4*scale;
+    const shY = headY + r*1.5;   // shoulder line
+    const shW = 7.5*scale;
+    const hipY = shY + 15*scale;
+    const hipW = 5*scale;
+    const footY = Math.min(96, hipY + 19*scale);
+    const footW = 6*scale;
+    const stroke = 'rgba(255,255,255,0.5)';
+    const dash = '1,1.4';
+    const c = document.createElementNS(ns,'circle');
+    c.setAttribute('cx',x); c.setAttribute('cy',headY); c.setAttribute('r',r);
+    c.setAttribute('fill','none'); c.setAttribute('stroke',stroke);
+    c.setAttribute('stroke-width','0.4'); c.setAttribute('stroke-dasharray',dash);
+    guide.appendChild(c);
+    const seg = (x1,y1,x2,y2)=>{
+      const l = document.createElementNS(ns,'line');
+      l.setAttribute('x1',x1); l.setAttribute('y1',y1);
+      l.setAttribute('x2',x2); l.setAttribute('y2',y2);
+      l.setAttribute('stroke',stroke); l.setAttribute('stroke-width','0.4');
+      l.setAttribute('stroke-dasharray',dash);
+      guide.appendChild(l);
+    };
+    seg(x-shW,shY, x+shW,shY);              // shoulders
+    seg(x-shW,shY, x-hipW,hipY);            // torso side (left)
+    seg(x+shW,shY, x+hipW,hipY);            // torso side (right)
+    seg(x-hipW,hipY, x+hipW,hipY);          // hips
+    seg(x-hipW*0.55,hipY, x-footW*0.55,footY); // left leg
+    seg(x+hipW*0.55,hipY, x+footW*0.55,footY); // right leg
+  };
   // rule of thirds grid, always
   addLine(33.3,0,33.3,100); addLine(66.6,0,66.6,100);
   addLine(0,33.3,100,33.3); addLine(0,66.6,100,66.6);
 
-  if(shot.id==='landscape'){
-    addLine(0,33.3,100,33.3,false); // emphasize horizon line already there
-  }
   if(shot.id==='macro'){
     const c = document.createElementNS(ns,'circle');
     c.setAttribute('cx',50); c.setAttribute('cy',50); c.setAttribute('r',22);
@@ -195,20 +223,14 @@ function drawGuide(shot){
     c.setAttribute('stroke-width','0.4'); c.setAttribute('stroke-dasharray','1.5,1.5');
     guide.appendChild(c);
   }
-  if(shot.id==='square' || shot.id==='group'){
-    const [w,h] = shot.ratio;
-    let rw=80, rh=80*h/w;
-    if(rh>90){ rh=90; rw=90*w/h; }
-    const x=(100-rw)/2, y=(100-rh)/2;
-    const r = document.createElementNS(ns,'rect');
-    r.setAttribute('x',x); r.setAttribute('y',y);
-    r.setAttribute('width',rw); r.setAttribute('height',rh);
-    r.setAttribute('fill','none'); r.setAttribute('stroke','rgba(255,255,255,0.6)');
-    r.setAttribute('stroke-width','0.4');
-    guide.appendChild(r);
+  if(shot.id==='group'){
+    addFigure(25, 30, 0.62);
+    addFigure(50, 26, 0.68);
+    addFigure(75, 30, 0.62);
   }
   if(shot.id==='portrait'){
     addLine(50,0,50,100,true);
+    addFigure(50, 16, 1.15);
   }
 }
 
