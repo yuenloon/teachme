@@ -82,6 +82,33 @@
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     color:var(--muted); text-align:center; padding:30px; font-size:0.9rem;
   }
+  .shutterWrap{
+    position:absolute; bottom:calc(96px + env(safe-area-inset-bottom,0px)); left:0; right:0;
+    display:flex; justify-content:center; z-index:5;
+  }
+  #shutterBtn{
+    width:68px; height:68px; border-radius:50%; border:3px solid rgba(255,255,255,0.85);
+    background:rgba(255,255,255,0.15); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; padding:0;
+  }
+  #shutterBtn span{ width:54px; height:54px; border-radius:50%; background:#fff; display:block; }
+  #shutterBtn:active{ transform:scale(0.93); }
+
+  #preview{
+    position:fixed; inset:0; display:none; background:#000;
+    flex-direction:column;
+  }
+  #preview.active{ display:flex; }
+  #preview img{ flex:1; width:100%; min-height:0; object-fit:contain; background:#000; }
+  .previewBar{
+    display:flex; gap:12px; padding:16px 20px calc(env(safe-area-inset-bottom,0px) + 20px);
+  }
+  .previewBar a, .previewBar button{
+    flex:1; padding:14px; border-radius:14px; font-size:0.95rem; font-weight:600;
+    text-align:center; text-decoration:none; border:none; cursor:pointer;
+  }
+  .previewBar .retake{ background:var(--panel); color:var(--text); border:1px solid var(--line); }
+  .previewBar .save{ background:var(--accent); color:#0e1211; }
 </style>
 </head>
 <body>
@@ -112,7 +139,16 @@
     <div class="pill" id="back">← Menu</div>
     <div class="pill" id="shotLabel"></div>
   </div>
+  <div class="shutterWrap"><button id="shutterBtn" aria-label="Take photo"><span></span></button></div>
   <div id="tip"></div>
+</div>
+
+<div id="preview">
+  <img id="shotImg" alt="Your photo">
+  <div class="previewBar">
+    <button class="retake" id="retakeBtn">Retake</button>
+    <a class="save" id="saveBtn" download="photo.jpg">Save</a>
+  </div>
 </div>
 
 <script>
@@ -377,6 +413,36 @@ function closeCamera(){
   window.removeEventListener('deviceorientation', onTilt);
 }
 document.getElementById('back').onclick = closeCamera;
+
+const previewEl = document.getElementById('preview');
+const shotImg = document.getElementById('shotImg');
+const saveBtn = document.getElementById('saveBtn');
+
+document.getElementById('shutterBtn').onclick = () => {
+  const vw = video.videoWidth, vh = video.videoHeight;
+  if(!vw || !vh) return;
+  const dw = camEl.clientWidth, dh = camEl.clientHeight;
+  // match object-fit:cover cropping so the photo matches what's on screen
+  const scale = Math.max(dw/vw, dh/vh);
+  const sw = dw/scale, sh = dh/scale;
+  const sx = (vw-sw)/2, sy = (vh-sh)/2;
+
+  const out = document.createElement('canvas');
+  out.width = dw; out.height = dh;
+  const octx = out.getContext('2d');
+  octx.drawImage(video, sx, sy, sw, sh, 0, 0, dw, dh);
+
+  const url = out.toDataURL('image/jpeg', 0.92);
+  shotImg.src = url;
+  saveBtn.href = url;
+  camEl.classList.remove('active');
+  previewEl.classList.add('active');
+};
+
+document.getElementById('retakeBtn').onclick = () => {
+  previewEl.classList.remove('active');
+  camEl.classList.add('active');
+};
 
 function onTilt(e){
   const liveLine = document.getElementById('liveLine');
