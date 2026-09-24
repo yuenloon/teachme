@@ -73,6 +73,54 @@
   }
   .document:before,.document:after{content:"";position:absolute;inset:-2px}
   .document:before{border-top:18px solid rgba(255,255,255,.55);border-left:18px solid transparent;border-right:18px solid transparent;width:18px;height:18px;top:-3px;left:-3px}
+.aspect-frame{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  border:2px solid rgba(255,255,255,.95);
+  pointer-events:none;
+  z-index:4;
+}
+
+.aspect-3-4{
+  height:80%;
+  aspect-ratio:3/4;
+}
+
+.aspect-9-16{
+  height:92%;
+  aspect-ratio:9/16;
+}
+
+.frame-label{
+  position:absolute;
+  top:-28px;
+  right:0;
+  background:rgba(0,0,0,.6);
+  color:white;
+  font-size:11px;
+  padding:4px 8px;
+  border-radius:20px;
+}
+
+.aspect-frame::before{
+  content:"";
+  position:absolute;
+  top:50%;
+  left:0;
+  right:0;
+  border-top:1px dashed rgba(255,255,255,.35);
+}
+
+.aspect-frame::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:0;
+  bottom:0;
+  border-left:1px dashed rgba(255,255,255,.35);
+}
   .tip{
     position:absolute;z-index:4;left:14px;right:14px;bottom:92px;
     border-radius:16px;background:rgba(0,0,0,.58);backdrop-filter:blur(10px);
@@ -182,10 +230,26 @@
   <video id="video" autoplay playsinline muted></video>
 
   <div class="topbar">
-    <button id="backBtn" aria-label="Back">‹</button>
+  <button id="backBtn" aria-label="Back">‹</button>
+
+  <div style="display:flex;align-items:center;gap:8px;">
     <div id="modeName" class="mode-name">Portrait</div>
-    <button id="infoBtn" class="info-toggle" aria-label="Show tip">i</button>
+
+    <select id="ratioSelect" style="
+      background:rgba(0,0,0,.45);
+      color:#fff;
+      border:none;
+      border-radius:18px;
+      padding:6px 10px;
+      font-size:12px;
+    ">
+      <option value="3:4">3:4</option>
+      <option value="9:16">9:16</option>
+    </select>
   </div>
+
+  <button id="infoBtn" class="info-toggle" aria-label="Show tip">i</button>
+</div>
 
   <div id="guide" class="guide"></div>
 
@@ -272,6 +336,8 @@ let stream = null;
 let facingMode = "environment";
 let tipVisible = true;
 
+let currentRatio = "3:4";
+
 const menu = document.getElementById("menu");
 const camera = document.getElementById("camera");
 const video = document.getElementById("video");
@@ -284,9 +350,19 @@ const permission = document.getElementById("permission");
 const result = document.getElementById("result");
 const canvas = document.getElementById("canvas");
 const photo = document.getElementById("photo");
+const ratioSelect = document.getElementById("ratioSelect");
 
 document.querySelectorAll(".shot-card").forEach(card => {
   card.addEventListener("click", () => selectMode(card.dataset.mode));
+});
+ratioSelect.addEventListener("change", e => {
+
+  currentRatio = e.target.value;
+
+  if(currentMode){
+    renderGuide(currentMode.guide);
+  }
+
 });
 
 async function selectMode(mode){
@@ -337,6 +413,25 @@ function renderGuide(type){
     d.className = "document";
     guide.appendChild(d);
   }
+const frame = document.createElement("div");
+
+frame.classList.add("aspect-frame");
+
+if(currentRatio === "3:4"){
+  frame.classList.add("aspect-3-4");
+}
+
+if(currentRatio === "9:16"){
+  frame.classList.add("aspect-9-16");
+}
+
+const label = document.createElement("div");
+label.className = "frame-label";
+label.textContent = currentRatio;
+
+frame.appendChild(label);
+
+guide.appendChild(frame);
 }
 
 async function startCamera(){
