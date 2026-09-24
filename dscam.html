@@ -141,14 +141,7 @@
    SHOT TYPES
    ---------------------------------------------------------
    bands : shaded zones. Typically the top headroom band.
-           { y1, y2, label, kind }
-           kind: 'blank' (faint white) | 'safe' (green) | 'avoid' (red)
    lines : thin anchor lines the person should hit.
-           { y, label, kind }
-           kind: 'anchor' (solid white — the head-top closure)
-                 'key'    (dashed white — eyes / shoulders / feet)
-                 'safe'   (solid green — safe to crop)
-                 'avoid'  (dashed red — never crop here)
    ========================================================= */
 const MODES = {
   portrait: {
@@ -167,30 +160,30 @@ const MODES = {
 
   selfie: {
     label: 'Selfie', icon: '🤳', guide: 'lines',
-    desc: 'Solo · high angle, 28% headroom',
+    desc: 'Solo · high angle, 30% headroom',
     tip: 'Hold the phone slightly above eye level. Leave the top band blank — head top on the anchor, eyes on the eye line.',
     targetRoll: 0, targetElevation: -14,
-    bands: [ { y1: 0.00, y2: 0.28, label: 'HEADROOM · LEAVE BLANK', kind: 'blank' } ],
+    bands: [ { y1: 0.00, y2: 0.30, label: 'HEADROOM · LEAVE BLANK', kind: 'blank' } ],
     lines: [
-      { y: 0.28, label: 'HEAD TOP',           kind: 'anchor' },
-      { y: 0.38, label: 'EYES — upper third', kind: 'key'    },
-      { y: 0.52, label: 'SHOULDERS',          kind: 'key'    },
-      { y: 0.85, label: 'WAIST · safe crop',  kind: 'safe'   }
+      { y: 0.30, label: 'HEAD TOP',           kind: 'anchor' },
+      { y: 0.40, label: 'EYES — upper third', kind: 'key'    },
+      { y: 0.54, label: 'SHOULDERS',          kind: 'key'    },
+      { y: 0.86, label: 'WAIST · safe crop',  kind: 'safe'   }
     ]
   },
 
   halfBody: {
     label: 'Half body', icon: '🧍', guide: 'lines',
-    desc: 'Waist up · eye level',
-    tip: 'Top 28% is headroom. Eyes on the eye line, shoulders below. Crop at the waist — never cut at the wrists.',
+    desc: 'Waist up · 30% headroom',
+    tip: 'Top 30% is headroom. Eyes on the eye line, shoulders below. Crop at the waist — never cut at the wrists.',
     targetRoll: 0, targetElevation: -2,
-    bands: [ { y1: 0.00, y2: 0.28, label: 'HEADROOM · LEAVE BLANK', kind: 'blank' } ],
+    bands: [ { y1: 0.00, y2: 0.30, label: 'HEADROOM · LEAVE BLANK', kind: 'blank' } ],
     lines: [
-      { y: 0.28, label: 'HEAD TOP',            kind: 'anchor' },
-      { y: 0.38, label: 'EYES — upper third',  kind: 'key'    },
-      { y: 0.52, label: 'SHOULDERS',           kind: 'key'    },
-      { y: 0.72, label: 'WRISTS · avoid crop', kind: 'avoid'  },
-      { y: 0.92, label: 'WAIST · safe crop',   kind: 'safe'   }
+      { y: 0.30, label: 'HEAD TOP',            kind: 'anchor' },
+      { y: 0.40, label: 'EYES — upper third',  kind: 'key'    },
+      { y: 0.54, label: 'SHOULDERS',           kind: 'key'    },
+      { y: 0.74, label: 'WRISTS · avoid crop', kind: 'avoid'  },
+      { y: 0.94, label: 'WAIST · safe crop',   kind: 'safe'   }
     ]
   },
 
@@ -211,30 +204,36 @@ const MODES = {
   group: {
     label: 'Group', icon: '👨‍👩‍👧', guide: 'lines',
     desc: 'Everyone in one eye line',
-    tip: 'Top 25% is headroom — keep it blank. Align every face on the eye bar. Waist is a safe crop.',
+    tip: 'Top 30% is headroom — keep it blank. Align every face on the eye bar. Waist is a safe crop.',
     targetRoll: 0, targetElevation: -3,
-    bands: [ { y1: 0.00, y2: 0.25, label: 'HEADROOM · LEAVE BLANK', kind: 'blank' } ],
+    bands: [ { y1: 0.00, y2: 0.30, label: 'HEADROOM · LEAVE BLANK', kind: 'blank' } ],
     lines: [
-      { y: 0.25, label: 'HEAD TOPS',              kind: 'anchor' },
-      { y: 0.36, label: 'EYES — align all faces', kind: 'key'    },
-      { y: 0.52, label: 'SHOULDERS',              kind: 'key'    },
+      { y: 0.30, label: 'HEAD TOPS',              kind: 'anchor' },
+      { y: 0.40, label: 'EYES — align all faces', kind: 'key'    },
+      { y: 0.55, label: 'SHOULDERS',              kind: 'key'    },
       { y: 0.88, label: 'WAIST · safe crop',      kind: 'safe'   }
     ]
   },
 
+  /* ---------------------------------------------------------
+     FULL BODY — now with 30% headroom, body spans 30% → 96%
+     Anatomical proportions (7.5 heads tall):
+       head 30%→39% · eyes 35% · shoulders 43%
+       waist 56% · knees 78% · ankles 92% · feet 96%
+     --------------------------------------------------------- */
   fullBody: {
     label: 'Full body', icon: '🕴️', guide: 'lines',
-    desc: 'Head to toe · tighter headroom',
-    tip: 'Full body needs less headroom so the figure fits — 12% blank on top. Never crop at knees or ankles. Waist is safe.',
+    desc: 'Head to toe · 30% headroom',
+    tip: 'Top 30% is empty headroom — keep it blank for an airy, editorial look. Head top on the anchor. Never crop at knees or ankles. Waist is a safe crop.',
     targetRoll: 0, targetElevation: -2,
-    bands: [ { y1: 0.00, y2: 0.12, label: 'HEADROOM · LEAVE BLANK', kind: 'blank' } ],
+    bands: [ { y1: 0.00, y2: 0.30, label: 'HEADROOM · LEAVE BLANK', kind: 'blank' } ],
     lines: [
-      { y: 0.12, label: 'HEAD TOP',             kind: 'anchor' },
-      { y: 0.22, label: 'EYES',                 kind: 'key'    },
-      { y: 0.35, label: 'SHOULDERS',            kind: 'key'    },
-      { y: 0.50, label: 'WAIST · safe crop',    kind: 'safe'   },
-      { y: 0.72, label: 'KNEES · avoid crop',   kind: 'avoid'  },
-      { y: 0.90, label: 'ANKLES · avoid crop',  kind: 'avoid'  },
+      { y: 0.30, label: 'HEAD TOP',             kind: 'anchor' },
+      { y: 0.35, label: 'EYES',                 kind: 'key'    },
+      { y: 0.43, label: 'SHOULDERS',            kind: 'key'    },
+      { y: 0.56, label: 'WAIST · safe crop',    kind: 'safe'   },
+      { y: 0.78, label: 'KNEES · avoid crop',   kind: 'avoid'  },
+      { y: 0.92, label: 'ANKLES · avoid crop',  kind: 'avoid'  },
       { y: 0.96, label: 'FEET — leave floor',   kind: 'key'    }
     ]
   },
@@ -434,20 +433,13 @@ function drawOverlay() {
   const m = MODES[currentMode];
   if (!m) return;
 
-  // Rule-of-thirds grid (faint)
   drawGrid(ctx, w, h);
-
-  // Shaded bands (headroom / safe zones)
   (m.bands || []).forEach(b => drawBand(ctx, w, h, b));
-
-  // Anchor / crop lines
   (m.lines || []).forEach(l => drawRefLine(ctx, w, h, l));
 
-  // Circle for close-up / food
   if (m.guide === 'circle') drawCircle(ctx, w, h, 0.50, 0.50, 0.34);
   if (m.guide === 'food')   drawCircle(ctx, w, h, 0.50, 0.47, 0.32);
 
-  // Horizon-level line (landscape only)
   const rollAligned = tiltActive && Math.abs(rollCW - m.targetRoll) < 2;
   if (m.guide === 'landscape') {
     drawHorizonLine(ctx, w, h, m.targetRoll, rollAligned);
@@ -504,7 +496,6 @@ function drawBand(ctx, w, h, def) {
 
   ctx.save();
 
-  // Soft top-down gradient inside the band
   const grad = ctx.createLinearGradient(0, y1, 0, y2);
   if (def.kind === 'safe') {
     grad.addColorStop(0, 'rgba(34,197,94,.16)');
@@ -513,14 +504,13 @@ function drawBand(ctx, w, h, def) {
     grad.addColorStop(0, 'rgba(239,68,68,.16)');
     grad.addColorStop(1, 'rgba(239,68,68,.04)');
   } else {
-    // default 'blank'
     grad.addColorStop(0, 'rgba(255,255,255,.09)');
     grad.addColorStop(1, 'rgba(255,255,255,.02)');
   }
   ctx.fillStyle = grad;
   ctx.fillRect(0, y1, w, bandH);
 
-  // Very faint diagonal hatch to visually say "empty zone"
+  // Faint diagonal hatch
   ctx.save();
   ctx.beginPath();
   ctx.rect(0, y1, w, bandH);
@@ -536,7 +526,6 @@ function drawBand(ctx, w, h, def) {
   }
   ctx.restore();
 
-  // Label centered inside the band
   const labelY = y1 + bandH * 0.5;
   const labelColor =
     def.kind === 'safe'  ? '#86efac' :
@@ -569,7 +558,7 @@ function drawRefLine(ctx, w, h, def) {
     label = '#fca5a5';
     dash = [6, 5];
     thickness = 1.5;
-  } else { // 'key'
+  } else {
     stroke = 'rgba(255,255,255,.75)';
     label = 'rgba(255,255,255,.92)';
     dash = [8, 6];
@@ -587,7 +576,6 @@ function drawRefLine(ctx, w, h, def) {
   ctx.lineTo(w, y);
   ctx.stroke();
 
-  // small end ticks
   ctx.setLineDash([]);
   ctx.lineWidth = thickness + 0.4;
   ctx.beginPath();
@@ -595,7 +583,6 @@ function drawRefLine(ctx, w, h, def) {
   ctx.moveTo(w - 10, y - 4); ctx.lineTo(w - 10, y + 4);
   ctx.stroke();
 
-  // label pill on the left
   ctx.font = '600 10.5px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
   const textW = ctx.measureText(def.label).width;
   const padX = 7, pillH = 16;
