@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
-<meta name="theme-color" content="#0b0b0d" />
-<title>Korean Shot Coach</title>
+<meta name="theme-color" content="#0b0f17" />
+<title>Shot Coach</title>
 <style>
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;height:100%;overflow:hidden;background:#0b0b0d;color:#fff5e6;
+  html,body{margin:0;height:100%;overflow:hidden;background:#0b0f17;color:#e6eaf2;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-user-select:none;user-select:none}
   button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -17,23 +17,23 @@
 
   /* ---------- MENU ---------- */
   #menuScreen{overflow-y:auto;-webkit-overflow-scrolling:touch;
-    background:radial-gradient(120% 90% at 50% 0%,#1e1a1f 0%,#0d0a0d 60%)}
+    background:radial-gradient(120% 90% at 50% 0%,#141a25 0%,#0b0f17 60%)}
   .menu-wrap{padding:calc(env(safe-area-inset-top) + 34px) 20px calc(env(safe-area-inset-bottom) + 34px)}
-  .menu-wrap h1{margin:0 0 8px;font-size:27px;line-height:1.15;letter-spacing:-.4px;color:#ffe6ee}
-  .menu-wrap .sub{margin:0 0 6px;font-size:14.5px;line-height:1.45;color:#c9b8bd;max-width:32ch}
+  .menu-wrap h1{margin:0 0 8px;font-size:26px;line-height:1.15;letter-spacing:-.4px;color:#fff}
+  .menu-wrap .sub{margin:0 0 6px;font-size:14px;line-height:1.45;color:#8892a6;max-width:32ch}
   .menu-wrap .kicker{font-size:11px;font-weight:600;letter-spacing:2px;
-    text-transform:uppercase;color:#f7b8c4;margin:0 0 14px;opacity:.9}
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:22px}
+    text-transform:uppercase;color:#60a5fa;margin:0 0 12px;opacity:.9}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
   @media(min-width:560px){.grid{grid-template-columns:repeat(3,1fr)}}
   .card{display:flex;flex-direction:column;align-items:flex-start;gap:10px;
-    padding:18px 16px 16px;border-radius:18px;
-    background:linear-gradient(180deg,#221a20 0%,#1a141a 100%);
-    border:1px solid rgba(247,184,196,.10);
+    padding:18px 16px 16px;border-radius:16px;
+    background:linear-gradient(180deg,#151b26 0%,#101620 100%);
+    border:1px solid rgba(255,255,255,.06);
     transition:transform .12s ease,background .12s ease,border-color .12s ease}
-  .card:active{transform:scale(.965);background:#2a1f26;border-color:rgba(247,184,196,.3)}
-  .card .ico{font-size:26px;line-height:1}
-  .card .lbl{font-size:15px;font-weight:600;letter-spacing:-.2px;color:#ffe6ee}
-  .card .desc{font-size:12.5px;line-height:1.4;color:#9d8d93;margin-top:2px}
+  .card:active{transform:scale(.965);background:#1a2231;border-color:rgba(96,165,250,.35)}
+  .card .ico{font-size:24px;line-height:1}
+  .card .lbl{font-size:15px;font-weight:600;letter-spacing:-.2px;color:#fff}
+  .card .desc{font-size:12.5px;line-height:1.4;color:#7c869a;margin-top:2px}
 
   /* ---------- CAMERA ---------- */
   #camScreen{background:#000}
@@ -45,49 +45,49 @@
     padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;
     background:linear-gradient(to bottom,rgba(0,0,0,.55),transparent)}
   .icon-btn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
-    background:rgba(0,0,0,.4);backdrop-filter:blur(8px);font-size:19px;
-    border:1px solid rgba(247,184,196,.22);color:#ffe6ee}
-  .icon-btn:active{background:rgba(247,184,196,.18)}
+    background:rgba(0,0,0,.42);backdrop-filter:blur(8px);font-size:19px;
+    border:1px solid rgba(255,255,255,.14);color:#fff}
+  .icon-btn:active{background:rgba(255,255,255,.18)}
   .mode-chip{font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
     padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.42);
-    backdrop-filter:blur(8px);border:1px solid rgba(247,184,196,.25);color:#ffe6ee}
+    backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);color:#fff}
 
   .status{position:absolute;top:calc(env(safe-area-inset-top) + 66px);left:50%;
     transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:8px;
     padding:8px 16px;border-radius:999px;font-size:12.5px;font-weight:600;
-    letter-spacing:.4px;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);
-    border:1px solid rgba(247,184,196,.22);white-space:nowrap;color:#ffe6ee;
+    letter-spacing:.4px;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.14);white-space:nowrap;color:#e6eaf2;
     transition:background .2s,border-color .2s}
-  .status .dot{width:8px;height:8px;border-radius:50%;background:#ffe6ee;transition:background .2s}
-  .status.ok{background:rgba(247,184,196,.22);border-color:rgba(247,184,196,.65)}
-  .status.ok .dot{background:#f7b8c4;box-shadow:0 0 12px #f7b8c4}
+  .status .dot{width:8px;height:8px;border-radius:50%;background:#fff;transition:background .2s}
+  .status.ok{background:rgba(96,165,250,.22);border-color:rgba(96,165,250,.7)}
+  .status.ok .dot{background:#60a5fa;box-shadow:0 0 12px #60a5fa}
 
   .bottombar{position:absolute;left:0;right:0;bottom:0;z-index:3;display:flex;
     flex-direction:column;align-items:center;gap:16px;
     padding:26px 20px calc(env(safe-area-inset-bottom) + 26px);
     background:linear-gradient(to top,rgba(0,0,0,.72),transparent)}
-  .tip{max-width:34ch;text-align:center;font-size:13.5px;line-height:1.5;color:#f4e5ea;
+  .tip{max-width:34ch;text-align:center;font-size:13.5px;line-height:1.5;color:#dde3ee;
     text-shadow:0 1px 6px rgba(0,0,0,.8)}
   .shutter{width:74px;height:74px;border-radius:50%;
-    border:3px solid rgba(247,184,196,.9);
-    display:grid;place-items:center;background:rgba(247,184,196,.14);transition:transform .1s}
-  .shutter span{width:58px;height:58px;border-radius:50%;background:#ffe6ee;display:block}
+    border:3px solid rgba(255,255,255,.9);
+    display:grid;place-items:center;background:rgba(255,255,255,.12);transition:transform .1s}
+  .shutter span{width:58px;height:58px;border-radius:50%;background:#fff;display:block}
   .shutter:active{transform:scale(.93)}
-  .link-btn{font-size:12.5px;color:#f7b8c4;text-decoration:underline;padding:4px 8px}
+  .link-btn{font-size:12.5px;color:#60a5fa;text-decoration:underline;padding:4px 8px}
 
-  .err{position:absolute;inset:auto 20px 50% 20px;z-index:5;padding:18px;border-radius:16px;
-    background:#1b1b21;border:1px solid rgba(247,184,196,.18);font-size:14px;line-height:1.5;
-    color:#e8d8dd;text-align:center}
+  .err{position:absolute;inset:auto 20px 50% 20px;z-index:5;padding:18px;border-radius:14px;
+    background:#151b26;border:1px solid rgba(255,255,255,.12);font-size:14px;line-height:1.5;
+    color:#cfd6e3;text-align:center}
 
   /* ---------- PREVIEW ---------- */
   #previewScreen{background:#000;flex-direction:column}
   #previewScreen.active{display:flex}
   #shotImg{flex:1;width:100%;min-height:0;object-fit:contain;background:#000}
   .preview-bar{display:flex;gap:12px;padding:16px 20px calc(env(safe-area-inset-bottom) + 20px)}
-  .btn{flex:1;padding:15px;border-radius:14px;font-size:15px;font-weight:600;text-align:center;
+  .btn{flex:1;padding:15px;border-radius:12px;font-size:15px;font-weight:600;text-align:center;
     text-decoration:none;display:block}
-  .btn.ghost{background:#221a20;color:#ffe6ee;border:1px solid rgba(247,184,196,.2)}
-  .btn.primary{background:#f7b8c4;color:#1a1016}
+  .btn.ghost{background:#1a2231;color:#fff;border:1px solid rgba(255,255,255,.08)}
+  .btn.primary{background:#60a5fa;color:#0b0f17}
   .btn:active{opacity:.75}
 </style>
 </head>
@@ -96,9 +96,9 @@
 <!-- ============ SCREEN 1 : MENU ============ -->
 <div id="menuScreen" class="screen active">
   <div class="menu-wrap">
-    <p class="kicker">🌸 Korean Aesthetic</p>
-    <h1>Korean Shot Coach</h1>
-    <p class="sub">A soft figure line shows exactly where the person stands — head, body, legs. Red lines warn where not to crop.</p>
+    <p class="kicker">Framing Guide</p>
+    <h1>Where should the person stand?</h1>
+    <p class="sub">Pick a shot type and I’ll show faint horizontal lines for where the eyes, shoulders, waist and feet should sit — plus which areas are safe to crop.</p>
     <div class="grid" id="modeGrid"></div>
   </div>
 </div>
@@ -138,70 +138,119 @@
 
 <script>
 /* =========================================================
-   KOREAN-STYLE SHOT TYPES
-   figure block:
-     type     : 'single' | 'cluster'
-     pose     : 'bust'   | 'full'
-     headCy   : head centre as fraction of screen height
-     headR    : head radius as fraction of screen width
-     warnings : array of joint-crop markers to draw
-                'chin' | 'knee' | 'ankle' |
-                'waist-safe' | 'chest-safe' |
-                'head-top' | 'feet'
+   SHOT TYPES
+   ---------------------------------------------------------
+   `lines` is an array of faint horizontal reference lines:
+     y     : fraction of screen height (0 = top, 1 = bottom)
+     label : text shown at the left edge
+     kind  : 'key'   → plain reference (soft white/blue)
+             'safe'  → good place to crop (green)
+             'avoid' → never crop here (red)
    ========================================================= */
 const MODES = {
   portrait: {
-    label: 'Portrait', icon: '🌸', guide: 'portrait',
-    desc: 'Bust guide · centered',
-    tip: 'Line the person up with the soft figure — head in the upper third, eyes on the guide line. Body angled ~30° with the face turned back. Soft window light.',
+    label: 'Portrait',
+    icon: '🧑',
+    guide: 'lines',
+    desc: 'Bust · eyes on the upper third',
+    tip: 'Eyes on the top line, shoulders on the middle line. Bottom of the frame at the waist is a safe place to crop.',
     targetRoll: 0, targetElevation: -5,
-    figure: { type:'single', pose:'bust', headCy:0.32, headR:0.088,
-              warnings:['chin','waist-safe'] }
-  },
-  landscape: {
-    label: 'Landscape', icon: '🌷', guide: 'landscape',
-    desc: 'Pastel skies & minimal scenes',
-    tip: 'Shoot at golden hour or on an overcast day for soft pastel skies. Keep the horizon dead level and frame something minimal.',
-    targetRoll: 0, targetElevation: -3,
-    figure: null
+    lines: [
+      { y: 0.30, label: 'EYES',      kind: 'key'   },
+      { y: 0.44, label: 'SHOULDERS', kind: 'key'   },
+      { y: 0.88, label: 'WAIST — safe crop', kind: 'safe' }
+    ]
   },
   selfie: {
-    label: 'Selfie', icon: '🎀', guide: 'selfie',
-    desc: 'Ulzzang · small face, high angle',
-    tip: 'Hold the phone at arm’s length, slightly above eye level. Keep your face small with lots of headroom, angle ~20° to one side, chin slightly down.',
+    label: 'Selfie',
+    icon: '🤳',
+    guide: 'lines',
+    desc: 'Solo · high angle, small face',
+    tip: 'Hold the phone above eye level. Eyes on the top line, shoulders on the second. Waist is a safe crop.',
     targetRoll: 0, targetElevation: -14,
-    figure: { type:'single', pose:'bust', headCy:0.28, headR:0.074,
-              warnings:['chin'] }
+    lines: [
+      { y: 0.28, label: 'EYES',      kind: 'key'   },
+      { y: 0.40, label: 'SHOULDERS', kind: 'key'   },
+      { y: 0.82, label: 'WAIST — safe crop', kind: 'safe' }
+    ]
+  },
+  halfBody: {
+    label: 'Half body',
+    icon: '🧍',
+    guide: 'lines',
+    desc: 'Waist up · eye level',
+    tip: 'Frame from the waist up. Eyes sit on the top line, shoulders on the middle. Waist is a safe crop — never cut at the wrists.',
+    targetRoll: 0, targetElevation: -2,
+    lines: [
+      { y: 0.28, label: 'EYES',      kind: 'key'   },
+      { y: 0.42, label: 'SHOULDERS', kind: 'key'   },
+      { y: 0.55, label: 'WRISTS — avoid crop', kind: 'avoid' },
+      { y: 0.90, label: 'WAIST — safe crop',   kind: 'safe'  }
+    ]
+  },
+  closeUp: {
+    label: 'Close-up',
+    icon: '🙂',
+    guide: 'circle',
+    desc: 'Head & shoulders fill the frame',
+    tip: 'Fill the circle with the face. Eyes on the upper line — never crop at the chin or neck.',
+    targetRoll: 0, targetElevation: -8,
+    lines: [
+      { y: 0.38, label: 'EYES',      kind: 'key'   },
+      { y: 0.68, label: 'CHIN — avoid crop', kind: 'avoid' },
+      { y: 0.88, label: 'CHEST — safe crop', kind: 'safe'  }
+    ]
   },
   group: {
-    label: 'Group', icon: '💗', guide: 'group',
-    desc: 'Loose cluster · warm light',
-    tip: 'Cluster into the three figure guides — heads at different heights, faces close together. Warm even light (café, sunset, overcast).',
+    label: 'Group',
+    icon: '👨‍👩‍👧',
+    guide: 'lines',
+    desc: 'Everyone in one eye-line',
+    tip: 'Line every face up along the eye bar. Cluster heads at slightly different heights — not a flat row.',
     targetRoll: 0, targetElevation: -3,
-    figure: { type:'cluster', pose:'bust', headCy:0.33, headR:0.052,
-              warnings:['chin'] }
+    lines: [
+      { y: 0.34, label: 'EYES — all faces', kind: 'key' },
+      { y: 0.48, label: 'SHOULDERS',        kind: 'key' },
+      { y: 0.86, label: 'WAIST — safe crop', kind: 'safe' }
+    ]
   },
-  closeup: {
-    label: 'Close-up', icon: '🌼', guide: 'circle',
-    desc: 'Soft details & textures',
-    tip: 'Fill the circle with your subject — flowers, coffee, hands, fabric. Soft light behind or beside it for a dreamy glow.',
-    targetRoll: 0, targetElevation: -8,
-    figure: null
+  fullBody: {
+    label: 'Full body',
+    icon: '🕴️',
+    guide: 'lines',
+    desc: 'Head to toe · street style',
+    tip: 'Head top near the top line, feet resting on the bottom line. Never crop at knees or ankles — waist is safe.',
+    targetRoll: 0, targetElevation: -2,
+    lines: [
+      { y: 0.06, label: 'HEAD TOP — leave air',   kind: 'key'   },
+      { y: 0.14, label: 'EYES',                   kind: 'key'   },
+      { y: 0.24, label: 'SHOULDERS',              kind: 'key'   },
+      { y: 0.42, label: 'WAIST — safe crop',      kind: 'safe'  },
+      { y: 0.68, label: 'KNEES — avoid crop',     kind: 'avoid' },
+      { y: 0.90, label: 'ANKLES — avoid crop',    kind: 'avoid' },
+      { y: 0.96, label: 'FEET — leave floor',     kind: 'key'   }
+    ]
+  },
+  landscape: {
+    label: 'Landscape',
+    icon: '🏔️',
+    guide: 'landscape',
+    desc: 'Scenic · level horizon',
+    tip: 'Keep the horizon dead level. Put it on the upper or lower third depending on whether sky or land is the hero.',
+    targetRoll: 0, targetElevation: -3,
+    lines: [
+      { y: 0.33, label: 'UPPER THIRD — horizon here if sky is hero', kind: 'key' },
+      { y: 0.66, label: 'LOWER THIRD — horizon here if land is hero', kind: 'key' }
+    ]
   },
   food: {
-    label: 'Food', icon: '🍰', guide: 'food',
-    desc: 'Café flat-lay / 45° aesthetics',
-    tip: 'Café style — 45° for layered dishes, or straight overhead for a flat-lay. Soft window light from the side, lifestyle surroundings.',
+    label: 'Food',
+    icon: '🍜',
+    guide: 'food',
+    desc: '45° or overhead',
+    tip: 'Shoot at 45° for layered dishes, or straight overhead for a flat-lay. Soft side light. Never flash.',
     targetRoll: 0, targetElevation: -45,
-    figure: null
-  },
-  fullbody: {
-    label: 'Full body', icon: '👗', guide: 'full',
-    desc: 'Full silhouette · street style',
-    tip: 'Line the person up with the full figure — head near the top, feet near the bottom. Red lines at knees and ankles mark where NOT to crop.',
-    targetRoll: 0, targetElevation: -2,
-    figure: { type:'single', pose:'full', headCy:0.145, headR:0.046,
-              warnings:['head-top','knee','ankle','feet'] }
+    lines: []
   }
 };
 
@@ -381,21 +430,20 @@ function drawOverlay() {
 
   drawGrid(ctx, w, h);
 
-  switch (m.guide) {
-    case 'landscape': drawLandscape(ctx, w, h); break;
-    case 'circle':    drawCircle(ctx, w, h, 0.50, 0.50, 0.34); break;
-    case 'food':      drawCircle(ctx, w, h, 0.50, 0.47, 0.32); break;
-    case 'group':     drawGroupBand(ctx, w, h); break;
-    case 'full':      drawFullBodyBand(ctx, w, h); break;
-    // portrait / selfie: figure carries the guide
+  // Draw the faint horizontal reference lines
+  if (m.lines && m.lines.length) {
+    m.lines.forEach(l => drawRefLine(ctx, w, h, l));
   }
 
-  // THE SHALLOW POSE LINE — soft anatomical figure + joint warnings
-  if (m.figure) drawFigureGuide(ctx, w, h, m.figure);
+  // Circle for close-up / food
+  if (m.guide === 'circle') drawCircle(ctx, w, h, 0.50, 0.50, 0.34);
+  if (m.guide === 'food')   drawCircle(ctx, w, h, 0.50, 0.47, 0.32);
 
-  // Horizon guide line (roll + pitch)
+  // Horizon-level line (only on modes that need it — landscape)
   const rollAligned = tiltActive && Math.abs(rollCW - m.targetRoll) < 2;
-  drawGuideLine(ctx, w, h, m.targetRoll, rollAligned);
+  if (m.guide === 'landscape') {
+    drawGuideLine(ctx, w, h, m.targetRoll, rollAligned);
+  }
   drawPitchMeter(ctx, w, h, m.targetElevation);
   updateStatus(m, rollAligned);
 }
@@ -411,9 +459,9 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.arcTo(x,     y,     x + w, y,     r);
   ctx.closePath();
 }
-function tag(ctx, text, x, y, color, align) {
+function tag(ctx, text, x, y, color, align, size) {
   ctx.save();
-  ctx.font = '600 10.5px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
+  ctx.font = `600 ${size || 10.5}px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif`;
   ctx.fillStyle = color;
   ctx.textAlign = align || 'center';
   ctx.shadowColor = 'rgba(0,0,0,.9)';
@@ -424,7 +472,7 @@ function tag(ctx, text, x, y, color, align) {
 
 function drawGrid(ctx, w, h) {
   ctx.save();
-  ctx.strokeStyle = 'rgba(255,230,238,.16)';
+  ctx.strokeStyle = 'rgba(255,255,255,.10)';
   ctx.lineWidth = 1;
   ctx.setLineDash([5, 7]);
   ctx.beginPath();
@@ -437,288 +485,88 @@ function drawGrid(ctx, w, h) {
 }
 
 /* =========================================================
-   THE SHALLOW POSE LINE — anatomical figure + joint warnings
+   THE SHALLOW REFERENCE LINE
    ---------------------------------------------------------
-   Structure (all relative to head radius r):
-     head      : ellipse (cx, headCy) rx=r  ry=1.22r
-     eyes      : small circles just above head centre
-     eye line  : soft horizontal guide across the face
-     chin      : bottom of head
-     neck      : two short lines from chin to shoulder
-     shoulders : gentle arc, width 2.5r
-     torso     : tapered curves to the waist
-     arms      : relaxed, quadratic curves
-     legs      : two curves from hips to feet
-     feet      : small ellipses on the floor
-   Warnings:
-     red dashed lines at knees & ankles (never crop here)
-     soft pink safe-crop line at the waist (bust modes)
+   A faint, thin, full-width line with a small label. Used
+   for eyes, shoulders, waist, feet, and safe/avoid markers.
    ========================================================= */
-function drawFigureGuide(ctx, w, h, fig) {
-  if (fig.type === 'cluster') {
-    const r = w * fig.headR;
-    drawPersonFigure(ctx, w * 0.27, h * (fig.headCy + 0.035), r * 0.94, 'bust', []);
-    drawPersonFigure(ctx, w * 0.50, h * fig.headCy,            r,        'bust', []);
-    drawPersonFigure(ctx, w * 0.73, h * (fig.headCy + 0.020), r * 0.94, 'bust', []);
-    // Eye-level bar across the cluster
-    ctx.save();
-    ctx.strokeStyle = 'rgba(247,184,196,.7)';
-    ctx.lineWidth = 1.2;
-    ctx.setLineDash([7, 6]);
-    const eyeY = h * fig.headCy - w * fig.headR * 0.10;
-    ctx.beginPath();
-    ctx.moveTo(w * 0.10, eyeY);
-    ctx.lineTo(w * 0.90, eyeY);
-    ctx.stroke();
-    ctx.restore();
-  } else {
-    drawPersonFigure(ctx, w * 0.5, h * fig.headCy, w * fig.headR,
-                     fig.pose, fig.warnings || []);
-  }
-}
+function drawRefLine(ctx, w, h, def) {
+  const y = h * def.y;
+  const color =
+    def.kind === 'avoid' ? 'rgba(239,68,68,.85)' :
+    def.kind === 'safe'  ? 'rgba(34,197,94,.85)' :
+                            'rgba(255,255,255,.72)';
 
-function drawPersonFigure(ctx, cx, headCy, r, pose, warnings) {
-  /* ---- key anatomy Y positions (all based on head radius r) ---- */
-  const eyeY      = headCy - r * 0.10;
-  const chinY     = headCy + r * 1.20;     // head ellipse bottom
-  const neckY     = chinY + r * 0.22;
-  const shoulderY = neckY + r * 0.18;
-  const shoulderW = r * 2.5;
-  const waistY    = shoulderY + r * 2.30;
-  const waistW    = shoulderW * 0.82;
-  const hipY      = waistY + r * 0.28;
-  const hipW      = waistW * 0.95;
-  const legLen    = r * 4.20;
-  const footY     = hipY + legLen;
-  const kneeY     = hipY + legLen * 0.48;
-  const ankleY    = footY - r * 0.15;
-  const legSpread = r * 0.58;
-  const eyeSpacing = r * 0.38;
+  const labelColor =
+    def.kind === 'avoid' ? '#fca5a5' :
+    def.kind === 'safe'  ? '#86efac' :
+                            '#e6eaf2';
 
-  /* ======================================================
-     Soft blush figure — dashed with a gentle glow
-     ====================================================== */
   ctx.save();
-  ctx.strokeStyle = 'rgba(247,184,196,.58)';
-  ctx.lineWidth = 1.7;
-  ctx.setLineDash([6, 6]);
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.shadowColor = 'rgba(247,184,196,.55)';
-  ctx.shadowBlur = 7;
 
-  // HEAD (slightly oval, wider than tall looks more natural)
+  // The line itself — thin and slightly faded at the edges
+  const grad = ctx.createLinearGradient(0, 0, w, 0);
+  grad.addColorStop(0.00, color.replace(/[\d.]+\)$/, '0)'));
+  grad.addColorStop(0.12, color);
+  grad.addColorStop(0.88, color);
+  grad.addColorStop(1.00, color.replace(/[\d.]+\)$/, '0)'));
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = def.kind === 'key' ? 1.4 : 1.6;
+  ctx.setLineDash(def.kind === 'key' ? [9, 7] : [6, 5]);
+  ctx.shadowColor = 'rgba(0,0,0,.65)';
+  ctx.shadowBlur = 4;
   ctx.beginPath();
-  ctx.ellipse(cx, headCy, r * 1.00, r * 1.22, 0, 0, Math.PI * 2);
+  ctx.moveTo(0, y);
+  ctx.lineTo(w, y);
   ctx.stroke();
 
-  // EYES (small dots) + eye line
-  ctx.beginPath();
-  ctx.arc(cx - eyeSpacing, eyeY, r * 0.075, 0, Math.PI * 2);
-  ctx.arc(cx + eyeSpacing, eyeY, r * 0.075, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // EYE LINE (soft across-face guide)
-  ctx.setLineDash([3, 4]);
-  ctx.strokeStyle = 'rgba(247,184,196,.85)';
-  ctx.lineWidth = 1.3;
-  ctx.beginPath();
-  ctx.moveTo(cx - r * 1.55, eyeY);
-  ctx.lineTo(cx + r * 1.55, eyeY);
-  ctx.stroke();
-
-  // restore main figure style
-  ctx.setLineDash([6, 6]);
-  ctx.strokeStyle = 'rgba(247,184,196,.58)';
-  ctx.lineWidth = 1.7;
-
-  // NECK
-  ctx.beginPath();
-  ctx.moveTo(cx - r * 0.28, chinY);
-  ctx.lineTo(cx - r * 0.32, shoulderY);
-  ctx.moveTo(cx + r * 0.28, chinY);
-  ctx.lineTo(cx + r * 0.32, shoulderY);
-  ctx.stroke();
-
-  // SHOULDERS (gentle arc)
-  ctx.beginPath();
-  ctx.moveTo(cx - shoulderW / 2, shoulderY + r * 0.20);
-  ctx.quadraticCurveTo(cx, shoulderY - r * 0.20, cx + shoulderW / 2, shoulderY + r * 0.20);
-  ctx.stroke();
-
-  // TORSO (tapered curves down to waist)
-  ctx.beginPath();
-  ctx.moveTo(cx - shoulderW / 2, shoulderY + r * 0.20);
-  ctx.quadraticCurveTo(cx - waistW * 0.55, shoulderY + (waistY - shoulderY) * 0.55,
-                        cx - waistW / 2, waistY);
-  ctx.moveTo(cx + shoulderW / 2, shoulderY + r * 0.20);
-  ctx.quadraticCurveTo(cx + waistW * 0.55, shoulderY + (waistY - shoulderY) * 0.55,
-                        cx + waistW / 2, waistY);
-  ctx.stroke();
-
-  /* ---- BUST MODE: stop at the waist, add a soft safe-crop tick ---- */
-  if (pose === 'bust') {
-    ctx.setLineDash([4, 5]);
-    ctx.strokeStyle = 'rgba(247,184,196,.90)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(cx - waistW * 0.75, waistY);
-    ctx.lineTo(cx + waistW * 0.75, waistY);
-    ctx.stroke();
-    ctx.restore();
-
-    // warnings relevant to bust (chin, waist-safe)
-    drawJointWarnings(ctx, cx, {
-      chinY, waistY, shoulderW
-    }, warnings, 'bust');
-    return;
-  }
-
-  /* ---- FULL BODY: arms, legs, feet ---- */
-  // ARMS (relaxed, slight outward curve)
-  const armLen = r * 2.6;
-  ctx.beginPath();
-  ctx.moveTo(cx - shoulderW / 2 + r * 0.10, shoulderY + r * 0.30);
-  ctx.quadraticCurveTo(cx - shoulderW / 2 - r * 0.30, shoulderY + armLen * 0.55,
-                        cx - shoulderW / 2 - r * 0.05, shoulderY + armLen);
-  ctx.moveTo(cx + shoulderW / 2 - r * 0.10, shoulderY + r * 0.30);
-  ctx.quadraticCurveTo(cx + shoulderW / 2 + r * 0.30, shoulderY + armLen * 0.55,
-                        cx + shoulderW / 2 + r * 0.05, shoulderY + armLen);
-  ctx.stroke();
-
-  // LEGS
-  ctx.beginPath();
-  ctx.moveTo(cx - hipW * 0.30, hipY);
-  ctx.quadraticCurveTo(cx - legSpread - r * 0.08, hipY + legLen * 0.55,
-                        cx - legSpread, footY - r * 0.12);
-  ctx.moveTo(cx + hipW * 0.30, hipY);
-  ctx.quadraticCurveTo(cx + legSpread + r * 0.08, hipY + legLen * 0.55,
-                        cx + legSpread, footY - r * 0.12);
-  ctx.stroke();
-
-  // FEET (small ellipses on the floor)
+  // Small end ticks
   ctx.setLineDash([]);
+  ctx.lineWidth = 1.6;
   ctx.beginPath();
-  ctx.ellipse(cx - legSpread, footY, r * 0.32, r * 0.11, 0, 0, Math.PI * 2);
-  ctx.ellipse(cx + legSpread, footY, r * 0.32, r * 0.11, 0, 0, Math.PI * 2);
+  ctx.moveTo(14, y - 4); ctx.lineTo(14, y + 4);
+  ctx.moveTo(w - 14, y - 4); ctx.lineTo(w - 14, y + 4);
   ctx.stroke();
 
-  ctx.restore();
+  // Left-aligned label with a soft background pill
+  const label = def.label;
+  ctx.font = '600 10.5px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
+  const textW = ctx.measureText(label).width;
+  const padX = 7, padY = 4, labelH = 16;
+  const bx = 20;
+  const by = y - labelH / 2;
 
-  // joint warnings for full body (knee, ankle, head-top, feet)
-  drawJointWarnings(ctx, cx, {
-    headTopY: headCy - r * 1.22,
-    chinY,
-    kneeY,
-    ankleY,
-    footY,
-    shoulderW,
-    legSpread
-  }, warnings, 'full');
-}
+  ctx.setLineDash([]);
+  roundRect(ctx, bx - 1, by, textW + padX * 2, labelH, 8);
+  ctx.fillStyle = 'rgba(0,0,0,.55)';
+  ctx.fill();
 
-/* =========================================================
-   JOINT CROP WARNINGS  (from the reference code's technique)
-   ========================================================= */
-function drawJointWarnings(ctx, cx, pos, warnings, pose) {
-  if (!warnings || !warnings.length) return;
-
-  const halfW = (pos.shoulderW || 80) * 1.55;
-
-  ctx.save();
-  ctx.font = '600 10px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
-  ctx.textAlign = 'center';
-  ctx.shadowColor = 'rgba(0,0,0,.95)';
-  ctx.shadowBlur = 6;
-
-  /* ---------- RED: never crop here ---------- */
-  ctx.strokeStyle = 'rgba(239,68,68,.80)';
-  ctx.fillStyle   = 'rgba(252,165,165,.98)';
-  ctx.lineWidth = 1.3;
-  ctx.setLineDash([5, 4]);
-
-  if (warnings.includes('chin') && pos.chinY != null) {
-    ctx.beginPath();
-    ctx.moveTo(cx - halfW, pos.chinY);
-    ctx.lineTo(cx + halfW, pos.chinY);
-    ctx.stroke();
-    ctx.fillText('✕ don’t crop the chin', cx, pos.chinY - 5);
-  }
-
-  if (warnings.includes('knee') && pos.kneeY != null) {
-    ctx.beginPath();
-    ctx.moveTo(cx - halfW, pos.kneeY);
-    ctx.lineTo(cx + halfW, pos.kneeY);
-    ctx.stroke();
-    ctx.fillText('✕ don’t crop at knees', cx, pos.kneeY - 5);
-  }
-
-  if (warnings.includes('ankle') && pos.ankleY != null) {
-    ctx.beginPath();
-    ctx.moveTo(cx - halfW, pos.ankleY);
-    ctx.lineTo(cx + halfW, pos.ankleY);
-    ctx.stroke();
-    ctx.fillText('✕ don’t crop at ankles', cx, pos.ankleY - 5);
-  }
-
-  /* ---------- PINK: good place to crop ---------- */
-  ctx.strokeStyle = 'rgba(247,184,196,.95)';
-  ctx.fillStyle   = 'rgba(255,230,238,.98)';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([4, 4]);
-
-  if (warnings.includes('waist-safe') && pos.waistY != null) {
-    ctx.beginPath();
-    ctx.moveTo(cx - halfW, pos.waistY);
-    ctx.lineTo(cx + halfW, pos.waistY);
-    ctx.stroke();
-    ctx.fillText('✓ safe crop at waist', cx, pos.waistY + 12);
-  }
-
-  if (warnings.includes('chest-safe') && pos.shoulderY != null) {
-    const y = pos.shoulderY + 4;
-    ctx.beginPath();
-    ctx.moveTo(cx - halfW, y);
-    ctx.lineTo(cx + halfW, y);
-    ctx.stroke();
-    ctx.fillText('✓ safe crop at chest', cx, y + 12);
-  }
-
-  if (warnings.includes('head-top') && pos.headTopY != null) {
-    ctx.beginPath();
-    ctx.moveTo(cx - halfW, pos.headTopY);
-    ctx.lineTo(cx + halfW, pos.headTopY);
-    ctx.stroke();
-    ctx.fillText('✓ head top — leave air above', cx, pos.headTopY - 6);
-  }
-
-  if (warnings.includes('feet') && pos.footY != null) {
-    ctx.beginPath();
-    ctx.moveTo(cx - halfW, pos.footY + 8);
-    ctx.lineTo(cx + halfW, pos.footY + 8);
-    ctx.stroke();
-    ctx.fillText('✓ feet rest here — leave floor', cx, pos.footY + 22);
-  }
+  ctx.fillStyle = labelColor;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.shadowColor = 'rgba(0,0,0,.9)';
+  ctx.shadowBlur = 4;
+  ctx.fillText(label, bx + padX, y);
 
   ctx.restore();
 }
 
 /* =========================================================
-   HORIZON GUIDE LINE
+   HORIZON LEVEL LINE  (only used in landscape mode)
    ========================================================= */
 function drawGuideLine(ctx, w, h, targetRoll, aligned) {
   const cy = h * 0.52;
   const half = Math.hypot(w, h) * 0.62;
-  const tint = aligned ? '247,184,196' : '255,245,230';
+  const tint = aligned ? '96,165,250' : '255,255,255';
   const baseAlpha = aligned ? 0.90 : 0.55;
 
-  // dashed ghost target
+  // dashed ghost
   ctx.save();
   ctx.translate(w / 2, cy);
   ctx.rotate(targetRoll * Math.PI / 180);
   ctx.setLineDash([16, 14]);
   ctx.lineWidth = 1.3;
-  ctx.strokeStyle = aligned ? 'rgba(247,184,196,0.30)' : 'rgba(255,245,230,0.22)';
+  ctx.strokeStyle = aligned ? 'rgba(96,165,250,0.30)' : 'rgba(255,255,255,0.20)';
   ctx.beginPath();
   ctx.moveTo(-half, 0);
   ctx.lineTo(half, 0);
@@ -734,7 +582,7 @@ function drawGuideLine(ctx, w, h, targetRoll, aligned) {
   grad.addColorStop(0.18, `rgba(${tint},${baseAlpha})`);
   grad.addColorStop(0.82, `rgba(${tint},${baseAlpha})`);
   grad.addColorStop(1.00, `rgba(${tint},0)`);
-  ctx.shadowColor = aligned ? 'rgba(247,184,196,0.9)' : 'rgba(255,245,230,0.5)';
+  ctx.shadowColor = aligned ? 'rgba(96,165,250,0.9)' : 'rgba(255,255,255,0.5)';
   ctx.shadowBlur  = aligned ? 20 : 9;
   ctx.lineWidth   = aligned ? 2.6 : 2;
   ctx.strokeStyle = grad;
@@ -750,22 +598,10 @@ function drawGuideLine(ctx, w, h, targetRoll, aligned) {
   ctx.rotate((tiltActive ? rollCW : targetRoll) * Math.PI / 180);
   ctx.beginPath();
   ctx.arc(0, 0, 4.5, 0, Math.PI * 2);
-  ctx.fillStyle = aligned ? '#f7b8c4' : 'rgba(255,245,230,.9)';
+  ctx.fillStyle = aligned ? '#60a5fa' : 'rgba(255,255,255,.9)';
   ctx.shadowColor = 'rgba(0,0,0,.8)';
   ctx.shadowBlur = 7;
   ctx.fill();
-  ctx.restore();
-
-  // end caps
-  ctx.save();
-  ctx.translate(w / 2, cy);
-  ctx.rotate((tiltActive ? rollCW : targetRoll) * Math.PI / 180);
-  [-half + 30, half - 30].forEach(x => {
-    ctx.beginPath();
-    ctx.arc(x, 0, 2.6, 0, Math.PI * 2);
-    ctx.fillStyle = aligned ? 'rgba(247,184,196,.95)' : 'rgba(255,245,230,.7)';
-    ctx.fill();
-  });
   ctx.restore();
 }
 
@@ -789,16 +625,16 @@ function drawPitchMeter(ctx, w, h, target) {
   roundRect(ctx, x - barW / 2, top, barW, barH, barW / 2);
   ctx.fillStyle = 'rgba(0,0,0,.42)';
   ctx.fill();
-  ctx.strokeStyle = 'rgba(255,230,238,.22)';
+  ctx.strokeStyle = 'rgba(255,255,255,.20)';
   ctx.lineWidth = 1;
   ctx.stroke();
   ctx.restore();
 
   const ty = map(target);
   ctx.save();
-  ctx.strokeStyle = '#f7b8c4';
+  ctx.strokeStyle = '#60a5fa';
   ctx.lineWidth = 2;
-  ctx.shadowColor = 'rgba(247,184,196,.85)';
+  ctx.shadowColor = 'rgba(96,165,250,.85)';
   ctx.shadowBlur = 9;
   ctx.beginPath();
   ctx.moveTo(x - 11, ty);
@@ -811,84 +647,47 @@ function drawPitchMeter(ctx, w, h, target) {
   ctx.save();
   ctx.beginPath();
   ctx.arc(x, iy, 6.5, 0, Math.PI * 2);
-  ctx.fillStyle = ok ? '#f7b8c4' : '#fff5e6';
-  ctx.shadowColor = ok ? 'rgba(247,184,196,.95)' : 'rgba(0,0,0,.7)';
+  ctx.fillStyle = ok ? '#60a5fa' : '#ffffff';
+  ctx.shadowColor = ok ? 'rgba(96,165,250,.95)' : 'rgba(0,0,0,.7)';
   ctx.shadowBlur = 9;
   ctx.fill();
   ctx.restore();
 
-  tag(ctx, 'UP',   x, top - 10, 'rgba(255,230,238,.5)');
-  tag(ctx, 'DOWN', x, top + barH + 16, 'rgba(255,230,238,.5)');
+  tag(ctx, 'UP',   x, top - 10, 'rgba(255,255,255,.45)');
+  tag(ctx, 'DOWN', x, top + barH + 16, 'rgba(255,255,255,.45)');
 
   if (tiltActive) {
     const diff = target - elevation;
     if (Math.abs(diff) >= 3) {
       const dir = diff < 0 ? 'DOWN' : 'UP';
-      tag(ctx, `TILT ${dir} ${Math.abs(diff).toFixed(0)}°`, x - 12, top - 10, '#fff5e6', 'right');
+      tag(ctx, `TILT ${dir} ${Math.abs(diff).toFixed(0)}°`, x - 12, top - 10, '#e6eaf2', 'right');
     } else {
-      tag(ctx, 'ANGLE ✓', x - 12, top - 10, '#f7b8c4', 'right');
+      tag(ctx, 'ANGLE ✓', x - 12, top - 10, '#60a5fa', 'right');
     }
   }
 }
 
 /* =========================================================
-   OTHER COMPOSITION GUIDES
+   CIRCLE (close-up / food)
    ========================================================= */
-function drawLandscape(ctx, w, h) {
-  ctx.save();
-  ctx.setLineDash([10, 8]);
-  ctx.lineWidth = 1.5;
-  ctx.strokeStyle = 'rgba(255,230,238,.55)';
-  line(ctx, 0, h / 3, w, h / 3);
-  line(ctx, 0, h * 2 / 3, w, h * 2 / 3);
-  ctx.setLineDash([]);
-  tag(ctx, 'SKY HERO → HORIZON LOW',  w / 2, h / 3 - 10, 'rgba(255,230,238,.85)');
-  tag(ctx, 'LAND HERO → HORIZON HIGH', w / 2, h * 2 / 3 - 10, 'rgba(255,230,238,.85)');
-  ctx.restore();
-}
-
-function drawGroupBand(ctx, w, h) {
-  ctx.save();
-  const top = h * 0.24, bot = h * 0.72;
-  ctx.setLineDash([10, 8]);
-  ctx.lineWidth = 1.5;
-  ctx.strokeStyle = 'rgba(255,230,238,.55)';
-  line(ctx, 0, top, w, top);
-  line(ctx, 0, bot, w, bot);
-  ctx.setLineDash([]);
-  tag(ctx, 'LOOSE CLUSTER · WARM LIGHT', w / 2, top - 12, 'rgba(255,230,238,.85)');
-  ctx.restore();
-}
-
 function drawCircle(ctx, w, h, cxF, cyF, rF) {
   ctx.save();
   const cx = w * cxF, cy = h * cyF;
   const r = Math.min(w, h) * rF;
 
-  ctx.strokeStyle = 'rgba(255,230,238,.85)';
-  ctx.lineWidth = 1.7;
+  ctx.strokeStyle = 'rgba(255,255,255,.75)';
+  ctx.lineWidth = 1.6;
   ctx.setLineDash([8, 7]);
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.stroke();
 
   ctx.setLineDash([]);
-  ctx.strokeStyle = 'rgba(255,230,238,.5)';
+  ctx.strokeStyle = 'rgba(255,255,255,.4)';
   ctx.lineWidth = 1.2;
   const t = r * 0.14;
   line(ctx, cx - t, cy, cx + t, cy);
   line(ctx, cx, cy - t, cx, cy + t);
-  ctx.restore();
-}
-
-function drawFullBodyBand(ctx, w, h) {
-  // (figure carries the guide; just a soft band for reference)
-  ctx.save();
-  ctx.setLineDash([8, 7]);
-  ctx.lineWidth = 1.2;
-  ctx.strokeStyle = 'rgba(255,230,238,.35)';
-  line(ctx, w * 0.10, h * 0.06, w * 0.90, h * 0.06);
-  line(ctx, w * 0.10, h * 0.94, w * 0.90, h * 0.94);
   ctx.restore();
 }
 
@@ -904,7 +703,7 @@ function updateStatus(m, rollAligned) {
   const pitchOk = Math.abs(elevation - m.targetElevation) < 3;
   if (rollAligned && pitchOk) {
     statusPill.classList.add('ok');
-    statusText.textContent = 'Aesthetic ✓ ready to shoot';
+    statusText.textContent = 'Ready to shoot';
   } else {
     statusPill.classList.remove('ok');
     if (!rollAligned) {
