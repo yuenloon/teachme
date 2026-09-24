@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shot Guide</title>
+<style>
+  :root{
+    --bg:#0b0d10;
+    --card:#15191f;
+    --text:#f4f6f8;
+    --muted:#aeb6c1;
+    --accent:#ffffff;
+    --line:rgba(255,255,255,.30);
+    --line-strong:rgba(255,255,255,.72);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text);
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  button{font:inherit}
+  .screen{min-height:100dvh}
+  #menu{
+    padding:28px 18px 32px;
+    max-width:760px;
+    margin:auto;
+  }
+  .header{padding:12px 4px 22px}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  h1{font-size:34px;line-height:1.05;margin:8px 0}
+  .subtitle{color:var(--muted);margin:0;line-height:1.5}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.portrait-grid .shot-card{min-height:155px}
+  .shot-card{
+    position:relative;min-height:170px;border:1px solid rgba(255,255,255,.10);
+    border-radius:20px;background:linear-gradient(145deg,#171c23,#111419);
+    color:var(--text);padding:18px;text-align:left;cursor:pointer;overflow:hidden;
+    transition:transform .15s,border-color .15s;
+  }
+  .shot-card:active{transform:scale(.98)}
+  .shot-card:hover{border-color:rgba(255,255,255,.25)}
+  .icon{font-size:38px;margin-bottom:16px}
+  .shot-card strong{display:block;font-size:19px}
+  .shot-card span{display:block;color:var(--muted);font-size:13px;margin-top:5px}
+  .camera{position:fixed;inset:0;background:#000;display:none;overflow:hidden}
+  video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+  .topbar{
+    position:absolute;z-index:5;top:0;left:0;right:0;
+    padding:calc(env(safe-area-inset-top) + 12px) 14px 12px;
+    display:flex;align-items:center;justify-content:space-between;
+    background:linear-gradient(to bottom,rgba(0,0,0,.65),transparent);
+  }
+  .topbar button,.info-toggle{
+    border:0;border-radius:999px;background:rgba(0,0,0,.45);color:#fff;
+    width:42px;height:42px;cursor:pointer;backdrop-filter:blur(8px);
+  }
+  .mode-name{font-weight:650;font-size:15px}
+  .guide{
+    position:absolute;z-index:3;inset:0;pointer-events:none;
+  }
+  .thirds:before,.thirds:after{content:"";position:absolute;left:33.333%;right:33.333%;top:0;bottom:0;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  .thirds:after{left:0;right:0;top:33.333%;bottom:33.333%;border-left:0;border-right:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .horizon{position:absolute;left:7%;right:7%;top:50%;border-top:1px solid var(--line-strong)}
+  .center-box{position:absolute;left:12%;right:12%;top:18%;bottom:18%;border:1px solid var(--line);border-radius:8px}
+  .face-oval{
+    position:absolute;width:min(55vw,300px);height:min(70vw,390px);
+    left:50%;top:45%;transform:translate(-50%,-50%);
+    border:1px solid var(--line);border-radius:48%;
+  }
+  .eye-line{position:absolute;left:22%;right:22%;top:39%;border-top:1px dashed var(--line)}
+  .landscape-safe{position:absolute;left:6%;right:6%;top:16%;bottom:16%;border:1px solid rgba(255,255,255,.16)}
+  .document{
+    position:absolute;left:9%;right:9%;top:15%;bottom:15%;
+    border:2px solid var(--line);border-radius:6px;
+  }
+  .document:before,.document:after{content:"";position:absolute;inset:-2px}
+  .document:before{border-top:18px solid rgba(255,255,255,.55);border-left:18px solid transparent;border-right:18px solid transparent;width:18px;height:18px;top:-3px;left:-3px}
+  .tip{
+    position:absolute;z-index:4;left:14px;right:14px;bottom:92px;
+    border-radius:16px;background:rgba(0,0,0,.58);backdrop-filter:blur(10px);
+    padding:13px 15px;transition:opacity .25s;
+  }
+  .tip strong{display:block;font-size:14px;margin-bottom:4px}
+  .tip p{margin:0;color:#e1e5ea;font-size:13px;line-height:1.4}
+  .controls{
+    position:absolute;z-index:6;left:0;right:0;bottom:0;
+    padding:12px 18px calc(env(safe-area-inset-bottom) + 16px);
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(to top,rgba(0,0,0,.8),transparent);
+  }
+  .shutter{
+    width:70px;height:70px;border-radius:50%;border:5px solid #fff;background:transparent;
+    box-shadow:0 0 0 3px rgba(255,255,255,.18);cursor:pointer;
+  }
+  .flip{
+    position:absolute;right:22px;width:46px;height:46px;border:0;border-radius:50%;
+    background:rgba(0,0,0,.5);color:#fff;font-size:22px;cursor:pointer;
+  }
+  .result{position:absolute;inset:0;background:#000;z-index:20;display:none;align-items:center;justify-content:center}
+  .result img{max-width:100%;max-height:100%;object-fit:contain}
+  .result-actions{position:absolute;left:0;right:0;bottom:0;padding:20px;display:flex;gap:10px}
+  .result-actions button{flex:1;border:0;border-radius:12px;padding:13px;font-weight:650;cursor:pointer}
+  .primary{background:#fff;color:#111}
+  .secondary{background:rgba(255,255,255,.14);color:#fff}
+  .permission{
+    position:absolute;z-index:10;inset:0;display:flex;align-items:center;justify-content:center;
+    padding:28px;background:rgba(0,0,0,.78);text-align:center
+  }
+  .permission-card{max-width:360px}
+  .permission h2{margin:0 0 8px}
+  .permission p{color:var(--muted);line-height:1.5}
+  .permission button{border:0;background:#fff;color:#111;border-radius:12px;padding:13px 18px;font-weight:700}
+  .hidden{display:none!important}
+  @media(min-width:650px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.shot-card{min-height:190px}}
+</style>
+</head>
+<body>
+
+<section id="menu" class="screen">
+  <div class="header">
+    <div class="eyebrow">Portrait camera guide</div>
+    <h1>What portrait are you taking?</h1>
+    <p class="subtitle">Choose the framing first. The camera will then show where to place the person and phone.</p>
+  </div>
+
+  <div class="grid portrait-grid">
+    <button class="shot-card" data-mode="headshot">
+      <div class="icon">🙂</div>
+      <strong>Headshot</strong>
+      <span>Head + shoulders</span>
+    </button>
+
+    <button class="shot-card" data-mode="bust">
+      <div class="icon">👤</div>
+      <strong>Bust / Chest-up</strong>
+      <span>Head to upper chest</span>
+    </button>
+
+    <button class="shot-card" data-mode="halfbody">
+      <div class="icon">🧍</div>
+      <strong>Half Body</strong>
+      <span>Head to waist</span>
+    </button>
+
+    <button class="shot-card" data-mode="threequarter">
+      <div class="icon">🧍‍♂️</div>
+      <strong>Three-quarter</strong>
+      <span>Head to mid-thigh</span>
+    </button>
+
+    <button class="shot-card" data-mode="fullbody">
+      <div class="icon">🚶</div>
+      <strong>Full Body</strong>
+      <span>Head to feet</span>
+    </button>
+
+    <button class="shot-card" data-mode="environmental">
+      <div class="icon">🏙️</div>
+      <strong>Environmental</strong>
+      <span>Person + surroundings</span>
+    </button>
+
+    <button class="shot-card" data-mode="group">
+      <div class="icon">👥</div>
+      <strong>Group Portrait</strong>
+      <span>Keep everyone inside</span>
+    </button>
+
+    <button class="shot-card" data-mode="lowangle">
+      <div class="icon">⬆️</div>
+      <strong>Low-angle</strong>
+      <span>Stronger, taller perspective</span>
+    </button>
+
+    <button class="shot-card" data-mode="highangle">
+      <div class="icon">⬇️</div>
+      <strong>High-angle</strong>
+      <span>Camera slightly above</span>
+    </button>
+  </div>
+</section>
+
+<section id="camera" class="camera">
+  <video id="video" autoplay playsinline muted></video>
+
+  <div class="topbar">
+    <button id="backBtn" aria-label="Back">‹</button>
+    <div id="modeName" class="mode-name">Portrait</div>
+    <button id="infoBtn" class="info-toggle" aria-label="Show tip">i</button>
+  </div>
+
+  <div id="guide" class="guide"></div>
+
+  <div id="tip" class="tip">
+    <strong id="tipTitle">Portrait</strong>
+    <p id="tipText"></p>
+  </div>
+
+  <div class="controls">
+    <button id="shutter" class="shutter" aria-label="Take photo"></button>
+    <button id="flip" class="flip" aria-label="Switch camera">↻</button>
+  </div>
+
+  <div id="permission" class="permission hidden">
+    <div class="permission-card">
+      <h2>Camera access</h2>
+      <p id="permissionText">Allow camera access to use the live viewfinder.</p>
+      <button id="startCamera">Allow camera</button>
+    </div>
+  </div>
+
+  <div id="result" class="result">
+    <img id="photo" alt="Captured photo">
+    <div class="result-actions">
+      <button id="retake" class="secondary">Retake</button>
+      <button id="save" class="primary">Save photo</button>
+    </div>
+  </div>
+</section>
+
+<canvas id="canvas" class="hidden"></canvas>
+
+<script>
+const modes = {
+  headshot: {
+    name:"Headshot",
+    guide:"thirds face",
+    tip:"Place the eyes near the upper third. Keep the phone around eye level and leave a little space above the head."
+  },
+  bust: {
+    name:"Bust / Chest-up",
+    guide:"thirds face",
+    tip:"Frame from the head to upper chest. Keep the camera around eye level and avoid cutting through the neck."
+  },
+  halfbody: {
+    name:"Half Body",
+    guide:"thirds face",
+    tip:"Frame from head to waist. Keep the camera near chest-to-eye level and leave comfortable space around the elbows."
+  },
+  threequarter: {
+    name:"Three-quarter",
+    guide:"thirds face",
+    tip:"Frame from head to mid-thigh. Step back rather than using a very wide lens, and keep the body naturally relaxed."
+  },
+  fullbody: {
+    name:"Full Body",
+    guide:"thirds horizon landscape",
+    tip:"Keep the whole person, including feet, inside the frame. Hold the phone around waist-to-chest height and keep verticals straight."
+  },
+  environmental: {
+    name:"Environmental",
+    guide:"thirds horizon landscape",
+    tip:"Show the person and enough surroundings to tell the story. Place the person near a third instead of always centering them."
+  },
+  group: {
+    name:"Group Portrait",
+    guide:"thirds",
+    tip:"Leave a little space around the outside people. Keep faces on a similar depth plane and check that nobody is cropped."
+  },
+  lowangle: {
+    name:"Low-angle",
+    guide:"thirds face",
+    tip:"Lower the phone slightly and tilt only as much as needed. Keep the subject's face clear and watch for distracting foreground objects."
+  },
+  highangle: {
+    name:"High-angle",
+    guide:"thirds face",
+    tip:"Raise the phone slightly above eye level and angle down gently. Keep the face close to the upper-middle area of the frame."
+  }
+};
+
+let currentMode = null;
+let stream = null;
+let facingMode = "environment";
+let tipVisible = true;
+
+const menu = document.getElementById("menu");
+const camera = document.getElementById("camera");
+const video = document.getElementById("video");
+const guide = document.getElementById("guide");
+const tip = document.getElementById("tip");
+const tipTitle = document.getElementById("tipTitle");
+const tipText = document.getElementById("tipText");
+const modeName = document.getElementById("modeName");
+const permission = document.getElementById("permission");
+const result = document.getElementById("result");
+const canvas = document.getElementById("canvas");
+const photo = document.getElementById("photo");
+
+document.querySelectorAll(".shot-card").forEach(card => {
+  card.addEventListener("click", () => selectMode(card.dataset.mode));
+});
+
+async function selectMode(mode){
+  currentMode = modes[mode];
+  menu.style.display = "none";
+  camera.style.display = "block";
+  modeName.textContent = currentMode.name;
+  tipTitle.textContent = currentMode.name;
+  tipText.textContent = currentMode.tip;
+  renderGuide(currentMode.guide);
+  tipVisible = true;
+  tip.classList.remove("hidden");
+  await startCamera();
+}
+
+function renderGuide(type){
+  guide.innerHTML = "";
+  if(type.includes("thirds")) {
+    const g = document.createElement("div");
+    g.className = "thirds";
+    guide.appendChild(g);
+  }
+  if(type.includes("horizon")) {
+    const h = document.createElement("div");
+    h.className = "horizon";
+    guide.appendChild(h);
+  }
+  if(type.includes("landscape")) {
+    const s = document.createElement("div");
+    s.className = "landscape-safe";
+    guide.appendChild(s);
+  }
+  if(type.includes("face")) {
+    const oval = document.createElement("div");
+    oval.className = "face-oval";
+    guide.appendChild(oval);
+    const eye = document.createElement("div");
+    eye.className = "eye-line";
+    guide.appendChild(eye);
+  }
+  if(type.includes("center")) {
+    const c = document.createElement("div");
+    c.className = "center-box";
+    guide.appendChild(c);
+  }
+  if(type.includes("document")) {
+    const d = document.createElement("div");
+    d.className = "document";
+    guide.appendChild(d);
+  }
+}
+
+async function startCamera(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    showPermission("This browser does not provide camera access. Try Chrome or Safari over HTTPS.");
+    return;
+  }
+  stopCamera();
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({
+      video:{
+        facingMode:{ideal:facingMode},
+        width:{ideal:1920},
+        height:{ideal:1080}
+      },
+      audio:false
+    });
+    video.srcObject = stream;
+    permission.classList.add("hidden");
+  }catch(err){
+    showPermission("Camera access was blocked. Allow camera permission, then try again.");
+  }
+}
+
+function showPermission(message){
+  document.getElementById("permissionText").textContent = message;
+  permission.classList.remove("hidden");
+}
+
+function stopCamera(){
+  if(stream){
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+}
+
+document.getElementById("startCamera").addEventListener("click", startCamera);
+
+document.getElementById("backBtn").addEventListener("click", () => {
+  stopCamera();
+  camera.style.display = "none";
+  menu.style.display = "block";
+  result.style.display = "none";
+});
+
+document.getElementById("infoBtn").addEventListener("click", () => {
+  tipVisible = !tipVisible;
+  tip.style.opacity = tipVisible ? "1" : "0";
+});
+
+document.getElementById("flip").addEventListener("click", async () => {
+  facingMode = facingMode === "environment" ? "user" : "environment";
+  await startCamera();
+});
+
+document.getElementById("shutter").addEventListener("click", () => {
+  if(!stream || video.readyState < 2) return;
+
+  const w = video.videoWidth;
+  const h = video.videoHeight;
+  canvas.width = w;
+  canvas.height = h;
+
+  const ctx = canvas.getContext("2d");
+  if(facingMode === "user"){
+    ctx.translate(w,0);
+    ctx.scale(-1,1);
+  }
+  ctx.drawImage(video,0,0,w,h);
+  photo.src = canvas.toDataURL("image/jpeg", .92);
+  result.style.display = "flex";
+});
+
+document.getElementById("retake").addEventListener("click", () => {
+  result.style.display = "none";
+});
+
+document.getElementById("save").addEventListener("click", () => {
+  const a = document.createElement("a");
+  a.href = photo.src;
+  a.download = `shot-guide-${currentMode.name.toLowerCase().replace(/\\s+/g,"-")}-${Date.now()}.jpg`;
+  a.click();
+});
+</script>
+</body>
+</html>

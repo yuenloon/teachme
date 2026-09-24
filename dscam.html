@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+<meta name="theme-color" content="#0b0b0d" />
+<title>Shot Coach</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;overflow:hidden;background:#0b0b0d;color:#fff;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-user-select:none;user-select:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+  .screen{position:fixed;inset:0;display:none}
+  .screen.active{display:block}
+
+  /* ---------- MENU ---------- */
+  #menuScreen{overflow-y:auto;-webkit-overflow-scrolling:touch;
+    background:radial-gradient(120% 90% at 50% 0%,#1c1c22 0%,#0b0b0d 60%)}
+  .menu-wrap{padding:calc(env(safe-area-inset-top) + 34px) 20px calc(env(safe-area-inset-bottom) + 34px)}
+  .menu-wrap h1{margin:0 0 8px;font-size:27px;line-height:1.15;letter-spacing:-.4px}
+  .menu-wrap .sub{margin:0 0 26px;font-size:14.5px;line-height:1.45;color:#9a9aa6;max-width:32ch}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(min-width:560px){.grid{grid-template-columns:repeat(3,1fr)}}
+  .card{display:flex;flex-direction:column;align-items:flex-start;gap:10px;
+    padding:18px 16px 16px;border-radius:18px;background:#16161b;
+    border:1px solid rgba(255,255,255,.07);transition:transform .12s ease,background .12s ease}
+  .card:active{transform:scale(.965);background:#1e1e25}
+  .card .ico{font-size:26px;line-height:1}
+  .card .lbl{font-size:15px;font-weight:600;letter-spacing:-.2px}
+  .card .desc{font-size:12.5px;line-height:1.4;color:#8e8e9a;margin-top:2px}
+
+  /* ---------- CAMERA ---------- */
+  #camScreen{background:#000}
+  #video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+  #overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+
+  .topbar{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;
+    justify-content:space-between;gap:12px;
+    padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;
+    background:linear-gradient(to bottom,rgba(0,0,0,.55),transparent)}
+  .icon-btn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
+    background:rgba(0,0,0,.4);backdrop-filter:blur(8px);font-size:19px;
+    border:1px solid rgba(255,255,255,.14)}
+  .icon-btn:active{background:rgba(255,255,255,.18)}
+  .mode-chip{font-size:13px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;
+    padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.4);
+    backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);color:#fff}
+
+  .bottombar{position:absolute;left:0;right:0;bottom:0;z-index:3;display:flex;
+    flex-direction:column;align-items:center;gap:16px;
+    padding:26px 20px calc(env(safe-area-inset-bottom) + 26px);
+    background:linear-gradient(to top,rgba(0,0,0,.72),transparent)}
+  .tip{max-width:34ch;text-align:center;font-size:13.5px;line-height:1.45;color:#e9e9ef;
+    text-shadow:0 1px 6px rgba(0,0,0,.8)}
+  .shutter{width:74px;height:74px;border-radius:50%;border:3px solid rgba(255,255,255,.9);
+    display:grid;place-items:center;background:rgba(255,255,255,.12);transition:transform .1s}
+  .shutter span{width:58px;height:58px;border-radius:50%;background:#fff;display:block}
+  .shutter:active{transform:scale(.93)}
+  .link-btn{font-size:12.5px;color:#8ab4ff;text-decoration:underline;padding:4px 8px}
+
+  .err{position:absolute;inset:auto 20px 50% 20px;z-index:5;padding:18px;border-radius:16px;
+    background:#1b1b21;border:1px solid rgba(255,255,255,.12);font-size:14px;line-height:1.5;
+    color:#d8d8e0;text-align:center}
+
+  /* ---------- PREVIEW ---------- */
+  #previewScreen{background:#000;flex-direction:column}
+  #previewScreen.active{display:flex}
+  #shotImg{flex:1;width:100%;min-height:0;object-fit:contain;background:#000}
+  .preview-bar{display:flex;gap:12px;padding:16px 20px calc(env(safe-area-inset-bottom) + 20px)}
+  .btn{flex:1;padding:15px;border-radius:14px;font-size:15px;font-weight:600;text-align:center;
+    text-decoration:none;display:block}
+  .btn.ghost{background:#202027;color:#fff}
+  .btn.primary{background:#fff;color:#000}
+  .btn:active{opacity:.75}
+</style>
+</head>
+<body>
+
+<!-- ============ SCREEN 1 : MENU ============ -->
+<div id="menuScreen" class="screen active">
+  <div class="menu-wrap">
+    <h1>What are you shooting?</h1>
+    <p class="sub">Pick a shot type — I'll open the camera and lay guides over it.</p>
+    <div class="grid" id="modeGrid"></div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 2 : CAMERA ============ -->
+<div id="camScreen" class="screen">
+  <video id="video" playsinline autoplay muted></video>
+  <canvas id="overlay"></canvas>
+
+  <div class="topbar">
+    <button class="icon-btn" id="backBtn" aria-label="Back">✕</button>
+    <div class="mode-chip" id="modeLabel">Portrait</div>
+    <button class="icon-btn" id="flipBtn" aria-label="Switch camera">⇄</button>
+  </div>
+
+  <div class="bottombar">
+    <div class="tip" id="tipText"></div>
+    <button class="shutter" id="shutterBtn" aria-label="Take photo"><span></span></button>
+    <button class="link-btn" id="permBtn" hidden>Tap to enable the tilt level</button>
+  </div>
+
+  <div class="err" id="errBox" hidden></div>
+</div>
+
+<!-- ============ SCREEN 3 : PREVIEW ============ -->
+<div id="previewScreen" class="screen">
+  <img id="shotImg" alt="Your photo" />
+  <div class="preview-bar">
+    <button class="btn ghost" id="retakeBtn">Retake</button>
+    <a class="btn primary" id="saveBtn" download="photo.jpg">Save</a>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   SHOT TYPES — research-backed tips from photography sources
+   ========================================================= */
+const MODES = {
+  portrait: {
+    label: 'Portrait',
+    icon: '🧑',
+    guide: 'portrait',
+    desc: 'Head & shoulders with flattering light',
+    tip: 'Eyes on the upper third line. Angle their body 30–45° off camera, then bring the face back. Chin slightly down and out to lengthen the neck and define the jaw.'
+  },
+  landscape: {
+    label: 'Landscape',
+    icon: '🏔️',
+    guide: 'landscape',
+    desc: 'Scenic views with a level horizon',
+    tip: 'Keep the horizon dead level — it conveys peace and calm. Place it on the upper or lower third: sky is the hero? horizon low. Land is the hero? horizon high.'
+  },
+  selfie: {
+    label: 'Selfie',
+    icon: '🤳',
+    guide: 'selfie',
+    desc: 'Flattering angles for solo shots',
+    tip: 'Hold the phone slightly above eye level (about 5 cm up). Tilt your head down ~10°. Turn shoulders slightly instead of facing the camera straight on.'
+  },
+  group: {
+    label: 'Group',
+    icon: '👨‍👩‍👧',
+    guide: 'group',
+    desc: 'Everyone in frame, layered for depth',
+    tip: 'Layer people front-to-back and stagger heights — avoid flat, linear rows. Build triangles or V-shapes. Keep faces on roughly the same eye-level plane.'
+  },
+  closeup: {
+    label: 'Close-up',
+    icon: '🌸',
+    guide: 'circle',
+    desc: 'Macro details that fill the frame',
+    tip: 'Get close and fill the circle. Use central composition for symmetrical subjects, or rule of thirds for off-center interest. Tap the screen to focus precisely.'
+  },
+  food: {
+    label: 'Food',
+    icon: '🍜',
+    guide: 'food',
+    desc: 'Appetizing angles for dishes',
+    tip: 'Shoot at 45° for layered dishes, or directly overhead (flat lay) for plating. Use side or backlight to reveal texture and steam. Never use flash.'
+  },
+  fullbody: {
+    label: 'Full body',
+    icon: '🕴️',
+    guide: 'full',
+    desc: 'Head-to-toe with balanced framing',
+    tip: 'Leave more headroom than feet room (roughly 30/70 split). Place subject at a 45° angle with weight on the back foot. Keep both head and feet inside the frame.'
+  }
+};
+
+/* =========================================================
+   ELEMENTS / STATE
+   ========================================================= */
+const menuScreen    = document.getElementById('menuScreen');
+const camScreen     = document.getElementById('camScreen');
+const previewScreen = document.getElementById('previewScreen');
+const video         = document.getElementById('video');
+const overlay       = document.getElementById('overlay');
+const modeGrid      = document.getElementById('modeGrid');
+const modeLabel     = document.getElementById('modeLabel');
+const tipText       = document.getElementById('tipText');
+const errBox        = document.getElementById('errBox');
+const permBtn       = document.getElementById('permBtn');
+const shotImg       = document.getElementById('shotImg');
+const saveBtn       = document.getElementById('saveBtn');
+
+let currentMode = null;
+let stream = null;
+let facingMode = 'environment';
+let roll = 0;
+let tiltAttached = false;
+let rafId = null;
+
+/* =========================================================
+   MENU
+   ========================================================= */
+Object.entries(MODES).forEach(([key, m]) => {
+  const b = document.createElement('button');
+  b.className = 'card';
+  b.innerHTML = `<span class="ico">${m.icon}</span>
+                 <span class="lbl">${m.label}</span>
+                 <span class="desc">${m.desc}</span>`;
+  b.addEventListener('click', () => selectMode(key));
+  modeGrid.appendChild(b);
+});
+
+function showScreen(id) {
+  [menuScreen, camScreen, previewScreen].forEach(s =>
+    s.classList.toggle('active', s.id === id)
+  );
+}
+
+async function selectMode(key) {
+  currentMode = key;
+  modeLabel.textContent = MODES[key].label;
+  tipText.textContent = MODES[key].tip;
+  showScreen('camScreen');
+
+  const ok = await requestTiltPermission();
+  permBtn.hidden = ok;
+  if (ok) attachTilt();
+
+  startCamera();
+  startLoop();
+}
+
+/* =========================================================
+   CAMERA
+   ========================================================= */
+async function startCamera() {
+  stopCamera();
+  errBox.hidden = true;
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showError('This browser can’t access the camera here. Open the page over <b>https://</b> or <b>localhost</b>, and allow camera access.');
+    return;
+  }
+
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        facingMode: { ideal: facingMode },
+        width:  { ideal: 1920 },
+        height: { ideal: 1080 }
+      }
+    });
+    video.srcObject = stream;
+    video.style.transform = (facingMode === 'user') ? 'scaleX(-1)' : 'none';
+    await video.play();
+  } catch (err) {
+    showError(
+      err && err.name === 'NotAllowedError'
+        ? 'Camera permission was denied. Allow it in your browser settings and reload.'
+        : 'Could not start the camera.<br><small>' + (err && err.message ? err.message : err) + '</small>'
+    );
+  }
+}
+
+function stopCamera() {
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  }
+  video.srcObject = null;
+}
+
+function showError(html) {
+  errBox.innerHTML = html;
+  errBox.hidden = false;
+}
+
+/* =========================================================
+   TILT / LEVEL
+   ========================================================= */
+async function requestTiltPermission() {
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    try {
+      const res = await DeviceOrientationEvent.requestPermission();
+      return res === 'granted';
+    } catch (e) { return false; }
+  }
+  return typeof DeviceOrientationEvent !== 'undefined';
+}
+
+function getScreenAngle() {
+  if (screen.orientation && typeof screen.orientation.angle === 'number') {
+    return screen.orientation.angle;
+  }
+  if (typeof window.orientation === 'number') return window.orientation;
+  return 0;
+}
+
+function attachTilt() {
+  if (tiltAttached) return;
+  tiltAttached = true;
+
+  window.addEventListener('deviceorientation', (e) => {
+    const beta  = (e.beta  || 0) * Math.PI / 180;
+    const gamma = (e.gamma || 0) * Math.PI / 180;
+
+    let theta = Math.atan2(Math.cos(beta) * Math.sin(gamma), Math.sin(beta)) * 180 / Math.PI;
+
+    const ang = getScreenAngle();
+    let off = 0;
+    if (ang === 90) off = -90;
+    else if (ang === 270 || ang === -90) off = 90;
+
+    let r = theta - off;
+    while (r >  90) r -= 180;
+    while (r < -90) r += 180;
+    roll = r;
+  }, true);
+}
+
+permBtn.addEventListener('click', async () => {
+  const ok = await requestTiltPermission();
+  if (ok) { attachTilt(); permBtn.hidden = true; }
+});
+
+/* =========================================================
+   OVERLAY RENDERING
+   ========================================================= */
+function startLoop() {
+  if (rafId) return;
+  const loop = () => { drawOverlay(); rafId = requestAnimationFrame(loop); };
+  rafId = requestAnimationFrame(loop);
+}
+function stopLoop() {
+  if (rafId) cancelAnimationFrame(rafId);
+  rafId = null;
+}
+
+function drawOverlay() {
+  const w = overlay.clientWidth;
+  const h = overlay.clientHeight;
+  if (!w || !h) return;
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  if (overlay.width !== Math.round(w * dpr) || overlay.height !== Math.round(h * dpr)) {
+    overlay.width  = Math.round(w * dpr);
+    overlay.height = Math.round(h * dpr);
+  }
+  const ctx = overlay.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+
+  const m = MODES[currentMode];
+  if (!m) return;
+
+  drawGrid(ctx, w, h);
+
+  switch (m.guide) {
+    case 'portrait':  drawPortrait(ctx, w, h); break;
+    case 'landscape': drawLandscape(ctx, w, h); break;
+    case 'selfie':    drawSelfie(ctx, w, h); break;
+    case 'group':     drawGroup(ctx, w, h); break;
+    case 'circle':    drawCircle(ctx, w, h, 0.50, 0.50, 0.34); break;
+    case 'food':      drawCircle(ctx, w, h, 0.50, 0.47, 0.32); break;
+    case 'full':      drawFullBody(ctx, w, h); break;
+  }
+
+  drawLevel(ctx, w, h);
+}
+
+/* ---- helpers ---- */
+function line(ctx, x1, y1, x2, y2) {
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+}
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y,     x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x,     y + h, r);
+  ctx.arcTo(x,     y + h, x,     y,     r);
+  ctx.arcTo(x,     y,     x + w, y,     r);
+  ctx.closePath();
+}
+function label(ctx, text, x, y, color) {
+  ctx.save();
+  ctx.font = '600 11px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
+  ctx.fillStyle = color || 'rgba(255,255,255,.85)';
+  ctx.textAlign = 'center';
+  ctx.shadowColor = 'rgba(0,0,0,.85)';
+  ctx.shadowBlur = 6;
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
+function drawGrid(ctx, w, h) {
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,.30)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 7]);
+  ctx.beginPath();
+  for (let i = 1; i < 3; i++) {
+    ctx.moveTo(w * i / 3, 0); ctx.lineTo(w * i / 3, h);
+    ctx.moveTo(0, h * i / 3); ctx.lineTo(w, h * i / 3);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawLevel(ctx, w, h) {
+  const trackW = 124, trackH = 14;
+  const x = (w - trackW) / 2;
+  const y = 92;
+  const level = Math.abs(roll) < 1.6;
+
+  ctx.save();
+  roundRect(ctx, x, y, trackW, trackH, 7);
+  ctx.fillStyle = 'rgba(0,0,0,.45)';
+  ctx.fill();
+  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = level ? '#4ade80' : 'rgba(255,255,255,.55)';
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(w / 2, y - 5);
+  ctx.lineTo(w / 2, y + trackH + 5);
+  ctx.strokeStyle = 'rgba(255,255,255,.45)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  const k = Math.max(-1, Math.min(1, roll / 12));
+  const bx = w / 2 + k * (trackW / 2 - 10);
+  ctx.beginPath();
+  ctx.arc(bx, y + trackH / 2, 6, 0, Math.PI * 2);
+  ctx.fillStyle = level ? '#4ade80' : '#ffffff';
+  ctx.fill();
+
+  if (level) label(ctx, 'LEVEL', w / 2, y + trackH + 20, '#4ade80');
+  ctx.restore();
+}
+
+function drawPortrait(ctx, w, h) {
+  ctx.save();
+  const cx = w / 2;
+  const cy = h * 0.31;
+  const rx = Math.min(w * 0.19, h * 0.115);
+  const ry = rx * 1.3;
+
+  ctx.strokeStyle = 'rgba(255,255,255,.85)';
+  ctx.lineWidth = 1.8;
+  ctx.setLineDash([7, 6]);
+
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(cx - rx * 2.3, cy + ry * 3.1);
+  ctx.quadraticCurveTo(cx, cy + ry * 1.15, cx + rx * 2.3, cy + ry * 3.1);
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+  ctx.strokeStyle = 'rgba(74,222,128,.9)';
+  ctx.lineWidth = 1.6;
+  line(ctx, cx - rx * 1.3, cy, cx + rx * 1.3, cy);
+  label(ctx, 'EYES ON UPPER THIRD', cx, cy - 8, '#4ade80');
+
+  ctx.restore();
+}
+
+function drawLandscape(ctx, w, h) {
+  ctx.save();
+  ctx.setLineDash([10, 8]);
+  ctx.lineWidth = 1.6;
+  ctx.strokeStyle = 'rgba(255,255,255,.6)';
+
+  [1 / 3, 2 / 3].forEach(f => {
+    line(ctx, 0, h * f, w, h * f);
+  });
+
+  ctx.setLineDash([]);
+  label(ctx, 'SKY HERO → HORIZON LOW', w / 2, h / 3 - 10);
+  label(ctx, 'LAND HERO → HORIZON HIGH', w / 2, h * 2 / 3 - 10);
+  ctx.restore();
+}
+
+function drawSelfie(ctx, w, h) {
+  ctx.save();
+  const cx = w / 2;
+  const cy = h * 0.42;
+  const rx = Math.min(w * 0.28, h * 0.16);
+  const ry = rx * 1.32;
+
+  ctx.strokeStyle = 'rgba(255,255,255,.85)';
+  ctx.lineWidth = 1.8;
+  ctx.setLineDash([7, 6]);
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+  ctx.strokeStyle = 'rgba(74,222,128,.9)';
+  ctx.lineWidth = 1.6;
+  line(ctx, cx - rx * 0.9, cy - ry * 0.18, cx + rx * 0.9, cy - ry * 0.18);
+  label(ctx, 'PHONE ABOVE EYE LEVEL', cx, cy - ry * 0.18 - 10, '#4ade80');
+  ctx.restore();
+}
+
+function drawGroup(ctx, w, h) {
+  ctx.save();
+  const top = h * 0.28, bot = h * 0.70;
+
+  ctx.setLineDash([10, 8]);
+  ctx.lineWidth = 1.6;
+  ctx.strokeStyle = 'rgba(255,255,255,.6)';
+  line(ctx, 0, top, w, top);
+  line(ctx, 0, bot, w, bot);
+
+  ctx.setLineDash([6, 6]);
+  ctx.strokeStyle = 'rgba(255,255,255,.85)';
+  ctx.lineWidth = 1.6;
+  const n = 5;
+  for (let i = 0; i < n; i++) {
+    const t = n === 1 ? 0.5 : i / (n - 1);
+    const x = w * (0.14 + t * 0.72);
+    const arc = Math.sin(t * Math.PI);
+    const y = h * (0.46 - arc * 0.035);
+    ctx.beginPath();
+    ctx.arc(x, y, Math.min(w * 0.055, h * 0.032), 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  label(ctx, 'LAYER FRONT → BACK', w / 2, top - 12);
+  ctx.restore();
+}
+
+function drawCircle(ctx, w, h, cxF, cyF, rF) {
+  ctx.save();
+  const cx = w * cxF, cy = h * cyF;
+  const r = Math.min(w, h) * rF;
+
+  ctx.strokeStyle = 'rgba(255,255,255,.85)';
+  ctx.lineWidth = 1.8;
+  ctx.setLineDash([8, 7]);
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+  ctx.strokeStyle = 'rgba(255,255,255,.5)';
+  ctx.lineWidth = 1.2;
+  const t = r * 0.14;
+  line(ctx, cx - t, cy, cx + t, cy);
+  line(ctx, cx, cy - t, cx, cy + t);
+  ctx.restore();
+}
+
+function drawFullBody(ctx, w, h) {
+  ctx.save();
+  const x = w * 0.13, y = h * 0.06;
+  const rw = w * 0.74, rh = h * 0.86;
+
+  ctx.setLineDash([9, 8]);
+  ctx.lineWidth = 1.8;
+  ctx.strokeStyle = 'rgba(255,255,255,.7)';
+  roundRect(ctx, x, y, rw, rh, 20);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(w / 2, y + rh * 0.11, rw * 0.125, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.setLineDash([]);
+  ctx.strokeStyle = 'rgba(74,222,128,.9)';
+  ctx.lineWidth = 1.6;
+  line(ctx, x, y + rh * 0.20, x + rw, y + rh * 0.20);
+  label(ctx, '30/70 HEADROOM SPLIT', w / 2, y + rh * 0.20 - 9, '#4ade80');
+  ctx.restore();
+}
+
+/* =========================================================
+   CAPTURE
+   ========================================================= */
+document.getElementById('shutterBtn').addEventListener('click', capture);
+
+function capture() {
+  const vw = video.videoWidth, vh = video.videoHeight;
+  if (!vw || !vh) return;
+
+  const dw = camScreen.clientWidth, dh = camScreen.clientHeight;
+  const scale = Math.max(dw / vw, dh / vh);
+  const sw = Math.min(vw, dw / scale);
+  const sh = Math.min(vh, dh / scale);
+  const sx = (vw - sw) / 2;
+  const sy = (vh - sh) / 2;
+
+  const outScale = Math.min(1, 1600 / sw);
+  const out = document.createElement('canvas');
+  out.width  = Math.round(sw * outScale);
+  out.height = Math.round(sh * outScale);
+
+  const octx = out.getContext('2d');
+  if (facingMode === 'user') {
+    octx.translate(out.width, 0);
+    octx.scale(-1, 1);
+  }
+  octx.drawImage(video, sx, sy, sw, sh, 0, 0, out.width, out.height);
+
+  const url = out.toDataURL('image/jpeg', 0.92);
+  shotImg.src = url;
+  saveBtn.href = url;
+
+  showScreen('previewScreen');
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+document.getElementById('backBtn').addEventListener('click', () => {
+  stopCamera();
+  stopLoop();
+  currentMode = null;
+  showScreen('menuScreen');
+});
+
+document.getElementById('flipBtn').addEventListener('click', () => {
+  facingMode = (facingMode === 'environment') ? 'user' : 'environment';
+  startCamera();
+});
+
+document.getElementById('retakeBtn').addEventListener('click', () => {
+  showScreen('camScreen');
+  startLoop();
+});
+
+window.addEventListener('orientationchange', () => setTimeout(drawOverlay, 250));
+window.addEventListener('resize', drawOverlay);
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) stopLoop();
+  else if (camScreen.classList.contains('active')) startLoop();
+});
+</script>
+</body>
+</html>
