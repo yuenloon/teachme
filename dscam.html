@@ -19,8 +19,7 @@
   #menuScreen{overflow-y:auto;-webkit-overflow-scrolling:touch;
     background:radial-gradient(120% 90% at 50% 0%,#1e1a1f 0%,#0d0a0d 60%)}
   .menu-wrap{padding:calc(env(safe-area-inset-top) + 34px) 20px calc(env(safe-area-inset-bottom) + 34px)}
-  .menu-wrap h1{margin:0 0 8px;font-size:27px;line-height:1.15;letter-spacing:-.4px;
-    color:#ffe6ee}
+  .menu-wrap h1{margin:0 0 8px;font-size:27px;line-height:1.15;letter-spacing:-.4px;color:#ffe6ee}
   .menu-wrap .sub{margin:0 0 6px;font-size:14.5px;line-height:1.45;color:#c9b8bd;max-width:32ch}
   .menu-wrap .kicker{font-size:11px;font-weight:600;letter-spacing:2px;
     text-transform:uppercase;color:#f7b8c4;margin:0 0 14px;opacity:.9}
@@ -99,7 +98,7 @@
   <div class="menu-wrap">
     <p class="kicker">🌸 Korean Aesthetic</p>
     <h1>Korean Shot Coach</h1>
-    <p class="sub">Soft light, centered frames, gentle mood — pick a shot type and I'll show a soft figure line where the person should stand.</p>
+    <p class="sub">A soft figure line shows exactly where the person stands — head, body, legs. Red lines warn where not to crop.</p>
     <div class="grid" id="modeGrid"></div>
   </div>
 </div>
@@ -140,20 +139,24 @@
 <script>
 /* =========================================================
    KOREAN-STYLE SHOT TYPES
-   Each mode can carry a `figure` block describing the
-   "shallow line" pose guide:
-     type  : 'single' | 'cluster'
-     pose  : 'bust'   | 'full'
-     headCy: head centre as fraction of screen height
-     headR : head radius as fraction of screen width
+   figure block:
+     type     : 'single' | 'cluster'
+     pose     : 'bust'   | 'full'
+     headCy   : head centre as fraction of screen height
+     headR    : head radius as fraction of screen width
+     warnings : array of joint-crop markers to draw
+                'chin' | 'knee' | 'ankle' |
+                'waist-safe' | 'chest-safe' |
+                'head-top' | 'feet'
    ========================================================= */
 const MODES = {
   portrait: {
     label: 'Portrait', icon: '🌸', guide: 'portrait',
     desc: 'Bust guide · centered',
-    tip: 'Line the person up with the soft figure. Head in the upper third, body angled ~30° with the face turned back. Soft window light — no harsh sun.',
+    tip: 'Line the person up with the soft figure — head in the upper third, eyes on the guide line. Body angled ~30° with the face turned back. Soft window light.',
     targetRoll: 0, targetElevation: -5,
-    figure: { type: 'single', pose: 'bust', headCy: 0.30, headR: 0.078 }
+    figure: { type:'single', pose:'bust', headCy:0.32, headR:0.088,
+              warnings:['chin','waist-safe'] }
   },
   landscape: {
     label: 'Landscape', icon: '🌷', guide: 'landscape',
@@ -167,14 +170,16 @@ const MODES = {
     desc: 'Ulzzang · small face, high angle',
     tip: 'Hold the phone at arm’s length, slightly above eye level. Keep your face small with lots of headroom, angle ~20° to one side, chin slightly down.',
     targetRoll: 0, targetElevation: -14,
-    figure: { type: 'single', pose: 'bust', headCy: 0.27, headR: 0.066 }
+    figure: { type:'single', pose:'bust', headCy:0.28, headR:0.074,
+              warnings:['chin'] }
   },
   group: {
     label: 'Group', icon: '💗', guide: 'group',
     desc: 'Loose cluster · warm light',
     tip: 'Cluster into the three figure guides — heads at different heights, faces close together. Warm even light (café, sunset, overcast).',
     targetRoll: 0, targetElevation: -3,
-    figure: { type: 'cluster', pose: 'bust', headCy: 0.33, headR: 0.050 }
+    figure: { type:'cluster', pose:'bust', headCy:0.33, headR:0.052,
+              warnings:['chin'] }
   },
   closeup: {
     label: 'Close-up', icon: '🌼', guide: 'circle',
@@ -193,9 +198,10 @@ const MODES = {
   fullbody: {
     label: 'Full body', icon: '👗', guide: 'full',
     desc: 'Full silhouette · street style',
-    tip: 'Line the person up with the full figure — head near the top, feet near the bottom. Phone at chest height, neutral background, relaxed mid-walk pose.',
+    tip: 'Line the person up with the full figure — head near the top, feet near the bottom. Red lines at knees and ankles mark where NOT to crop.',
     targetRoll: 0, targetElevation: -2,
-    figure: { type: 'single', pose: 'full', headCy: 0.155, headR: 0.042 }
+    figure: { type:'single', pose:'full', headCy:0.145, headR:0.046,
+              warnings:['head-top','knee','ankle','feet'] }
   }
 };
 
@@ -280,11 +286,7 @@ async function startCamera() {
   try {
     stream = await navigator.mediaDevices.getUserMedia({
       audio: false,
-      video: {
-        facingMode: { ideal: facingMode },
-        width:  { ideal: 1920 },
-        height: { ideal: 1080 }
-      }
+      video: { facingMode: { ideal: facingMode }, width: { ideal: 1920 }, height: { ideal: 1080 } }
     });
     video.srcObject = stream;
     video.style.transform = (facingMode === 'user') ? 'scaleX(-1)' : 'none';
@@ -299,17 +301,11 @@ async function startCamera() {
 }
 
 function stopCamera() {
-  if (stream) {
-    stream.getTracks().forEach(t => t.stop());
-    stream = null;
-  }
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
   video.srcObject = null;
 }
 
-function showError(html) {
-  errBox.innerHTML = html;
-  errBox.hidden = false;
-}
+function showError(html) { errBox.innerHTML = html; errBox.hidden = false; }
 
 /* =========================================================
    TILT / LEVEL
@@ -317,18 +313,14 @@ function showError(html) {
 async function requestTiltPermission() {
   if (typeof DeviceOrientationEvent !== 'undefined' &&
       typeof DeviceOrientationEvent.requestPermission === 'function') {
-    try {
-      const res = await DeviceOrientationEvent.requestPermission();
-      return res === 'granted';
-    } catch (e) { return false; }
+    try { return (await DeviceOrientationEvent.requestPermission()) === 'granted'; }
+    catch (e) { return false; }
   }
   return typeof DeviceOrientationEvent !== 'undefined';
 }
 
 function getScreenAngle() {
-  if (screen.orientation && typeof screen.orientation.angle === 'number') {
-    return screen.orientation.angle;
-  }
+  if (screen.orientation && typeof screen.orientation.angle === 'number') return screen.orientation.angle;
   if (typeof window.orientation === 'number') return window.orientation;
   return 0;
 }
@@ -339,10 +331,9 @@ function attachTilt() {
 
   window.addEventListener('deviceorientation', (e) => {
     if (e.beta == null || e.gamma == null) return;
-
-    const b  = e.beta  * Math.PI / 180;
-    const g  = e.gamma * Math.PI / 180;
-    const t  = getScreenAngle() * Math.PI / 180;
+    const b = e.beta * Math.PI / 180;
+    const g = e.gamma * Math.PI / 180;
+    const t = getScreenAngle() * Math.PI / 180;
 
     const gx = -Math.cos(b) * Math.sin(g);
     const gy = -Math.sin(b);
@@ -353,7 +344,6 @@ function attachTilt() {
 
     rollCW    = Math.atan2(gRight, gDown) * 180 / Math.PI;
     elevation = Math.asin(Math.max(-1, Math.min(1, gz))) * 180 / Math.PI;
-
     tiltActive = true;
   }, true);
 }
@@ -371,14 +361,10 @@ function startLoop() {
   const loop = () => { drawOverlay(); rafId = requestAnimationFrame(loop); };
   rafId = requestAnimationFrame(loop);
 }
-function stopLoop() {
-  if (rafId) cancelAnimationFrame(rafId);
-  rafId = null;
-}
+function stopLoop() { if (rafId) cancelAnimationFrame(rafId); rafId = null; }
 
 function drawOverlay() {
-  const w = overlay.clientWidth;
-  const h = overlay.clientHeight;
+  const w = overlay.clientWidth, h = overlay.clientHeight;
   if (!w || !h) return;
 
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -395,18 +381,16 @@ function drawOverlay() {
 
   drawGrid(ctx, w, h);
 
-  // Composition guide (grid, circle, band, etc.)
   switch (m.guide) {
-    case 'portrait':  drawPortraitGuides(ctx, w, h); break;
     case 'landscape': drawLandscape(ctx, w, h); break;
-    case 'selfie':    drawSelfieGuides(ctx, w, h); break;
-    case 'group':     drawGroupGuides(ctx, w, h); break;
     case 'circle':    drawCircle(ctx, w, h, 0.50, 0.50, 0.34); break;
     case 'food':      drawCircle(ctx, w, h, 0.50, 0.47, 0.32); break;
-    case 'full':      drawFullBodyGuides(ctx, w, h); break;
+    case 'group':     drawGroupBand(ctx, w, h); break;
+    case 'full':      drawFullBodyBand(ctx, w, h); break;
+    // portrait / selfie: figure carries the guide
   }
 
-  // THE SHALLOW POSE LINE — soft figure showing head / body / leg placement
+  // THE SHALLOW POSE LINE — soft anatomical figure + joint warnings
   if (m.figure) drawFigureGuide(ctx, w, h, m.figure);
 
   // Horizon guide line (roll + pitch)
@@ -416,10 +400,8 @@ function drawOverlay() {
   updateStatus(m, rollAligned);
 }
 
-/* ---- small helpers ---- */
-function line(ctx, x1, y1, x2, y2) {
-  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-}
+/* ---- helpers ---- */
+function line(ctx, x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -431,7 +413,7 @@ function roundRect(ctx, x, y, w, h, r) {
 }
 function tag(ctx, text, x, y, color, align) {
   ctx.save();
-  ctx.font = '600 11px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
+  ctx.font = '600 10.5px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
   ctx.fillStyle = color;
   ctx.textAlign = align || 'center';
   ctx.shadowColor = 'rgba(0,0,0,.9)';
@@ -442,7 +424,7 @@ function tag(ctx, text, x, y, color, align) {
 
 function drawGrid(ctx, w, h) {
   ctx.save();
-  ctx.strokeStyle = 'rgba(255,230,238,.18)';
+  ctx.strokeStyle = 'rgba(255,230,238,.16)';
   ctx.lineWidth = 1;
   ctx.setLineDash([5, 7]);
   ctx.beginPath();
@@ -455,28 +437,69 @@ function drawGrid(ctx, w, h) {
 }
 
 /* =========================================================
-   THE SHALLOW POSE LINE  (head, body, legs)
+   THE SHALLOW POSE LINE — anatomical figure + joint warnings
    ---------------------------------------------------------
-   A soft, faint figure drawn as a dashed blush-pink line
-   with a subtle glow. Shows where the person should stand
-   and how the head, torso, arms, and legs should be placed.
+   Structure (all relative to head radius r):
+     head      : ellipse (cx, headCy) rx=r  ry=1.22r
+     eyes      : small circles just above head centre
+     eye line  : soft horizontal guide across the face
+     chin      : bottom of head
+     neck      : two short lines from chin to shoulder
+     shoulders : gentle arc, width 2.5r
+     torso     : tapered curves to the waist
+     arms      : relaxed, quadratic curves
+     legs      : two curves from hips to feet
+     feet      : small ellipses on the floor
+   Warnings:
+     red dashed lines at knees & ankles (never crop here)
+     soft pink safe-crop line at the waist (bust modes)
    ========================================================= */
 function drawFigureGuide(ctx, w, h, fig) {
   if (fig.type === 'cluster') {
     const r = w * fig.headR;
-    drawPersonFigure(ctx, w * 0.27, h * (fig.headCy + 0.035), r * 0.92, 'bust');
-    drawPersonFigure(ctx, w * 0.50, h * fig.headCy,            r,        'bust');
-    drawPersonFigure(ctx, w * 0.73, h * (fig.headCy + 0.020), r * 0.92, 'bust');
+    drawPersonFigure(ctx, w * 0.27, h * (fig.headCy + 0.035), r * 0.94, 'bust', []);
+    drawPersonFigure(ctx, w * 0.50, h * fig.headCy,            r,        'bust', []);
+    drawPersonFigure(ctx, w * 0.73, h * (fig.headCy + 0.020), r * 0.94, 'bust', []);
+    // Eye-level bar across the cluster
+    ctx.save();
+    ctx.strokeStyle = 'rgba(247,184,196,.7)';
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([7, 6]);
+    const eyeY = h * fig.headCy - w * fig.headR * 0.10;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.10, eyeY);
+    ctx.lineTo(w * 0.90, eyeY);
+    ctx.stroke();
+    ctx.restore();
   } else {
-    drawPersonFigure(ctx, w * 0.5, h * fig.headCy, w * fig.headR, fig.pose);
+    drawPersonFigure(ctx, w * 0.5, h * fig.headCy, w * fig.headR,
+                     fig.pose, fig.warnings || []);
   }
 }
 
-function drawPersonFigure(ctx, cx, headCy, headR, pose) {
-  const s = headR;
+function drawPersonFigure(ctx, cx, headCy, r, pose, warnings) {
+  /* ---- key anatomy Y positions (all based on head radius r) ---- */
+  const eyeY      = headCy - r * 0.10;
+  const chinY     = headCy + r * 1.20;     // head ellipse bottom
+  const neckY     = chinY + r * 0.22;
+  const shoulderY = neckY + r * 0.18;
+  const shoulderW = r * 2.5;
+  const waistY    = shoulderY + r * 2.30;
+  const waistW    = shoulderW * 0.82;
+  const hipY      = waistY + r * 0.28;
+  const hipW      = waistW * 0.95;
+  const legLen    = r * 4.20;
+  const footY     = hipY + legLen;
+  const kneeY     = hipY + legLen * 0.48;
+  const ankleY    = footY - r * 0.15;
+  const legSpread = r * 0.58;
+  const eyeSpacing = r * 0.38;
 
+  /* ======================================================
+     Soft blush figure — dashed with a gentle glow
+     ====================================================== */
   ctx.save();
-  ctx.strokeStyle = 'rgba(247,184,196,.55)';
+  ctx.strokeStyle = 'rgba(247,184,196,.58)';
   ctx.lineWidth = 1.7;
   ctx.setLineDash([6, 6]);
   ctx.lineCap = 'round';
@@ -484,101 +507,208 @@ function drawPersonFigure(ctx, cx, headCy, headR, pose) {
   ctx.shadowColor = 'rgba(247,184,196,.55)';
   ctx.shadowBlur = 7;
 
-  // --- HEAD ---
+  // HEAD (slightly oval, wider than tall looks more natural)
   ctx.beginPath();
-  ctx.arc(cx, headCy, s, 0, Math.PI * 2);
+  ctx.ellipse(cx, headCy, r * 1.00, r * 1.22, 0, 0, Math.PI * 2);
   ctx.stroke();
 
-  // --- NECK ---
-  const neckTop = headCy + s * 0.92;
-  const neckH   = s * 0.42;
-  const shoulderY = neckTop + neckH;
+  // EYES (small dots) + eye line
   ctx.beginPath();
-  ctx.moveTo(cx - s * 0.30, neckTop);
-  ctx.lineTo(cx - s * 0.30, shoulderY);
-  ctx.moveTo(cx + s * 0.30, neckTop);
-  ctx.lineTo(cx + s * 0.30, shoulderY);
+  ctx.arc(cx - eyeSpacing, eyeY, r * 0.075, 0, Math.PI * 2);
+  ctx.arc(cx + eyeSpacing, eyeY, r * 0.075, 0, Math.PI * 2);
   ctx.stroke();
 
-  // --- SHOULDERS ---
-  const shoulderW = s * 2.4;
-  const shoulderDropY = shoulderY + s * 0.18;
+  // EYE LINE (soft across-face guide)
+  ctx.setLineDash([3, 4]);
+  ctx.strokeStyle = 'rgba(247,184,196,.85)';
+  ctx.lineWidth = 1.3;
   ctx.beginPath();
-  ctx.moveTo(cx - shoulderW * 0.5, shoulderDropY);
-  ctx.quadraticCurveTo(cx, shoulderY - s * 0.12, cx + shoulderW * 0.5, shoulderDropY);
+  ctx.moveTo(cx - r * 1.55, eyeY);
+  ctx.lineTo(cx + r * 1.55, eyeY);
   ctx.stroke();
 
-  // --- TORSO (tapered sides) ---
-  const torsoH = s * 2.6;
-  const waistY = shoulderY + torsoH;
-  const waistW = shoulderW * 0.82;
+  // restore main figure style
+  ctx.setLineDash([6, 6]);
+  ctx.strokeStyle = 'rgba(247,184,196,.58)';
+  ctx.lineWidth = 1.7;
+
+  // NECK
   ctx.beginPath();
-  ctx.moveTo(cx - shoulderW * 0.5, shoulderDropY);
-  ctx.quadraticCurveTo(cx - waistW * 0.62, shoulderY + torsoH * 0.55,
-                        cx - waistW * 0.5, waistY);
-  ctx.moveTo(cx + shoulderW * 0.5, shoulderDropY);
-  ctx.quadraticCurveTo(cx + waistW * 0.62, shoulderY + torsoH * 0.55,
-                        cx + waistW * 0.5, waistY);
+  ctx.moveTo(cx - r * 0.28, chinY);
+  ctx.lineTo(cx - r * 0.32, shoulderY);
+  ctx.moveTo(cx + r * 0.28, chinY);
+  ctx.lineTo(cx + r * 0.32, shoulderY);
   ctx.stroke();
 
-  // --- BUST: stop here with a soft waist tick ---
+  // SHOULDERS (gentle arc)
+  ctx.beginPath();
+  ctx.moveTo(cx - shoulderW / 2, shoulderY + r * 0.20);
+  ctx.quadraticCurveTo(cx, shoulderY - r * 0.20, cx + shoulderW / 2, shoulderY + r * 0.20);
+  ctx.stroke();
+
+  // TORSO (tapered curves down to waist)
+  ctx.beginPath();
+  ctx.moveTo(cx - shoulderW / 2, shoulderY + r * 0.20);
+  ctx.quadraticCurveTo(cx - waistW * 0.55, shoulderY + (waistY - shoulderY) * 0.55,
+                        cx - waistW / 2, waistY);
+  ctx.moveTo(cx + shoulderW / 2, shoulderY + r * 0.20);
+  ctx.quadraticCurveTo(cx + waistW * 0.55, shoulderY + (waistY - shoulderY) * 0.55,
+                        cx + waistW / 2, waistY);
+  ctx.stroke();
+
+  /* ---- BUST MODE: stop at the waist, add a soft safe-crop tick ---- */
   if (pose === 'bust') {
-    ctx.setLineDash([3, 6]);
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = 'rgba(247,184,196,.90)';
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(cx - waistW * 0.5, waistY);
-    ctx.lineTo(cx + waistW * 0.5, waistY);
+    ctx.moveTo(cx - waistW * 0.75, waistY);
+    ctx.lineTo(cx + waistW * 0.75, waistY);
     ctx.stroke();
     ctx.restore();
+
+    // warnings relevant to bust (chin, waist-safe)
+    drawJointWarnings(ctx, cx, {
+      chinY, waistY, shoulderW
+    }, warnings, 'bust');
     return;
   }
 
-  // --- ARMS (relaxed along the sides) ---
-  const armLen = s * 3.0;
-  const armOut = s * 0.30;
+  /* ---- FULL BODY: arms, legs, feet ---- */
+  // ARMS (relaxed, slight outward curve)
+  const armLen = r * 2.6;
   ctx.beginPath();
-  ctx.moveTo(cx - shoulderW * 0.5 + s * 0.05, shoulderDropY + s * 0.25);
-  ctx.quadraticCurveTo(cx - shoulderW * 0.5 - armOut,
-                        shoulderY + armLen * 0.55,
-                        cx - shoulderW * 0.5 - armOut * 0.5,
-                        shoulderY + armLen);
-  ctx.moveTo(cx + shoulderW * 0.5 - s * 0.05, shoulderDropY + s * 0.25);
-  ctx.quadraticCurveTo(cx + shoulderW * 0.5 + armOut,
-                        shoulderY + armLen * 0.55,
-                        cx + shoulderW * 0.5 + armOut * 0.5,
-                        shoulderY + armLen);
+  ctx.moveTo(cx - shoulderW / 2 + r * 0.10, shoulderY + r * 0.30);
+  ctx.quadraticCurveTo(cx - shoulderW / 2 - r * 0.30, shoulderY + armLen * 0.55,
+                        cx - shoulderW / 2 - r * 0.05, shoulderY + armLen);
+  ctx.moveTo(cx + shoulderW / 2 - r * 0.10, shoulderY + r * 0.30);
+  ctx.quadraticCurveTo(cx + shoulderW / 2 + r * 0.30, shoulderY + armLen * 0.55,
+                        cx + shoulderW / 2 + r * 0.05, shoulderY + armLen);
   ctx.stroke();
 
-  // --- HIPS / LEGS ---
-  const legLen = s * 3.6;
-  const legSpread = s * 0.55;
+  // LEGS
   ctx.beginPath();
-  ctx.moveTo(cx - waistW * 0.30, waistY);
-  ctx.quadraticCurveTo(cx - legSpread - s * 0.18, waistY + legLen * 0.55,
-                        cx - legSpread, waistY + legLen);
-  ctx.moveTo(cx + waistW * 0.30, waistY);
-  ctx.quadraticCurveTo(cx + legSpread + s * 0.18, waistY + legLen * 0.55,
-                        cx + legSpread, waistY + legLen);
+  ctx.moveTo(cx - hipW * 0.30, hipY);
+  ctx.quadraticCurveTo(cx - legSpread - r * 0.08, hipY + legLen * 0.55,
+                        cx - legSpread, footY - r * 0.12);
+  ctx.moveTo(cx + hipW * 0.30, hipY);
+  ctx.quadraticCurveTo(cx + legSpread + r * 0.08, hipY + legLen * 0.55,
+                        cx + legSpread, footY - r * 0.12);
   ctx.stroke();
 
-  // --- FEET ---
+  // FEET (small ellipses on the floor)
   ctx.setLineDash([]);
   ctx.beginPath();
-  ctx.ellipse(cx - legSpread, waistY + legLen + s * 0.05,
-              s * 0.30, s * 0.12, 0, 0, Math.PI * 2);
-  ctx.ellipse(cx + legSpread, waistY + legLen + s * 0.05,
-              s * 0.30, s * 0.12, 0, 0, Math.PI * 2);
+  ctx.ellipse(cx - legSpread, footY, r * 0.32, r * 0.11, 0, 0, Math.PI * 2);
+  ctx.ellipse(cx + legSpread, footY, r * 0.32, r * 0.11, 0, 0, Math.PI * 2);
   ctx.stroke();
+
+  ctx.restore();
+
+  // joint warnings for full body (knee, ankle, head-top, feet)
+  drawJointWarnings(ctx, cx, {
+    headTopY: headCy - r * 1.22,
+    chinY,
+    kneeY,
+    ankleY,
+    footY,
+    shoulderW,
+    legSpread
+  }, warnings, 'full');
+}
+
+/* =========================================================
+   JOINT CROP WARNINGS  (from the reference code's technique)
+   ========================================================= */
+function drawJointWarnings(ctx, cx, pos, warnings, pose) {
+  if (!warnings || !warnings.length) return;
+
+  const halfW = (pos.shoulderW || 80) * 1.55;
+
+  ctx.save();
+  ctx.font = '600 10px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
+  ctx.textAlign = 'center';
+  ctx.shadowColor = 'rgba(0,0,0,.95)';
+  ctx.shadowBlur = 6;
+
+  /* ---------- RED: never crop here ---------- */
+  ctx.strokeStyle = 'rgba(239,68,68,.80)';
+  ctx.fillStyle   = 'rgba(252,165,165,.98)';
+  ctx.lineWidth = 1.3;
+  ctx.setLineDash([5, 4]);
+
+  if (warnings.includes('chin') && pos.chinY != null) {
+    ctx.beginPath();
+    ctx.moveTo(cx - halfW, pos.chinY);
+    ctx.lineTo(cx + halfW, pos.chinY);
+    ctx.stroke();
+    ctx.fillText('✕ don’t crop the chin', cx, pos.chinY - 5);
+  }
+
+  if (warnings.includes('knee') && pos.kneeY != null) {
+    ctx.beginPath();
+    ctx.moveTo(cx - halfW, pos.kneeY);
+    ctx.lineTo(cx + halfW, pos.kneeY);
+    ctx.stroke();
+    ctx.fillText('✕ don’t crop at knees', cx, pos.kneeY - 5);
+  }
+
+  if (warnings.includes('ankle') && pos.ankleY != null) {
+    ctx.beginPath();
+    ctx.moveTo(cx - halfW, pos.ankleY);
+    ctx.lineTo(cx + halfW, pos.ankleY);
+    ctx.stroke();
+    ctx.fillText('✕ don’t crop at ankles', cx, pos.ankleY - 5);
+  }
+
+  /* ---------- PINK: good place to crop ---------- */
+  ctx.strokeStyle = 'rgba(247,184,196,.95)';
+  ctx.fillStyle   = 'rgba(255,230,238,.98)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 4]);
+
+  if (warnings.includes('waist-safe') && pos.waistY != null) {
+    ctx.beginPath();
+    ctx.moveTo(cx - halfW, pos.waistY);
+    ctx.lineTo(cx + halfW, pos.waistY);
+    ctx.stroke();
+    ctx.fillText('✓ safe crop at waist', cx, pos.waistY + 12);
+  }
+
+  if (warnings.includes('chest-safe') && pos.shoulderY != null) {
+    const y = pos.shoulderY + 4;
+    ctx.beginPath();
+    ctx.moveTo(cx - halfW, y);
+    ctx.lineTo(cx + halfW, y);
+    ctx.stroke();
+    ctx.fillText('✓ safe crop at chest', cx, y + 12);
+  }
+
+  if (warnings.includes('head-top') && pos.headTopY != null) {
+    ctx.beginPath();
+    ctx.moveTo(cx - halfW, pos.headTopY);
+    ctx.lineTo(cx + halfW, pos.headTopY);
+    ctx.stroke();
+    ctx.fillText('✓ head top — leave air above', cx, pos.headTopY - 6);
+  }
+
+  if (warnings.includes('feet') && pos.footY != null) {
+    ctx.beginPath();
+    ctx.moveTo(cx - halfW, pos.footY + 8);
+    ctx.lineTo(cx + halfW, pos.footY + 8);
+    ctx.stroke();
+    ctx.fillText('✓ feet rest here — leave floor', cx, pos.footY + 22);
+  }
 
   ctx.restore();
 }
 
 /* =========================================================
-   HORIZON GUIDE LINE  (roll reference you align to)
+   HORIZON GUIDE LINE
    ========================================================= */
 function drawGuideLine(ctx, w, h, targetRoll, aligned) {
   const cy = h * 0.52;
   const half = Math.hypot(w, h) * 0.62;
-
   const tint = aligned ? '247,184,196' : '255,245,230';
   const baseAlpha = aligned ? 0.90 : 0.55;
 
@@ -588,9 +718,7 @@ function drawGuideLine(ctx, w, h, targetRoll, aligned) {
   ctx.rotate(targetRoll * Math.PI / 180);
   ctx.setLineDash([16, 14]);
   ctx.lineWidth = 1.3;
-  ctx.strokeStyle = aligned
-    ? 'rgba(247,184,196,0.30)'
-    : 'rgba(255,245,230,0.22)';
+  ctx.strokeStyle = aligned ? 'rgba(247,184,196,0.30)' : 'rgba(255,245,230,0.22)';
   ctx.beginPath();
   ctx.moveTo(-half, 0);
   ctx.lineTo(half, 0);
@@ -601,16 +729,12 @@ function drawGuideLine(ctx, w, h, targetRoll, aligned) {
   ctx.save();
   ctx.translate(w / 2, cy);
   ctx.rotate((tiltActive ? rollCW : targetRoll) * Math.PI / 180);
-
   const grad = ctx.createLinearGradient(-half, 0, half, 0);
   grad.addColorStop(0.00, `rgba(${tint},0)`);
   grad.addColorStop(0.18, `rgba(${tint},${baseAlpha})`);
   grad.addColorStop(0.82, `rgba(${tint},${baseAlpha})`);
   grad.addColorStop(1.00, `rgba(${tint},0)`);
-
-  ctx.shadowColor = aligned
-    ? 'rgba(247,184,196,0.9)'
-    : 'rgba(255,245,230,0.5)';
+  ctx.shadowColor = aligned ? 'rgba(247,184,196,0.9)' : 'rgba(255,245,230,0.5)';
   ctx.shadowBlur  = aligned ? 20 : 9;
   ctx.lineWidth   = aligned ? 2.6 : 2;
   ctx.strokeStyle = grad;
@@ -700,8 +824,7 @@ function drawPitchMeter(ctx, w, h, target) {
     const diff = target - elevation;
     if (Math.abs(diff) >= 3) {
       const dir = diff < 0 ? 'DOWN' : 'UP';
-      tag(ctx, `TILT ${dir} ${Math.abs(diff).toFixed(0)}°`,
-          x - 12, top - 10, '#fff5e6', 'right');
+      tag(ctx, `TILT ${dir} ${Math.abs(diff).toFixed(0)}°`, x - 12, top - 10, '#fff5e6', 'right');
     } else {
       tag(ctx, 'ANGLE ✓', x - 12, top - 10, '#f7b8c4', 'right');
     }
@@ -709,21 +832,8 @@ function drawPitchMeter(ctx, w, h, target) {
 }
 
 /* =========================================================
-   COMPOSITION GUIDES (small, complementary)
+   OTHER COMPOSITION GUIDES
    ========================================================= */
-function drawPortraitGuides(ctx, w, h) {
-  // Eye line only — the figure handles head/shoulders
-  ctx.save();
-  ctx.strokeStyle = 'rgba(247,184,196,.9)';
-  ctx.lineWidth = 1.4;
-  ctx.setLineDash([6, 6]);
-  const ey = h * 0.30 - w * 0.078 * 0.15;
-  line(ctx, w * 0.5 - w * 0.09, ey, w * 0.5 + w * 0.09, ey);
-  ctx.setLineDash([]);
-  tag(ctx, 'EYES ON UPPER THIRD', w / 2, ey - 8, '#f7b8c4');
-  ctx.restore();
-}
-
 function drawLandscape(ctx, w, h) {
   ctx.save();
   ctx.setLineDash([10, 8]);
@@ -737,29 +847,14 @@ function drawLandscape(ctx, w, h) {
   ctx.restore();
 }
 
-function drawSelfieGuides(ctx, w, h) {
-  // Eye line only
+function drawGroupBand(ctx, w, h) {
   ctx.save();
-  ctx.strokeStyle = 'rgba(247,184,196,.9)';
-  ctx.lineWidth = 1.4;
-  ctx.setLineDash([6, 6]);
-  const ey = h * 0.27 - w * 0.066 * 0.1;
-  line(ctx, w * 0.5 - w * 0.08, ey, w * 0.5 + w * 0.08, ey);
-  ctx.setLineDash([]);
-  tag(ctx, 'SMALL FACE · SOFT LIGHT', w / 2, ey - 8, '#f7b8c4');
-  ctx.restore();
-}
-
-function drawGroupGuides(ctx, w, h) {
-  ctx.save();
-  const top = h * 0.24, bot = h * 0.68;
-
+  const top = h * 0.24, bot = h * 0.72;
   ctx.setLineDash([10, 8]);
   ctx.lineWidth = 1.5;
   ctx.strokeStyle = 'rgba(255,230,238,.55)';
   line(ctx, 0, top, w, top);
   line(ctx, 0, bot, w, bot);
-
   ctx.setLineDash([]);
   tag(ctx, 'LOOSE CLUSTER · WARM LIGHT', w / 2, top - 12, 'rgba(255,230,238,.85)');
   ctx.restore();
@@ -786,22 +881,14 @@ function drawCircle(ctx, w, h, cxF, cyF, rF) {
   ctx.restore();
 }
 
-function drawFullBodyGuides(ctx, w, h) {
-  // Head-top line + feet line only — the figure handles body
+function drawFullBodyBand(ctx, w, h) {
+  // (figure carries the guide; just a soft band for reference)
   ctx.save();
-  ctx.strokeStyle = 'rgba(247,184,196,.9)';
-  ctx.lineWidth = 1.4;
-  ctx.setLineDash([7, 6]);
-
-  const headTopY = h * 0.155 - w * 0.042;    // top of head circle
-  const feetY    = h * 0.93;
-
-  line(ctx, w * 0.14, headTopY, w * 0.86, headTopY);
-  line(ctx, w * 0.14, feetY,    w * 0.86, feetY);
-
-  ctx.setLineDash([]);
-  tag(ctx, 'HEAD TOP', w * 0.5, headTopY - 7, '#f7b8c4');
-  tag(ctx, 'FEET',     w * 0.5, feetY + 16,    '#f7b8c4');
+  ctx.setLineDash([8, 7]);
+  ctx.lineWidth = 1.2;
+  ctx.strokeStyle = 'rgba(255,230,238,.35)';
+  line(ctx, w * 0.10, h * 0.06, w * 0.90, h * 0.06);
+  line(ctx, w * 0.10, h * 0.94, w * 0.90, h * 0.94);
   ctx.restore();
 }
 
@@ -824,8 +911,7 @@ function updateStatus(m, rollAligned) {
       statusText.textContent = `Tilt ${Math.abs(rollCW).toFixed(0)}° to level`;
     } else {
       const diff = m.targetElevation - elevation;
-      statusText.textContent =
-        `Angle phone ${diff < 0 ? 'down' : 'up'} ${Math.abs(diff).toFixed(0)}°`;
+      statusText.textContent = `Angle phone ${diff < 0 ? 'down' : 'up'} ${Math.abs(diff).toFixed(0)}°`;
     }
   }
 }
@@ -852,16 +938,12 @@ function capture() {
   out.height = Math.round(sh * outScale);
 
   const octx = out.getContext('2d');
-  if (facingMode === 'user') {
-    octx.translate(out.width, 0);
-    octx.scale(-1, 1);
-  }
+  if (facingMode === 'user') { octx.translate(out.width, 0); octx.scale(-1, 1); }
   octx.drawImage(video, sx, sy, sw, sh, 0, 0, out.width, out.height);
 
   const url = out.toDataURL('image/jpeg', 0.92);
   shotImg.src = url;
   saveBtn.href = url;
-
   showScreen('previewScreen');
 }
 
@@ -869,25 +951,19 @@ function capture() {
    NAVIGATION
    ========================================================= */
 document.getElementById('backBtn').addEventListener('click', () => {
-  stopCamera();
-  stopLoop();
+  stopCamera(); stopLoop();
   currentMode = null;
   showScreen('menuScreen');
 });
-
 document.getElementById('flipBtn').addEventListener('click', () => {
   facingMode = (facingMode === 'environment') ? 'user' : 'environment';
   startCamera();
 });
-
 document.getElementById('retakeBtn').addEventListener('click', () => {
-  showScreen('camScreen');
-  startLoop();
+  showScreen('camScreen'); startLoop();
 });
-
 window.addEventListener('orientationchange', () => setTimeout(drawOverlay, 250));
 window.addEventListener('resize', drawOverlay);
-
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) stopLoop();
   else if (camScreen.classList.contains('active')) startLoop();
