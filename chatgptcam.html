@@ -3,122 +3,246 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Photo Guide</title>
+<title>Professional Photo Guide</title>
 
 <style>
+
 *{
     margin:0;
-    padding*0;
+    padding:0;
     box-sizing:border-box;
+    font-family:Arial, sans-serif;
 }
 
 body{
-    font-family:Arial,sans-serif;
     background:#111;
     color:white;
     overflow:hidden;
 }
 
-/* MENU PAGE */
+/* ==========================
+   MENU PAGE
+========================== */
+
 #menuPage{
     display:flex;
-   *flex-direction:column;
-    justify*content:center;
-    align-items:ce*ter;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
     height:100vh;
-    gap:15p*;
+    padding:20px;
+}
+
+#menuPage h1{
+    margin-bottom:20px;
 }
 
 .photo-btn{
-    width*250*x;
-    padding:15px;
-    border*none;
+    width:280px;
+    padding:18px;
+    border:none;
     border-radius:12px;
-    *ont*size:18px;
-    cursor:pointer;
-   *background*#2196f3;
+    background:#1e88e5;
     color:white;
+    font-size:18px;
+    cursor:pointer;
+    transition:0.3s;
 }
 
-/* CAMERA PAGE */
+.photo-btn:hover{
+    background:#1565c0;
+}
+
+/* ==========================
+   CAMERA PAGE
+========================== */
+
 #cameraPage{
     display:none;
- *  width:100vw;
+    position:relative;
+    width:100vw;
     height:100vh;
- *  position:relative;
+    overflow:hidden;
 }
 
 video{
-   *position:absolute;
-    width:100%;*    height:100%;
-    object*fit:cover;
-}
-
-/* Overlay */
-.overlay{
-    position:absolute;*    inset:0;
-    pointer-events:no*e;
-}
-
-.line{
-    position:absolute*
+    position:absolute;
     width:100%;
-    border-top*1px solid rgba(255,255,255,0.6*;
+    height:100%;
+    object-fit:cover;
 }
 
-.label{
-    position:absolute*
-    right:10px;
-    color:white;
-*   background*rgba(0,0,0,0.5);
-    padding*2px 8px;
-    border-radius:6px;
-  * font*size:12px;
+/* ==========================
+   OVERLAY
+========================== */
+
+.overlay{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
 }
 
-/* Portrait guides */
-.headspace{
-    top*30%;
-}
-.eye{
-    top:38%;
-}
-.shoul*er{
-    top:48%;
-}
-.waist{
-    top*65*;
-}
-.foot{
-    bottom:5%;
-}
+/* Center alignment line */
 
-/* Vertical Center */
 .center-line{
     position:absolute;
     left:50%;
     top:0;
     height:100%;
-    border-left:1px dashed rgba(255,255,255,0.6);
+    border-left:3px solid rgba(255,255,255,0.95);
+    box-shadow:0 0 10px rgba(255,255,255,0.8);
 }
 
-/* Level indicator */
-.level{
+/* Guide Lines */
+
+.line{
+    position:absolute;
+    left:0;
+    width:100%;
+    height:2px;
+}
+
+/* Guide Band */
+
+.line::after{
+    content:'';
+    position:absolute;
+    left:0;
+    top:-8px;
+    width:100%;
+    height:16px;
+}
+
+/* HEADSPACE */
+
+.headspace{
+    top:30%;
+    background:#00ff88;
+    box-shadow:0 0 12px #00ff88;
+}
+
+.headspace::after{
+    background:rgba(0,255,136,0.15);
+}
+
+/* EYE */
+
+.eye{
+    top:40%;
+    background:#00bfff;
+    box-shadow:0 0 12px #00bfff;
+}
+
+.eye::after{
+    background:rgba(0,191,255,0.15);
+}
+
+/* SHOULDER */
+
+.shoulder{
+    top:50%;
+    background:#ffd600;
+    box-shadow:0 0 12px #ffd600;
+}
+
+.shoulder::after{
+    background:rgba(255,214,0,0.15);
+}
+
+/* WAIST */
+
+.waist{
+    top:68%;
+    background:#ff9800;
+    box-shadow:0 0 12px #ff9800;
+}
+
+.waist::after{
+    background:rgba(255,152,0,0.15);
+}
+
+/* FOOT */
+
+.foot{
+    top:92%;
+    background:#ff5252;
+    box-shadow:0 0 12px #ff5252;
+}
+
+.foot::after{
+    background:rgba(255,82,82,0.15);
+}
+
+/* Labels */
+
+.label{
+    position:absolute;
+    right:10px;
+    transform:translateY(-50%);
+    padding:4px 10px;
+    border-radius:6px;
+    background:rgba(0,0,0,0.6);
+    font-size:12px;
+    font-weight:bold;
+}
+
+/* Human Guide Area */
+
+.person-guide{
+    position:absolute;
+    left:50%;
+    top:30%;
+    transform:translateX(-50%);
+    width:40%;
+    height:62%;
+    border:3px dashed rgba(255,255,255,0.7);
+    border-radius:180px 180px 30px 30px;
+    background:rgba(255,255,255,0.04);
+}
+
+/* Tilt Indicator */
+
+.level-container{
     position:absolute;
     top:15px;
     left:50%;
     transform:translateX(-50%);
     background:rgba(0,0,0,0.6);
-    padding:8px 15px;
-    border-radius:20px;
-    z-index:2;
+    padding:10px 20px;
+    border-radius:25px;
+    font-weight:bold;
+    z-index:999;
 }
+
+/* Back Button */
+
+.back-btn{
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:999;
+    padding:12px 25px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    background:#f44336;
+    color:white;
+    cursor:pointer;
+}
+
 </style>
 </head>
+
 <body>
 
-<!-- PAGE 1 -->
+<!-- ==========================
+     PAGE 1
+=========================== -->
+
 <div id="menuPage">
+
     <h1>Select Photo Type</h1>
 
     <button class="photo-btn" onclick="startCamera('portrait')">
@@ -136,78 +260,115 @@ video{
     <button class="photo-btn" onclick="startCamera('landscape')">
         Landscape
     </button>
+
 </div>
 
-<!-- PAGE 2 -->
+<!-- ==========================
+     PAGE 2
+=========================== -->
+
 <div id="cameraPage">
 
     <video id="video" autoplay playsinline></video>
 
-    <div class="level">
-        Tilt: <span id="tiltValue">0°</span>
+    <div class="level-container">
+        Phone Level:
+        <span id="tiltValue">0°</span>
     </div>
 
     <div class="overlay">
 
+        <!-- Person Outline -->
+        <div class="person-guide"></div>
+
+        <!-- Center Line -->
         <div class="center-line"></div>
 
+        <!-- Head Space -->
         <div class="line headspace"></div>
-        <div class="label" style="top:29%;">
-            Head Space (30%)
+        <div class="label" style="top:30%;">
+            Head Space 30%
         </div>
 
+        <!-- Eye -->
         <div class="line eye"></div>
-        <div class="label" style="top:37%;">
-            Eyes
+        <div class="label" style="top:40%;">
+            Eye Level
         </div>
 
+        <!-- Shoulder -->
         <div class="line shoulder"></div>
-        <div class="label" style="top:47%;">
-            Shoulders
+        <div class="label" style="top:50%;">
+            Shoulder
         </div>
 
+        <!-- Waist -->
         <div class="line waist"></div>
-        <div class="label" style="top:64%;">
+        <div class="label" style="top:68%;">
             Waist
         </div>
 
+        <!-- Foot -->
         <div class="line foot"></div>
-        <div class="label" style="bottom:6%;">
-            Feet
+        <div class="label" style="top:92%;">
+            Foot
         </div>
 
     </div>
+
+    <button class="back-btn" onclick="goBack()">
+        Back
+    </button>
 
 </div>
 
 <script>
 
+let mediaStream = null;
+
 async function startCamera(type){
 
-    document.getElementById("menuPage").style.display="none";
-    document.getElementById("cameraPage").style.display="block";
+    document.getElementById('menuPage').style.display='none';
+    document.getElementById('cameraPage').style.display='block';
 
     try{
-        const stream = await navigator.mediaDevices.getUserMedia({
+
+        mediaStream = await navigator.mediaDevices.getUserMedia({
             video:{
                 facingMode:"environment"
             }
         });
 
-        document.getElementById("video").srcObject = stream;
+        document.getElementById('video').srcObject = mediaStream;
 
-    }catch(err){
-        alert("Camera access denied.");
+    }
+    catch(error){
+
+        alert('Camera permission denied or camera unavailable.');
+
     }
 }
 
-// phone tilt indicator
-window.addEventListener("deviceorientation",(event)=>{
+function goBack(){
 
-    let tilt = Math.round(event.gamma || 0);
+    if(mediaStream){
 
-    document.getElementById("tiltValue").innerText =
-        tilt + "°";
+        mediaStream.getTracks().forEach(track=>{
+            track.stop();
+        });
+
+    }
+
+    document.getElementById('cameraPage').style.display='none';
+    document.getElementById('menuPage').style.display='flex';
+}
+
+window.addEventListener('deviceorientation', function(event){
+
+    const gamma = Math.round(event.gamma || 0);
+
+    document.getElementById('tiltValue').textContent =
+        gamma + "°";
 
 });
 
