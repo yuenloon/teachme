@@ -4,10 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
 <meta name="theme-color" content="#0b0b0d" />
-<title>Shot Coach</title>
+<title>Korean Shot Coach</title>
 <style>
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;height:100%;overflow:hidden;background:#0b0b0d;color:#fff;
+  html,body{margin:0;height:100%;overflow:hidden;background:#0b0b0d;color:#fff5e6;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     -webkit-user-select:none;user-select:none}
   button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -17,19 +17,24 @@
 
   /* ---------- MENU ---------- */
   #menuScreen{overflow-y:auto;-webkit-overflow-scrolling:touch;
-    background:radial-gradient(120% 90% at 50% 0%,#1c1c22 0%,#0b0b0d 60%)}
+    background:radial-gradient(120% 90% at 50% 0%,#1e1a1f 0%,#0d0a0d 60%)}
   .menu-wrap{padding:calc(env(safe-area-inset-top) + 34px) 20px calc(env(safe-area-inset-bottom) + 34px)}
-  .menu-wrap h1{margin:0 0 8px;font-size:27px;line-height:1.15;letter-spacing:-.4px}
-  .menu-wrap .sub{margin:0 0 26px;font-size:14.5px;line-height:1.45;color:#9a9aa6;max-width:32ch}
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .menu-wrap h1{margin:0 0 8px;font-size:27px;line-height:1.15;letter-spacing:-.4px;
+    color:#ffe6ee}
+  .menu-wrap .sub{margin:0 0 6px;font-size:14.5px;line-height:1.45;color:#c9b8bd;max-width:32ch}
+  .menu-wrap .kicker{font-size:11px;font-weight:600;letter-spacing:2px;
+    text-transform:uppercase;color:#f7b8c4;margin:0 0 14px;opacity:.9}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:22px}
   @media(min-width:560px){.grid{grid-template-columns:repeat(3,1fr)}}
   .card{display:flex;flex-direction:column;align-items:flex-start;gap:10px;
-    padding:18px 16px 16px;border-radius:18px;background:#16161b;
-    border:1px solid rgba(255,255,255,.07);transition:transform .12s ease,background .12s ease}
-  .card:active{transform:scale(.965);background:#1e1e25}
+    padding:18px 16px 16px;border-radius:18px;
+    background:linear-gradient(180deg,#221a20 0%,#1a141a 100%);
+    border:1px solid rgba(247,184,196,.10);
+    transition:transform .12s ease,background .12s ease,border-color .12s ease}
+  .card:active{transform:scale(.965);background:#2a1f26;border-color:rgba(247,184,196,.3)}
   .card .ico{font-size:26px;line-height:1}
-  .card .lbl{font-size:15px;font-weight:600;letter-spacing:-.2px}
-  .card .desc{font-size:12.5px;line-height:1.4;color:#8e8e9a;margin-top:2px}
+  .card .lbl{font-size:15px;font-weight:600;letter-spacing:-.2px;color:#ffe6ee}
+  .card .desc{font-size:12.5px;line-height:1.4;color:#9d8d93;margin-top:2px}
 
   /* ---------- CAMERA ---------- */
   #camScreen{background:#000}
@@ -42,27 +47,38 @@
     background:linear-gradient(to bottom,rgba(0,0,0,.55),transparent)}
   .icon-btn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;
     background:rgba(0,0,0,.4);backdrop-filter:blur(8px);font-size:19px;
-    border:1px solid rgba(255,255,255,.14)}
-  .icon-btn:active{background:rgba(255,255,255,.18)}
-  .mode-chip{font-size:13px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;
-    padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.4);
-    backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);color:#fff}
+    border:1px solid rgba(247,184,196,.22);color:#ffe6ee}
+  .icon-btn:active{background:rgba(247,184,196,.18)}
+  .mode-chip{font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;
+    padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.42);
+    backdrop-filter:blur(8px);border:1px solid rgba(247,184,196,.25);color:#ffe6ee}
+
+  .status{position:absolute;top:calc(env(safe-area-inset-top) + 66px);left:50%;
+    transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:8px;
+    padding:8px 16px;border-radius:999px;font-size:12.5px;font-weight:600;
+    letter-spacing:.4px;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);
+    border:1px solid rgba(247,184,196,.22);white-space:nowrap;color:#ffe6ee;
+    transition:background .2s,border-color .2s}
+  .status .dot{width:8px;height:8px;border-radius:50%;background:#ffe6ee;transition:background .2s}
+  .status.ok{background:rgba(247,184,196,.22);border-color:rgba(247,184,196,.65)}
+  .status.ok .dot{background:#f7b8c4;box-shadow:0 0 12px #f7b8c4}
 
   .bottombar{position:absolute;left:0;right:0;bottom:0;z-index:3;display:flex;
     flex-direction:column;align-items:center;gap:16px;
     padding:26px 20px calc(env(safe-area-inset-bottom) + 26px);
     background:linear-gradient(to top,rgba(0,0,0,.72),transparent)}
-  .tip{max-width:34ch;text-align:center;font-size:13.5px;line-height:1.45;color:#e9e9ef;
+  .tip{max-width:34ch;text-align:center;font-size:13.5px;line-height:1.5;color:#f4e5ea;
     text-shadow:0 1px 6px rgba(0,0,0,.8)}
-  .shutter{width:74px;height:74px;border-radius:50%;border:3px solid rgba(255,255,255,.9);
-    display:grid;place-items:center;background:rgba(255,255,255,.12);transition:transform .1s}
-  .shutter span{width:58px;height:58px;border-radius:50%;background:#fff;display:block}
+  .shutter{width:74px;height:74px;border-radius:50%;
+    border:3px solid rgba(247,184,196,.9);
+    display:grid;place-items:center;background:rgba(247,184,196,.14);transition:transform .1s}
+  .shutter span{width:58px;height:58px;border-radius:50%;background:#ffe6ee;display:block}
   .shutter:active{transform:scale(.93)}
-  .link-btn{font-size:12.5px;color:#8ab4ff;text-decoration:underline;padding:4px 8px}
+  .link-btn{font-size:12.5px;color:#f7b8c4;text-decoration:underline;padding:4px 8px}
 
   .err{position:absolute;inset:auto 20px 50% 20px;z-index:5;padding:18px;border-radius:16px;
-    background:#1b1b21;border:1px solid rgba(255,255,255,.12);font-size:14px;line-height:1.5;
-    color:#d8d8e0;text-align:center}
+    background:#1b1b21;border:1px solid rgba(247,184,196,.18);font-size:14px;line-height:1.5;
+    color:#e8d8dd;text-align:center}
 
   /* ---------- PREVIEW ---------- */
   #previewScreen{background:#000;flex-direction:column}
@@ -71,8 +87,8 @@
   .preview-bar{display:flex;gap:12px;padding:16px 20px calc(env(safe-area-inset-bottom) + 20px)}
   .btn{flex:1;padding:15px;border-radius:14px;font-size:15px;font-weight:600;text-align:center;
     text-decoration:none;display:block}
-  .btn.ghost{background:#202027;color:#fff}
-  .btn.primary{background:#fff;color:#000}
+  .btn.ghost{background:#221a20;color:#ffe6ee;border:1px solid rgba(247,184,196,.2)}
+  .btn.primary{background:#f7b8c4;color:#1a1016}
   .btn:active{opacity:.75}
 </style>
 </head>
@@ -81,8 +97,9 @@
 <!-- ============ SCREEN 1 : MENU ============ -->
 <div id="menuScreen" class="screen active">
   <div class="menu-wrap">
-    <h1>What are you shooting?</h1>
-    <p class="sub">Pick a shot type — I'll open the camera and lay guides over it.</p>
+    <p class="kicker">🌸 Korean Aesthetic</p>
+    <h1>Korean Shot Coach</h1>
+    <p class="sub">Soft light, centered frames, gentle mood — pick a shot type and I'll lay the guide over your camera.</p>
     <div class="grid" id="modeGrid"></div>
   </div>
 </div>
@@ -98,10 +115,14 @@
     <button class="icon-btn" id="flipBtn" aria-label="Switch camera">⇄</button>
   </div>
 
+  <div class="status" id="statusPill">
+    <span class="dot"></span><span id="statusText">Enable motion for the tilt guide</span>
+  </div>
+
   <div class="bottombar">
     <div class="tip" id="tipText"></div>
     <button class="shutter" id="shutterBtn" aria-label="Take photo"><span></span></button>
-    <button class="link-btn" id="permBtn" hidden>Tap to enable the tilt level</button>
+    <button class="link-btn" id="permBtn" hidden>Tap to enable the tilt guide</button>
   </div>
 
   <div class="err" id="errBox" hidden></div>
@@ -118,57 +139,52 @@
 
 <script>
 /* =========================================================
-   SHOT TYPES — research-backed tips from photography sources
+   KOREAN-STYLE SHOT TYPES
+   targetRoll      : ideal horizon roll in degrees (0 = level)
+   targetElevation : ideal camera pitch  (0 = horizontal, -45 = down 45°)
    ========================================================= */
 const MODES = {
   portrait: {
-    label: 'Portrait',
-    icon: '🧑',
-    guide: 'portrait',
-    desc: 'Head & shoulders with flattering light',
-    tip: 'Eyes on the upper third line. Angle their body 30–45° off camera, then bring the face back. Chin slightly down and out to lengthen the neck and define the jaw.'
+    label: 'Portrait', icon: '🌸', guide: 'portrait',
+    desc: 'Soft, centered, gentle mood',
+    tip: 'Center your subject and shoot from a slightly elevated angle. Soft window light from the front or side — no harsh sun. Body angled ~30° with the face turned back toward the lens, soft expression.',
+    targetRoll: 0, targetElevation: -5
   },
   landscape: {
-    label: 'Landscape',
-    icon: '🏔️',
-    guide: 'landscape',
-    desc: 'Scenic views with a level horizon',
-    tip: 'Keep the horizon dead level — it conveys peace and calm. Place it on the upper or lower third: sky is the hero? horizon low. Land is the hero? horizon high.'
+    label: 'Landscape', icon: '🌷', guide: 'landscape',
+    desc: 'Pastel skies & minimal scenes',
+    tip: 'Shoot at golden hour or on an overcast day for soft pastel skies. Keep the horizon dead level and frame something minimal — a café window, blossoms, a clean street. Avoid clutter.',
+    targetRoll: 0, targetElevation: -3
   },
   selfie: {
-    label: 'Selfie',
-    icon: '🤳',
-    guide: 'selfie',
-    desc: 'Flattering angles for solo shots',
-    tip: 'Hold the phone slightly above eye level (about 5 cm up). Tilt your head down ~10°. Turn shoulders slightly instead of facing the camera straight on.'
+    label: 'Selfie', icon: '🎀', guide: 'selfie',
+    desc: 'Ulzzang — small face, soft glow',
+    tip: 'Hold the phone at arm’s length, slightly above eye level. Face small in the frame with lots of headroom. Angle your face ~20° to one side and tilt your chin down a touch. Soft front light — face a window.',
+    targetRoll: 0, targetElevation: -14
   },
   group: {
-    label: 'Group',
-    icon: '👨‍👩‍👧',
-    guide: 'group',
-    desc: 'Everyone in frame, layered for depth',
-    tip: 'Layer people front-to-back and stagger heights — avoid flat, linear rows. Build triangles or V-shapes. Keep faces on roughly the same eye-level plane.'
+    label: 'Group', icon: '💗', guide: 'group',
+    desc: 'Loose cluster, warm light',
+    tip: 'Arrange people in a loose cluster — never a straight row. Heads at different heights, faces close together. Shoot in warm even light (café, sunset, overcast). Keep everyone inside the band.',
+    targetRoll: 0, targetElevation: -3
   },
   closeup: {
-    label: 'Close-up',
-    icon: '🌸',
-    guide: 'circle',
-    desc: 'Macro details that fill the frame',
-    tip: 'Get close and fill the circle. Use central composition for symmetrical subjects, or rule of thirds for off-center interest. Tap the screen to focus precisely.'
+    label: 'Close-up', icon: '🌼', guide: 'circle',
+    desc: 'Soft details & textures',
+    tip: 'Fill the circle with your subject — flowers, coffee, hands, fabric, food. Put soft light behind or beside it for a dreamy glow. Tap the screen to focus on the detail you love.',
+    targetRoll: 0, targetElevation: -8
   },
   food: {
-    label: 'Food',
-    icon: '🍜',
-    guide: 'food',
-    desc: 'Appetizing angles for dishes',
-    tip: 'Shoot at 45° for layered dishes, or directly overhead (flat lay) for plating. Use side or backlight to reveal texture and steam. Never use flash.'
+    label: 'Food', icon: '🍰', guide: 'food',
+    desc: 'Café flat-lay / 45° aesthetics',
+    tip: 'Café style — shoot at 45° for layered dishes or straight overhead for a flat-lay. Soft window light from the side. Leave some table and surroundings in the frame for a lifestyle feel.',
+    targetRoll: 0, targetElevation: -45
   },
   fullbody: {
-    label: 'Full body',
-    icon: '🕴️',
-    guide: 'full',
-    desc: 'Head-to-toe with balanced framing',
-    tip: 'Leave more headroom than feet room (roughly 30/70 split). Place subject at a 45° angle with weight on the back foot. Keep both head and feet inside the frame.'
+    label: 'Full body', icon: '👗', guide: 'full',
+    desc: 'Street-style outfit shot',
+    tip: 'Subject fills about 60–70% of the frame height. Shoot from chest height, phone level. Leave air above the head. Neutral or minimal background. A mid-walk or relaxed hand-in-pocket pose reads most Korean.',
+    targetRoll: 0, targetElevation: -2
   }
 };
 
@@ -187,13 +203,17 @@ const errBox        = document.getElementById('errBox');
 const permBtn       = document.getElementById('permBtn');
 const shotImg       = document.getElementById('shotImg');
 const saveBtn       = document.getElementById('saveBtn');
+const statusPill    = document.getElementById('statusPill');
+const statusText    = document.getElementById('statusText');
 
-let currentMode = null;
-let stream = null;
-let facingMode = 'environment';
-let roll = 0;
-let tiltAttached = false;
-let rafId = null;
+let currentMode   = null;
+let stream        = null;
+let facingMode    = 'environment';
+let rollCW        = 0;
+let elevation     = 0;
+let tiltActive    = false;
+let tiltAttached  = false;
+let rafId         = null;
 
 /* =========================================================
    MENU
@@ -219,6 +239,12 @@ async function selectMode(key) {
   modeLabel.textContent = MODES[key].label;
   tipText.textContent = MODES[key].tip;
   showScreen('camScreen');
+
+  try {
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('portrait').catch(() => {});
+    }
+  } catch (e) {}
 
   const ok = await requestTiltPermission();
   permBtn.hidden = ok;
@@ -301,20 +327,23 @@ function attachTilt() {
   tiltAttached = true;
 
   window.addEventListener('deviceorientation', (e) => {
-    const beta  = (e.beta  || 0) * Math.PI / 180;
-    const gamma = (e.gamma || 0) * Math.PI / 180;
+    if (e.beta == null || e.gamma == null) return;
 
-    let theta = Math.atan2(Math.cos(beta) * Math.sin(gamma), Math.sin(beta)) * 180 / Math.PI;
+    const b  = e.beta  * Math.PI / 180;
+    const g  = e.gamma * Math.PI / 180;
+    const t  = getScreenAngle() * Math.PI / 180;
 
-    const ang = getScreenAngle();
-    let off = 0;
-    if (ang === 90) off = -90;
-    else if (ang === 270 || ang === -90) off = 90;
+    const gx = -Math.cos(b) * Math.sin(g);
+    const gy = -Math.sin(b);
+    const gz = -Math.cos(b) * Math.cos(g);
 
-    let r = theta - off;
-    while (r >  90) r -= 180;
-    while (r < -90) r += 180;
-    roll = r;
+    const gRight =  gx * Math.cos(t) - gy * Math.sin(t);
+    const gDown  =  gx * Math.sin(t) + gy * Math.cos(t);
+
+    rollCW    = Math.atan2(gRight, gDown) * 180 / Math.PI;
+    elevation = Math.asin(Math.max(-1, Math.min(1, gz))) * 180 / Math.PI;
+
+    tiltActive = true;
   }, true);
 }
 
@@ -365,7 +394,10 @@ function drawOverlay() {
     case 'full':      drawFullBody(ctx, w, h); break;
   }
 
-  drawLevel(ctx, w, h);
+  const rollAligned = tiltActive && Math.abs(rollCW - m.targetRoll) < 2;
+  drawGuideLine(ctx, w, h, m.targetRoll, rollAligned);
+  drawPitchMeter(ctx, w, h, m.targetElevation);
+  updateStatus(m, rollAligned);
 }
 
 /* ---- helpers ---- */
@@ -381,12 +413,12 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.arcTo(x,     y,     x + w, y,     r);
   ctx.closePath();
 }
-function label(ctx, text, x, y, color) {
+function tag(ctx, text, x, y, color, align) {
   ctx.save();
   ctx.font = '600 11px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';
-  ctx.fillStyle = color || 'rgba(255,255,255,.85)';
-  ctx.textAlign = 'center';
-  ctx.shadowColor = 'rgba(0,0,0,.85)';
+  ctx.fillStyle = color;
+  ctx.textAlign = align || 'center';
+  ctx.shadowColor = 'rgba(0,0,0,.9)';
   ctx.shadowBlur = 6;
   ctx.fillText(text, x, y);
   ctx.restore();
@@ -394,7 +426,7 @@ function label(ctx, text, x, y, color) {
 
 function drawGrid(ctx, w, h) {
   ctx.save();
-  ctx.strokeStyle = 'rgba(255,255,255,.30)';
+  ctx.strokeStyle = 'rgba(255,230,238,.20)';
   ctx.lineWidth = 1;
   ctx.setLineDash([5, 7]);
   ctx.beginPath();
@@ -406,38 +438,146 @@ function drawGrid(ctx, w, h) {
   ctx.restore();
 }
 
-function drawLevel(ctx, w, h) {
-  const trackW = 124, trackH = 14;
-  const x = (w - trackW) / 2;
-  const y = 92;
-  const level = Math.abs(roll) < 1.6;
+/* =========================================================
+   THE SHALLOW GUIDE LINE  — soft Korean pink
+   ========================================================= */
+function drawGuideLine(ctx, w, h, targetRoll, aligned) {
+  const cy = h * 0.52;
+  const half = Math.hypot(w, h) * 0.62;
 
+  // RGB string of the two states
+  const tint = aligned ? '247,184,196' : '255,245,230';   // blush pink / cream
+  const baseAlpha = aligned ? 0.95 : 0.60;
+
+  // --- dashed ghost target ---
   ctx.save();
-  roundRect(ctx, x, y, trackW, trackH, 7);
-  ctx.fillStyle = 'rgba(0,0,0,.45)';
-  ctx.fill();
-  ctx.lineWidth = 1.5;
-  ctx.strokeStyle = level ? '#4ade80' : 'rgba(255,255,255,.55)';
-  ctx.stroke();
-
+  ctx.translate(w / 2, cy);
+  ctx.rotate(targetRoll * Math.PI / 180);
+  ctx.setLineDash([16, 14]);
+  ctx.lineWidth = 1.4;
+  ctx.strokeStyle = aligned
+    ? 'rgba(247,184,196,0.35)'
+    : 'rgba(255,245,230,0.26)';
   ctx.beginPath();
-  ctx.moveTo(w / 2, y - 5);
-  ctx.lineTo(w / 2, y + trackH + 5);
-  ctx.strokeStyle = 'rgba(255,255,255,.45)';
-  ctx.lineWidth = 1;
+  ctx.moveTo(-half, 0);
+  ctx.lineTo(half, 0);
   ctx.stroke();
+  ctx.restore();
 
-  const k = Math.max(-1, Math.min(1, roll / 12));
-  const bx = w / 2 + k * (trackW / 2 - 10);
+  // --- live line ---
+  ctx.save();
+  ctx.translate(w / 2, cy);
+  ctx.rotate((tiltActive ? rollCW : targetRoll) * Math.PI / 180);
+
+  const grad = ctx.createLinearGradient(-half, 0, half, 0);
+  grad.addColorStop(0.00, `rgba(${tint},0)`);
+  grad.addColorStop(0.18, `rgba(${tint},${baseAlpha})`);
+  grad.addColorStop(0.82, `rgba(${tint},${baseAlpha})`);
+  grad.addColorStop(1.00, `rgba(${tint},0)`);
+
+  ctx.shadowColor = aligned
+    ? 'rgba(247,184,196,0.9)'
+    : 'rgba(255,245,230,0.55)';
+  ctx.shadowBlur  = aligned ? 22 : 10;
+  ctx.lineWidth   = aligned ? 3 : 2.2;
+  ctx.strokeStyle = grad;
   ctx.beginPath();
-  ctx.arc(bx, y + trackH / 2, 6, 0, Math.PI * 2);
-  ctx.fillStyle = level ? '#4ade80' : '#ffffff';
-  ctx.fill();
+  ctx.moveTo(-half, 0);
+  ctx.lineTo(half, 0);
+  ctx.stroke();
+  ctx.restore();
 
-  if (level) label(ctx, 'LEVEL', w / 2, y + trackH + 20, '#4ade80');
+  // --- centre tick ---
+  ctx.save();
+  ctx.translate(w / 2, cy);
+  ctx.rotate((tiltActive ? rollCW : targetRoll) * Math.PI / 180);
+  ctx.beginPath();
+  ctx.arc(0, 0, 5, 0, Math.PI * 2);
+  ctx.fillStyle = aligned ? '#f7b8c4' : 'rgba(255,245,230,.92)';
+  ctx.shadowColor = 'rgba(0,0,0,.8)';
+  ctx.shadowBlur = 8;
+  ctx.fill();
+  ctx.restore();
+
+  // --- end caps ---
+  ctx.save();
+  ctx.translate(w / 2, cy);
+  ctx.rotate((tiltActive ? rollCW : targetRoll) * Math.PI / 180);
+  [[-half + 30], [half - 30]].forEach(([x]) => {
+    ctx.beginPath();
+    ctx.arc(x, 0, 3, 0, Math.PI * 2);
+    ctx.fillStyle = aligned ? 'rgba(247,184,196,.95)' : 'rgba(255,245,230,.75)';
+    ctx.fill();
+  });
   ctx.restore();
 }
 
+/* =========================================================
+   PITCH METER — soft pink target notch
+   ========================================================= */
+function drawPitchMeter(ctx, w, h, target) {
+  const range = 60;
+  const barH  = Math.min(h * 0.40, 240);
+  const barW  = 6;
+  const x     = w - 22;
+  const cy    = h * 0.50;
+  const top   = cy - barH / 2;
+
+  const map = v => {
+    const c = Math.max(-range, Math.min(range, v));
+    return top + barH / 2 - (c / range) * (barH / 2);
+  };
+
+  ctx.save();
+  roundRect(ctx, x - barW / 2, top, barW, barH, barW / 2);
+  ctx.fillStyle = 'rgba(0,0,0,.42)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,230,238,.22)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.restore();
+
+  const ty = map(target);
+  ctx.save();
+  ctx.strokeStyle = '#f7b8c4';
+  ctx.lineWidth = 2;
+  ctx.shadowColor = 'rgba(247,184,196,.85)';
+  ctx.shadowBlur = 9;
+  ctx.beginPath();
+  ctx.moveTo(x - 11, ty);
+  ctx.lineTo(x + 11, ty);
+  ctx.stroke();
+  ctx.restore();
+
+  const iy = map(tiltActive ? elevation : target);
+  const ok = tiltActive && Math.abs(elevation - target) < 3;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(x, iy, 7, 0, Math.PI * 2);
+  ctx.fillStyle = ok ? '#f7b8c4' : '#fff5e6';
+  ctx.shadowColor = ok ? 'rgba(247,184,196,.95)' : 'rgba(0,0,0,.7)';
+  ctx.shadowBlur = 10;
+  ctx.fill();
+  ctx.restore();
+
+  tag(ctx, 'UP',   x, top - 10, 'rgba(255,230,238,.5)');
+  tag(ctx, 'DOWN', x, top + barH + 16, 'rgba(255,230,238,.5)');
+
+  if (tiltActive) {
+    const diff = target - elevation;
+    if (Math.abs(diff) >= 3) {
+      const dir = diff < 0 ? 'DOWN' : 'UP';
+      tag(ctx, `TILT ${dir} ${Math.abs(diff).toFixed(0)}°`,
+          x - 12, top - 10, '#fff5e6', 'right');
+    } else {
+      tag(ctx, 'ANGLE ✓', x - 12, top - 10, '#f7b8c4', 'right');
+    }
+  }
+}
+
+/* =========================================================
+   SHOT-SPECIFIC COMPOSITION GUIDES (Korean palette)
+   ========================================================= */
 function drawPortrait(ctx, w, h) {
   ctx.save();
   const cx = w / 2;
@@ -445,7 +585,7 @@ function drawPortrait(ctx, w, h) {
   const rx = Math.min(w * 0.19, h * 0.115);
   const ry = rx * 1.3;
 
-  ctx.strokeStyle = 'rgba(255,255,255,.85)';
+  ctx.strokeStyle = 'rgba(255,230,238,.85)';
   ctx.lineWidth = 1.8;
   ctx.setLineDash([7, 6]);
 
@@ -459,11 +599,10 @@ function drawPortrait(ctx, w, h) {
   ctx.stroke();
 
   ctx.setLineDash([]);
-  ctx.strokeStyle = 'rgba(74,222,128,.9)';
+  ctx.strokeStyle = 'rgba(247,184,196,.95)';
   ctx.lineWidth = 1.6;
   line(ctx, cx - rx * 1.3, cy, cx + rx * 1.3, cy);
-  label(ctx, 'EYES ON UPPER THIRD', cx, cy - 8, '#4ade80');
-
+  tag(ctx, 'EYES ON UPPER THIRD', cx, cy - 8, '#f7b8c4');
   ctx.restore();
 }
 
@@ -471,26 +610,23 @@ function drawLandscape(ctx, w, h) {
   ctx.save();
   ctx.setLineDash([10, 8]);
   ctx.lineWidth = 1.6;
-  ctx.strokeStyle = 'rgba(255,255,255,.6)';
-
-  [1 / 3, 2 / 3].forEach(f => {
-    line(ctx, 0, h * f, w, h * f);
-  });
-
+  ctx.strokeStyle = 'rgba(255,230,238,.6)';
+  line(ctx, 0, h / 3, w, h / 3);
+  line(ctx, 0, h * 2 / 3, w, h * 2 / 3);
   ctx.setLineDash([]);
-  label(ctx, 'SKY HERO → HORIZON LOW', w / 2, h / 3 - 10);
-  label(ctx, 'LAND HERO → HORIZON HIGH', w / 2, h * 2 / 3 - 10);
+  tag(ctx, 'SKY HERO → HORIZON LOW',  w / 2, h / 3 - 10, 'rgba(255,230,238,.85)');
+  tag(ctx, 'LAND HERO → HORIZON HIGH', w / 2, h * 2 / 3 - 10, 'rgba(255,230,238,.85)');
   ctx.restore();
 }
 
 function drawSelfie(ctx, w, h) {
   ctx.save();
   const cx = w / 2;
-  const cy = h * 0.42;
-  const rx = Math.min(w * 0.28, h * 0.16);
+  const cy = h * 0.40;                       // Korean selfie = lots of headroom
+  const rx = Math.min(w * 0.24, h * 0.14);   // smaller face
   const ry = rx * 1.32;
 
-  ctx.strokeStyle = 'rgba(255,255,255,.85)';
+  ctx.strokeStyle = 'rgba(255,230,238,.85)';
   ctx.lineWidth = 1.8;
   ctx.setLineDash([7, 6]);
   ctx.beginPath();
@@ -498,10 +634,10 @@ function drawSelfie(ctx, w, h) {
   ctx.stroke();
 
   ctx.setLineDash([]);
-  ctx.strokeStyle = 'rgba(74,222,128,.9)';
+  ctx.strokeStyle = 'rgba(247,184,196,.95)';
   ctx.lineWidth = 1.6;
   line(ctx, cx - rx * 0.9, cy - ry * 0.18, cx + rx * 0.9, cy - ry * 0.18);
-  label(ctx, 'PHONE ABOVE EYE LEVEL', cx, cy - ry * 0.18 - 10, '#4ade80');
+  tag(ctx, 'SMALL FACE · SOFT LIGHT', cx, cy - ry * 0.18 - 10, '#f7b8c4');
   ctx.restore();
 }
 
@@ -511,12 +647,12 @@ function drawGroup(ctx, w, h) {
 
   ctx.setLineDash([10, 8]);
   ctx.lineWidth = 1.6;
-  ctx.strokeStyle = 'rgba(255,255,255,.6)';
+  ctx.strokeStyle = 'rgba(255,230,238,.6)';
   line(ctx, 0, top, w, top);
   line(ctx, 0, bot, w, bot);
 
   ctx.setLineDash([6, 6]);
-  ctx.strokeStyle = 'rgba(255,255,255,.85)';
+  ctx.strokeStyle = 'rgba(255,230,238,.85)';
   ctx.lineWidth = 1.6;
   const n = 5;
   for (let i = 0; i < n; i++) {
@@ -528,7 +664,7 @@ function drawGroup(ctx, w, h) {
     ctx.arc(x, y, Math.min(w * 0.055, h * 0.032), 0, Math.PI * 2);
     ctx.stroke();
   }
-  label(ctx, 'LAYER FRONT → BACK', w / 2, top - 12);
+  tag(ctx, 'LOOSE CLUSTER · WARM LIGHT', w / 2, top - 12, 'rgba(255,230,238,.85)');
   ctx.restore();
 }
 
@@ -537,7 +673,7 @@ function drawCircle(ctx, w, h, cxF, cyF, rF) {
   const cx = w * cxF, cy = h * cyF;
   const r = Math.min(w, h) * rF;
 
-  ctx.strokeStyle = 'rgba(255,255,255,.85)';
+  ctx.strokeStyle = 'rgba(255,230,238,.85)';
   ctx.lineWidth = 1.8;
   ctx.setLineDash([8, 7]);
   ctx.beginPath();
@@ -545,7 +681,7 @@ function drawCircle(ctx, w, h, cxF, cyF, rF) {
   ctx.stroke();
 
   ctx.setLineDash([]);
-  ctx.strokeStyle = 'rgba(255,255,255,.5)';
+  ctx.strokeStyle = 'rgba(255,230,238,.5)';
   ctx.lineWidth = 1.2;
   const t = r * 0.14;
   line(ctx, cx - t, cy, cx + t, cy);
@@ -560,7 +696,7 @@ function drawFullBody(ctx, w, h) {
 
   ctx.setLineDash([9, 8]);
   ctx.lineWidth = 1.8;
-  ctx.strokeStyle = 'rgba(255,255,255,.7)';
+  ctx.strokeStyle = 'rgba(255,230,238,.7)';
   roundRect(ctx, x, y, rw, rh, 20);
   ctx.stroke();
 
@@ -569,11 +705,36 @@ function drawFullBody(ctx, w, h) {
   ctx.stroke();
 
   ctx.setLineDash([]);
-  ctx.strokeStyle = 'rgba(74,222,128,.9)';
+  ctx.strokeStyle = 'rgba(247,184,196,.95)';
   ctx.lineWidth = 1.6;
   line(ctx, x, y + rh * 0.20, x + rw, y + rh * 0.20);
-  label(ctx, '30/70 HEADROOM SPLIT', w / 2, y + rh * 0.20 - 9, '#4ade80');
+  tag(ctx, '30/70 HEADROOM SPLIT', w / 2, y + rh * 0.20 - 9, '#f7b8c4');
   ctx.restore();
+}
+
+/* =========================================================
+   STATUS PILL — Korean-tinted copy
+   ========================================================= */
+function updateStatus(m, rollAligned) {
+  if (!tiltActive) {
+    statusPill.classList.remove('ok');
+    statusText.textContent = 'Motion off — tilt guide inactive';
+    return;
+  }
+  const pitchOk = Math.abs(elevation - m.targetElevation) < 3;
+  if (rollAligned && pitchOk) {
+    statusPill.classList.add('ok');
+    statusText.textContent = 'Aesthetic ✓ ready to shoot';
+  } else {
+    statusPill.classList.remove('ok');
+    if (!rollAligned) {
+      statusText.textContent = `Tilt ${Math.abs(rollCW).toFixed(0)}° to level`;
+    } else {
+      const diff = m.targetElevation - elevation;
+      statusText.textContent =
+        `Angle phone ${diff < 0 ? 'down' : 'up'} ${Math.abs(diff).toFixed(0)}°`;
+    }
+  }
 }
 
 /* =========================================================
