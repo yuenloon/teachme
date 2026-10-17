@@ -1,9 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Camera Dashboard</title>
+
+    <title>Gemini Camera</title>
+
     <style>
         * {
             box-sizing: border-box;
@@ -13,93 +16,142 @@
         }
 
         body {
-            background-color: #f4f7f6;
-            color: #333;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background: #f4f7f6;
+            color: #2c3e50;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
+            padding: 24px;
+        }
+
+        .dashboard {
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .camera-icon {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 20px;
+            border-radius: 22px;
+            background: #e8f0fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
         }
 
         h1 {
-            margin-bottom: 30px;
-            font-size: 2.5rem;
-            color: #2c3e50;
-            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #202124;
         }
 
-        .menu-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 900px;
+        .subtitle {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #6b7280;
+            margin-bottom: 30px;
         }
 
         .menu-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            text-align: center;
-            text-decoration: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            border-top: 5px solid #bdc3c7;
+            gap: 10px;
+            width: 100%;
+            padding: 28px 22px;
+            background: white;
+            color: #1a73e8;
+            text-decoration: none;
+            border: 1px solid #e5e7eb;
+            border-top: 5px solid #1a73e8;
+            border-radius: 16px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .menu-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 9px 24px rgba(0, 0, 0, 0.1);
         }
-
-        /* Custom styling colors for each button */
-        .gemini { border-top-color: #1a73e8; color: #1a73e8; }
-        .claude { border-top-color: #d97706; color: #d97706; }
-        .deepseek { border-top-color: #2563eb; color: #2563eb; }
-        .chatgpt { border-top-color: #10b981; color: #10b981; }
 
         .card-title {
             font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 10px;
+            font-weight: 700;
         }
 
         .card-desc {
-            font-size: 0.9rem;
-            color: #7f8c8d;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #6b7280;
+        }
+
+        .launch-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 11px 24px;
+            border-radius: 999px;
+            background: #1a73e8;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .footer {
+            margin-top: 28px;
+            color: #9ca3af;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.7rem;
+            }
+
+            .dashboard {
+                max-width: 360px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-    <h1>AI Camera Dashboard</h1>
+    <main class="dashboard">
 
-    <nav class="menu-container">
-        <a href="geminicam.html" class="menu-card gemini">
+        <div class="camera-icon" aria-hidden="true">
+            📷
+        </div>
+
+        <h1>Gemini Camera</h1>
+
+        <p class="subtitle">
+            Your personal camera framing guide.
+            Choose Gemini Cam to get started.
+        </p>
+
+        <a href="geminicam.html" class="menu-card">
             <div class="card-title">Gemini Cam</div>
-            <div class="card-desc">Launch Gemini stream feed</div>
+
+            <div class="card-desc">
+                Open your camera and start composing your shots.
+            </div>
+
+            <span class="launch-button">
+                Launch Camera →
+            </span>
         </a>
 
-        <a href="claudecam.html" class="menu-card claude">
-            <div class="card-title">Claude Cam</div>
-            <div class="card-desc">Launch Claude stream feed</div>
-        </a>
+        <p class="footer">
+            Personal Camera Tools
+        </p>
 
-        <a href="dscam.html" class="menu-card deepseek">
-            <div class="card-title">DeepSeek Cam</div>
-            <div class="card-desc">Launch DeepSeek stream feed</div>
-        </a>
-
-        <a href="chatgptcam.html" class="menu-card chatgpt">
-            <div class="card-title">ChatGPT Cam</div>
-            <div class="card-desc">Launch ChatGPT stream feed</div>
-        </a>
-    </nav>
+    </main>
 
 </body>
 </html>
