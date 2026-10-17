@@ -3,773 +3,700 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>People Framing Guide</title>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Camera Framing Guide</title>
 
 <style>
 :root {
-  --blue: #3b82f6;
-  --glass: rgba(15,23,42,.35);
-  --border: rgba(255,255,255,.12);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --accent: #60a5fa;
+  --panel: rgba(12, 18, 30, .72);
+  --line: rgba(255,255,255,.8);
 }
 * { box-sizing: border-box; }
 html, body {
-  margin: 0; width: 100%; height: 100%;
-  background: #090d16; color: #f3f4f6;
-  font-family: Inter, sans-serif;
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  background: #080c13;
+  color: white;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
-body { overflow: hidden; }
-button, input, select { font: inherit; }
+body { overflow-x: hidden; }
+button, select, input { font: inherit; }
 button {
-  cursor: pointer; color: white;
-  -webkit-tap-highlight-color: transparent;
+  color: white;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.12);
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  touch-action: manipulation;
 }
-button:active { transform: scale(.96); }
+button:active { transform: scale(.97); }
+button:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
 .hidden { display: none !important; }
 
-/* MENU */
 #menuScreen {
-  height: 100vh;
-  height: 100dvh;
-  overflow-y: auto;
-  padding: 20px 16px;
-  max-width: 620px;
+  width: min(100%, 620px);
   margin: auto;
+  padding: 24px 16px 34px;
 }
-.menu-header { text-align: center; padding: 12px 0 20px; }
-.menu-header .logo {
-  width: 54px; height: 54px; border-radius: 16px;
-  display: grid; place-items: center; margin: auto auto 12px;
-  color: #93c5fd; background: rgba(59,130,246,.15);
-  font-size: 25px;
-}
-h1 { font-size: 25px; margin: 0 0 8px; }
-.subtitle { font-size: 12px; line-height: 1.6; color: #94a3b8; }
-.shot-list { display: grid; gap: 10px; }
-.shot-card {
-  width: 100%; text-align: left; padding: 15px;
-  border-radius: 16px; background: rgba(255,255,255,.055);
-  border: 1px solid var(--border);
-}
-.shot-card h3 { margin: 0 0 5px; font-size: 15px; }
-.shot-card p { margin: 0; font-size: 11px; color: #94a3b8; line-height: 1.5; }
-.shot-card .tip { margin-top: 8px; color: #cbd5e1; }
-.info-note {
-  margin-top: 12px; padding: 12px; text-align: center;
-  background: rgba(30,64,175,.15); border-radius: 12px;
-  color: #bfdbfe; font-size: 11px; line-height: 1.5;
-}
-
-/* CAMERA: fills Chrome's visible webpage viewport */
-#cameraScreen {
-  position: fixed; inset: 0;
-  width: 100%; height: 100vh; height: 100dvh;
-  overflow: hidden; background: #000;
-}
-#cameraContainer {
-  position: absolute; inset: 0; overflow: hidden; background: #000;
-}
-#videoFeed {
-  width: 100%; height: 100%; object-fit: cover;
-  transform-origin: center; transition: transform .08s linear;
-}
-#compositionOverlay {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%; pointer-events: none;
-}
-.glass {
-  background: var(--glass);
-  border: 1px solid var(--border);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  box-shadow: none;
-}
-#topBar {
-  position: absolute; top: 8px; left: 8px; right: 8px;
-  z-index: 10; display: flex; align-items: center;
-  justify-content: space-between; gap: 6px;
-  padding: 8px; border-radius: 15px;
-}
-.small-btn {
-  min-height: 38px; padding: 7px 10px; border-radius: 10px;
-  border: 1px solid var(--border); background: rgba(255,255,255,.09);
+.header { text-align: center; padding: 10px 0 20px; }
+.header .symbol { font-size: 42px; }
+.header h1 { font-size: 27px; margin: 5px 0; }
+.header p { color: #aab5c6; font-size: 14px; line-height: 1.5; }
+.section-label {
+  color: #aab5c6;
   font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 20px 2px 10px;
 }
-#levelerBadge {
-  display: flex; align-items: center; gap: 6px;
-  min-width: 0; font-size: 10px; cursor: pointer;
-}
-.bubble {
-  width: 28px; height: 28px; flex: 0 0 28px;
-  border: 1px solid #94a3b8; border-radius: 50%;
-  position: relative; background: rgba(0,0,0,.25);
-}
-.bubble:before, .bubble:after {
-  content: ""; position: absolute; background: #94a3b8;
-}
-.bubble:before { left: 4px; right: 4px; height: 1px; top: 13px; }
-.bubble:after { top: 4px; bottom: 4px; width: 1px; left: 13px; }
-#bubbleDot {
-  position: absolute; width: 7px; height: 7px; border-radius: 50%;
-  background: #fbbf24; left: 50%; top: 50%;
-  transform: translate(-50%,-50%);
-}
-#levelerStatus { font-size: 9px; color: #cbd5e1; }
-#guideAdvice {
-  position: absolute; top: 76px; left: 10px; right: 10px;
-  z-index: 5; pointer-events: none; text-align: center;
-}
-.advice-card {
-  display: inline-block; max-width: 100%; padding: 8px 10px;
-  border-radius: 12px; line-height: 1.5;
-}
-#phonePosTitle { font-size: 12px; font-weight: 700; }
-#phonePosDetail { font-size: 10px; color: #e2e8f0; }
-#zoomAdviceText { font-size: 10px; color: #bfdbfe; }
-#warningLegend {
-  position: absolute; bottom: 195px; left: 8px; right: 8px;
-  z-index: 4; text-align: center; pointer-events: none;
-  font-size: 10px; color: #fecaca; text-shadow: 0 1px 4px #000;
-}
-
-/* RATIO PICKER */
-#ratioBar {
-  position: absolute; z-index: 12;
-  bottom: calc(190px + var(--safe-bottom));
-  left: 10px; right: 10px;
-  display: flex; justify-content: center; gap: 7px;
-  pointer-events: none;
-}
-.ratio-btn {
-  pointer-events: auto; padding: 8px 13px;
-  border-radius: 20px; font-size: 11px; font-weight: 700;
-  background: rgba(0,0,0,.38); border: 1px solid var(--border);
-}
-.ratio-btn.active { background: #2563eb; border-color: #60a5fa; }
-
-/* BOTTOM CONTROLS: ZOOM LEFT, SHUTTER RIGHT */
-#cameraControlDock {
-  position: absolute; z-index: 15;
-  left: 10px; right: 10px;
-  bottom: calc(8px + var(--safe-bottom));
-  display: flex; align-items: center; gap: 9px;
-}
-#zoomPanel {
-  flex: 1; min-width: 0; padding: 9px;
+.mode-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.mode-card {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 12px;
+  padding: 15px;
+  background: rgba(255,255,255,.055);
+  border: 1px solid rgba(255,255,255,.12);
+  border-left: 4px solid var(--accent);
   border-radius: 15px;
 }
-.zoom-heading {
-  display: flex; justify-content: space-between; align-items: center;
-  gap: 5px; font-size: 12px; font-weight: 700;
-}
-#zoomDisplay { color: #bfdbfe; }
-#zoomSlider {
-  display: block; width: 100%; height: 38px; margin: 0;
-  accent-color: var(--blue); touch-action: pan-y;
-}
-#zoomSlider::-webkit-slider-runnable-track {
-  height: 7px; border-radius: 10px;
-  background: rgba(255,255,255,.3);
-}
-#zoomSlider::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 24px; height: 24px;
-  border: 3px solid white; border-radius: 50%;
-  background: var(--blue); margin-top: -8px;
-}
-.zoom-presets, .camera-tools { display: flex; gap: 5px; margin-top: 5px; }
-.zoom-presets button, .camera-tools button {
-  flex: 1; min-width: 0; min-height: 34px;
-  padding: 5px 3px; border-radius: 8px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,.08); font-size: 11px;
-}
-#shutterPanel {
-  width: 82px; flex: 0 0 82px;
-  display: flex; flex-direction: column; align-items: center; gap: 5px;
-}
-#mainShutter {
-  width: 74px; height: 74px; padding: 5px;
-  border: 4px solid rgba(255,255,255,.75); border-radius: 50%;
-  background: rgba(255,255,255,.95);
-  display: grid; place-items: center;
-  box-shadow: 0 2px 12px rgba(0,0,0,.3);
-}
-.shutter-inner {
-  width: 100%; height: 100%; border: 3px solid #111827;
-  border-radius: 50%; display: grid; place-items: center;
-}
-.shutter-dot { width: 13px; height: 13px; border-radius: 50%; background: #2563eb; }
-.shutter-label { font-size: 9px; font-weight: 700; text-shadow: 0 1px 4px #000; }
-
-/* SENSOR / ERROR PROMPTS */
-#sensorPermissionModal, #cameraErrorModal {
-  position: absolute; z-index: 30; top: 130px; left: 12px; right: 12px;
-  padding: 16px; border-radius: 16px; text-align: center;
-}
-#sensorPermissionModal p, #cameraErrorModal p {
-  font-size: 12px; line-height: 1.5; color: #cbd5e1;
-}
-#sensorPermissionModal button, #cameraErrorModal button {
-  border: 0; border-radius: 9px; padding: 10px;
-  background: #2563eb; margin: 3px; font-size: 11px;
+.mode-icon { font-size: 28px; width: 42px; text-align: center; }
+.mode-card strong { display: block; font-size: 15px; }
+.mode-card small { display: block; color: #b6c0cf; margin-top: 4px; line-height: 1.4; }
+.note {
+  margin-top: 18px;
+  padding: 13px;
+  color: #d5deeb;
+  background: rgba(96,165,250,.09);
+  border: 1px solid rgba(96,165,250,.22);
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
-/* PHOTO PREVIEW */
+/* The camera area follows the visible webpage viewport in mobile Chrome. */
+#cameraScreen {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 440px;
+  overflow: hidden;
+  background: #000;
+  isolation: isolate;
+}
+#videoFeed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+}
+#compositionOverlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+.topbar, .guide-info, .zoom-panel, .bottom-controls {
+  position: absolute;
+  z-index: 5;
+  background: var(--panel);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.12);
+}
+.topbar {
+  top: 8px; left: 8px; right: 8px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 8px; border-radius: 15px;
+}
+.topbar button { padding: 8px 11px; font-size: 12px; }
+#modeTitle {
+  font-size: 12px; font-weight: 700;
+  text-align: center; flex: 1;
+}
+#levelStatus { font-size: 11px; color: #d1d5db; white-space: nowrap; }
+.guide-info {
+  top: 65px; left: 10px; right: 10px;
+  padding: 10px 12px; border-radius: 13px;
+  pointer-events: none;
+}
+#guideTitle { font-size: 13px; font-weight: 750; margin-bottom: 3px; }
+#guideText { font-size: 11px; line-height: 1.45; color: #e0e7ef; }
+#angleText { color: #bfdbfe; font-size: 11px; margin-top: 4px; }
+
+.zoom-panel {
+  left: 10px; right: 10px; bottom: 91px;
+  padding: 10px 12px; border-radius: 15px;
+}
+.zoom-heading { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
+.zoom-row { display: flex; align-items: center; gap: 10px; }
+.zoom-row input { flex: 1; min-width: 0; accent-color: #60a5fa; }
+.zoom-row button { padding: 7px 10px; font-size: 11px; }
+.bottom-controls {
+  left: 10px; right: 10px;
+  bottom: 8px;
+  padding: 9px 12px;
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: space-between; gap: 9px;
+}
+.bottom-controls button { font-size: 12px; }
+#shutter {
+  width: 58px; height: 58px; padding: 0;
+  border-radius: 50%; background: white; color: #111827;
+  border: 4px solid rgba(255,255,255,.45);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.18);
+  font-size: 25px; flex-shrink: 0;
+}
+.control-stack { display: flex; align-items: center; gap: 7px; }
+select {
+  color: white; background: #182235;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 10px; padding: 8px 6px; font-size: 11px;
+  max-width: 94px;
+}
 #previewModal {
-  position: fixed; inset: 0; z-index: 50;
-  background: rgba(2,6,23,.96);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: space-between;
-  padding: 16px; padding-bottom: calc(16px + var(--safe-bottom));
+  position: fixed; inset: 0; z-index: 20;
+  background: rgba(0,0,0,.94);
+  display: flex; flex-direction: column; padding: 12px;
 }
-#previewImage {
-  display: block; max-width: 100%; max-height: 75%;
-  object-fit: contain; border-radius: 8px;
+.preview-head { display:flex; justify-content:space-between; align-items:center; padding:8px 0; }
+#photoCanvas { display:block; max-width:100%; max-height:100%; object-fit:contain; }
+.preview-image { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; }
+.preview-actions { display:flex; gap:10px; padding:10px 0; }
+.preview-actions button { flex:1; }
+#cameraError {
+  position:absolute; z-index:10; inset:0;
+  background:rgba(0,0,0,.9); padding:24px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; line-height:1.5;
 }
-.preview-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-.preview-actions button {
-  border: 0; border-radius: 10px; padding: 12px 16px;
-  background: #2563eb; font-size: 12px;
-}
-#previewModal h2 { font-size: 16px; }
-
-/* Short Chrome viewports */
-@media (max-height: 720px) {
-  #topBar { top: 4px; padding: 5px; }
-  #guideAdvice { top: 65px; }
-  #ratioBar { bottom: calc(165px + var(--safe-bottom)); }
-  #warningLegend { bottom: 165px; }
-  #zoomPanel { padding: 6px; }
-  #mainShutter { width: 64px; height: 64px; }
-  #shutterPanel { flex-basis: 72px; width: 72px; }
-  #zoomSlider { height: 32px; }
-  .zoom-presets button, .camera-tools button { min-height: 29px; }
-}
-@media (max-width: 370px) {
-  #cameraControlDock { left: 6px; right: 6px; gap: 5px; }
-  #shutterPanel { flex-basis: 68px; width: 68px; }
-  #mainShutter { width: 62px; height: 62px; }
-  #topBar { gap: 4px; }
-  .small-btn { padding: 6px; }
+#cameraError p { color:#cbd5e1; font-size:13px; }
+@media (max-height: 600px) {
+  .guide-info { top: 58px; padding: 7px 10px; }
+  #guideText { font-size: 10px; }
+  .zoom-panel { bottom: 79px; padding: 7px 10px; }
+  .bottom-controls { padding: 5px 10px; }
+  #shutter { width: 48px; height: 48px; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- SHOT SELECTION MENU -->
-<div id="menuScreen">
-  <header class="menu-header">
-    <div class="logo"><i class="fa-solid fa-camera"></i></div>
-    <h1>People Framing Guide</h1>
-    <div class="subtitle">Choose a shot type. Follow the guide to compose your portrait.</div>
+<main id="menuScreen">
+  <header class="header">
+    <div class="symbol">📷</div>
+    <h1>Camera Framing Guide</h1>
+    <p>Choose a guide, line up your subject, then take your photo.</p>
   </header>
 
-  <div class="shot-list">
-    <button class="shot-card" onclick="selectCategory('fullBody')">
-      <h3>🚶 Full-Body Shot</h3>
-      <p>Head to toe · Hold your phone around waist to chest height.</p>
-      <p class="tip">Tip: Leave space above the head and below the feet.</p>
+  <div class="section-label">People photography</div>
+  <div class="mode-grid">
+    <button class="mode-card" style="--accent:#60a5fa" onclick="selectMode('fullBody')">
+      <span class="mode-icon">🧍</span><span>
+        <strong>Full-body</strong>
+        <small>Head to toe, with space around the feet.</small>
+      </span>
     </button>
-    <button class="shot-card" onclick="selectCategory('kneeShot')">
-      <h3>🧍 Three-Quarter / Knee Shot</h3>
-      <p>Mid-thigh up · Hold your phone around chest level.</p>
-      <p class="tip">Tip: Avoid cropping directly at the knee joint.</p>
+    <button class="mode-card" style="--accent:#34d399" onclick="selectMode('kneeShot')">
+      <span class="mode-icon">🚶</span><span>
+        <strong>Three-quarter / knee shot</strong>
+        <small>Head to mid-thigh, not cropped at the knees.</small>
+      </span>
     </button>
-    <button class="shot-card" onclick="selectCategory('halfBody')">
-      <h3>👔 Half-Body Shot</h3>
-      <p>Waist up · Keep your phone near eye level.</p>
-      <p class="tip">Tip: Place the eyes near the upper guide line.</p>
+    <button class="mode-card" style="--accent:#fbbf24" onclick="selectMode('halfBody')">
+      <span class="mode-icon">👔</span><span>
+        <strong>Half-body</strong>
+        <small>Usually waist-up, with the face clearly visible.</small>
+      </span>
     </button>
-    <button class="shot-card" onclick="selectCategory('closeUp')">
-      <h3>🙂 Close-Up Portrait</h3>
-      <p>Head and shoulders · Hold your phone at eye level.</p>
-      <p class="tip">Tip: Step back a little and zoom in if space allows.</p>
+    <button class="mode-card" style="--accent:#c084fc" onclick="selectMode('closeUp')">
+      <span class="mode-icon">🙂</span><span>
+        <strong>Close-up portrait</strong>
+        <small>Head and shoulders, natural headroom and eye placement.</small>
+      </span>
     </button>
-    <button class="shot-card" onclick="selectCategory('groupShot')">
-      <h3>👥 Group Photo</h3>
-      <p>Multiple people · Keep the phone level and centred.</p>
-      <p class="tip">Tip: Leave room on both sides of the group.</p>
-    </button>
-  </div>
-
-  <div class="info-note">
-    Golden rule: Avoid cropping directly through joints such as knees, wrists and ankles.
-  </div>
-</div>
-
-<!-- LIVE CAMERA -->
-<div id="cameraScreen" class="hidden">
-  <div id="cameraContainer">
-    <video id="videoFeed" autoplay playsinline muted></video>
-    <svg id="compositionOverlay" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
-
-    <div id="guideAdvice">
-      <div class="advice-card glass">
-        <div id="phonePosTitle">Hold Phone at Eye Level</div>
-        <div id="phonePosDetail">Keep the phone level and centre your subject.</div>
-        <div id="zoomAdviceText">Recommended zoom: 1× to 2×</div>
-      </div>
-    </div>
-
-    <div id="warningLegend">Avoid cropping directly at joints.</div>
-
-    <div id="sensorPermissionModal" class="glass hidden">
-      <strong>Enable tilt indicator</strong>
-      <p>Your browser may require permission to access phone orientation.</p>
-      <button onclick="requestSensorPermission()">Enable sensor</button>
-      <button onclick="enableDemoMode()">Test mode</button>
-    </div>
-
-    <div id="cameraErrorModal" class="glass hidden">
-      <strong>Camera unavailable</strong>
-      <p id="cameraErrorMessage">Please allow camera access in Chrome.</p>
-      <button onclick="initCamera()">Try again</button>
-    </div>
-  </div>
-
-  <div id="topBar" class="glass">
-    <button class="small-btn" onclick="returnToMenu()">
-      <i class="fa-solid fa-chevron-left"></i> Menu
-    </button>
-
-    <div id="levelerBadge" onclick="requestSensorPermission()">
-      <div class="bubble"><div id="bubbleDot"></div></div>
-      <div>
-        <div id="levelerText">Tilt: 0°</div>
-        <div id="levelerStatus">Tap to enable</div>
-      </div>
-    </div>
-
-    <button class="small-btn" onclick="cycleOpacity()">
-      <i class="fa-solid fa-eye"></i> <span id="opacityLabel">85%</span>
+    <button class="mode-card" style="--accent:#fb7185" onclick="selectMode('groupShot')">
+      <span class="mode-icon">👥</span><span>
+        <strong>Group photo</strong>
+        <small>Keep everyone inside the side margins.</small>
+      </span>
     </button>
   </div>
 
-  <div id="ratioBar">
-    <button class="ratio-btn active" data-ratio="3:4" onclick="setRatio('3:4')">3:4</button>
-    <button class="ratio-btn" data-ratio="9:16" onclick="setRatio('9:16')">9:16</button>
-    <button class="ratio-btn" data-ratio="Full" onclick="setRatio('Full')">Full</button>
+  <div class="section-label">Food photography</div>
+  <div class="mode-grid">
+    <button class="mode-card" style="--accent:#f59e0b" onclick="selectMode('oneMeal')">
+      <span class="mode-icon">🍛</span><span>
+        <strong>1 main dish + 1 drink</strong>
+        <small>One hero dish with the drink as a secondary subject.</small>
+      </span>
+    </button>
+    <button class="mode-card" style="--accent:#2dd4bf" onclick="selectMode('twoMeals')">
+      <span class="mode-icon">🍽️</span><span>
+        <strong>2 main dishes + 2 drinks</strong>
+        <small>Arrange four items with clear spacing and balance.</small>
+      </span>
+    </button>
   </div>
 
-  <div id="cameraControlDock">
-    <div id="zoomPanel" class="glass">
-      <div class="zoom-heading">
-        <span><i class="fa-solid fa-magnifying-glass-plus"></i> Zoom</span>
-        <span id="zoomDisplay">1.0×</span>
-      </div>
+  <div class="note">
+    <strong>Remember:</strong> These are flexible reference guides, not rigid templates.
+    Move the phone or the subject to suit the real scene.
+  </div>
+</main>
 
-      <input id="zoomSlider" type="range" min="1" max="5" step="0.1" value="1"
-        oninput="handleZoomChange(this.value)" aria-label="Zoom">
+<section id="cameraScreen" class="hidden">
+  <video id="videoFeed" autoplay playsinline muted></video>
+  <svg id="compositionOverlay" aria-hidden="true"></svg>
 
-      <div class="zoom-presets">
-        <button onclick="setZoomPreset(1)">1×</button>
-        <button onclick="setZoomPreset(2)">2×</button>
-        <button onclick="setZoomPreset(3)">3×</button>
-      </div>
+  <div class="topbar">
+    <button onclick="returnToMenu()">‹ Menu</button>
+    <div id="modeTitle">Framing Guide</div>
+    <button onclick="cycleOpacity()" id="opacityButton">Lines 80%</button>
+  </div>
 
-      <div class="camera-tools">
-        <button onclick="toggleCameraFacing()"><i class="fa-solid fa-camera-rotate"></i> Flip</button>
-        <button onclick="toggleGrid()"><i class="fa-solid fa-border-all"></i> Grid</button>
-      </div>
+  <div class="guide-info">
+    <div id="guideTitle"></div>
+    <div id="guideText"></div>
+    <div id="angleText"></div>
+  </div>
+
+  <div class="zoom-panel">
+    <div class="zoom-heading">
+      <span>Zoom</span><strong id="zoomDisplay">1.0×</strong>
     </div>
-
-    <div id="shutterPanel">
-      <button id="mainShutter" onclick="takeSnapshot()" aria-label="Take photo">
-        <span class="shutter-inner"><span class="shutter-dot"></span></span>
-      </button>
-      <span class="shutter-label">TAKE PHOTO</span>
+    <div class="zoom-row">
+      <button onclick="setZoom(1)">1×</button>
+      <button onclick="setZoom(2)">2×</button>
+      <input id="zoomSlider" type="range" min="1" max="5" step="0.1" value="1" oninput="setZoom(this.value)">
+      <button onclick="setZoom(3)">3×</button>
     </div>
   </div>
-</div>
 
-<!-- PHOTO PREVIEW -->
-<div id="previewModal" class="hidden">
-  <h2>Photo Preview</h2>
-  <img id="previewImage" alt="Captured photo">
+  <div class="bottom-controls">
+    <div class="control-stack">
+      <button onclick="toggleCamera()">🔄</button>
+      <button onclick="toggleGrid()" id="gridButton">Grid ✓</button>
+    </div>
+    <button id="shutter" onclick="takePhoto()" aria-label="Take photo">●</button>
+    <div class="control-stack">
+      <select id="ratioSelect" aria-label="Photo ratio" onchange="drawGuides()">
+        <option value="3:4" selected>3:4 photo</option>
+        <option value="9:16">9:16 photo</option>
+        <option value="full">Full frame</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="cameraError" class="hidden">
+    <h2>Camera unavailable</h2>
+    <p id="errorMessage">Allow camera access and try again.</p>
+    <button onclick="startCamera()">Try again</button>
+    <button onclick="returnToMenu()" style="margin-top:10px">Back to menu</button>
+  </div>
+</section>
+
+<section id="previewModal" class="hidden">
+  <div class="preview-head">
+    <strong>Photo preview</strong>
+    <button onclick="closePreview()">✕ Close</button>
+  </div>
+  <div class="preview-image"><canvas id="photoCanvas"></canvas></div>
   <div class="preview-actions">
     <button onclick="closePreview()">Retake</button>
-    <button onclick="downloadCapturedPhoto()">Download photo</button>
+    <button onclick="downloadPhoto()" style="background:#2563eb">Save photo</button>
   </div>
-</div>
-
-<canvas id="photoCanvas" class="hidden"></canvas>
+</section>
 
 <script>
-const guides = {
+const modes = {
   fullBody: {
-    title: "Full-Body Shot",
-    posTitle: "Hold Phone at Waist to Chest Level",
-    detail: "Tilt slightly upwards and leave space below the feet.",
-    zoom: "Suggested zoom: 1× to 2×",
-    color: "#3b82f6"
+    title: "Full-body",
+    color: "#60a5fa",
+    text: "Fit the complete person inside the frame. Leave a little space above the head and below the feet.",
+    angle: "Phone: around waist to chest height; keep it level first.",
+    kind: "person"
   },
   kneeShot: {
-    title: "Three-Quarter / Knee Shot",
-    posTitle: "Hold Phone at Chest Level",
-    detail: "Frame from mid-thigh upwards. Avoid cropping at knees.",
-    zoom: "Suggested zoom: 1.5× to 2×",
-    color: "#10b981"
+    title: "Three-quarter / knee shot",
+    color: "#34d399",
+    text: "Frame from the head to mid-thigh. Avoid cutting directly through the knee joint.",
+    angle: "Phone: around chest height; step back if the head or legs look distorted.",
+    kind: "person"
   },
   halfBody: {
-    title: "Half-Body Shot",
-    posTitle: "Hold Phone at Eye Level",
-    detail: "Frame from waist up and align eyes near the upper guide.",
-    zoom: "Suggested zoom: 1.5× to 2×",
-    color: "#f59e0b"
+    title: "Half-body",
+    color: "#fbbf24",
+    text: "Usually frame from the waist up. Keep the head, shoulders and hands comfortably inside if visible.",
+    angle: "Phone: around eye level; keep the camera fairly level.",
+    kind: "person"
   },
   closeUp: {
-    title: "Close-Up Portrait",
-    posTitle: "Hold Phone at Eye Level",
-    detail: "Frame head and shoulders. Leave space above the head.",
-    zoom: "Suggested zoom: 2× to 3×",
-    color: "#a855f7"
+    title: "Close-up portrait",
+    color: "#c084fc",
+    text: "Frame the head and shoulders. Leave modest headroom and keep both eyes visible. Do not force the eyes onto one exact line.",
+    angle: "Phone: eye level or slightly above. Step back and zoom modestly rather than moving extremely close.",
+    kind: "person"
   },
   groupShot: {
-    title: "Group Photo",
-    posTitle: "Hold Phone at Chest or Eye Level",
-    detail: "Keep the phone straight and leave room on both sides.",
-    zoom: "Suggested zoom: 1× to 1.5×",
-    color: "#f43f5e"
+    title: "Group photo",
+    color: "#fb7185",
+    text: "Keep faces at comfortable heights, leave space at both sides and check that nobody is cut off.",
+    angle: "Phone: chest to eye level, straight and level. Take a step back for larger groups.",
+    kind: "group"
+  },
+  oneMeal: {
+    title: "1 main dish + 1 drink",
+    color: "#f59e0b",
+    text: "Make the dish the hero. Place the drink diagonally opposite with a visible gap. Keep both items fully inside the guide.",
+    angle: "Start around 45° for most meals. Try overhead for flat dishes or decorative toppings.",
+    kind: "food1"
+  },
+  twoMeals: {
+    title: "2 main dishes + 2 drinks",
+    color: "#2dd4bf",
+    text: "Arrange two dishes as the main pair, with one drink near each dish. Keep all four items distinct and avoid edge clipping.",
+    angle: "Overhead is a good starting point for the full arrangement. Try 45° if the dishes have height.",
+    kind: "food2"
   }
 };
 
-let currentCategory = "closeUp";
-let currentRatio = "3:4";
-let currentZoom = 1;
-let facingMode = "environment";
-let mediaStream = null;
-let videoTrack = null;
-let supportsHardwareZoom = false;
-let minZoom = 1;
-let maxZoom = 5;
-let showGrid = true;
-let opacityIndex = 0;
-const opacityLevels = [0.85, 0.6, 0.35, 0];
-let demoMode = false;
-let demoInterval = null;
-let pinchDistance = null;
-let pinchStartZoom = 1;
+let currentMode = "closeUp";
+let stream = null;
+let facing = "environment";
+let zoom = 1;
+let opacity = .8;
+let gridOn = true;
+let hardwareZoom = false;
+let minHardwareZoom = 1;
+let maxHardwareZoom = 1;
+let activeTrack = null;
+let resizeObserver = null;
 
-function selectCategory(key) {
-  currentCategory = key;
+const video = document.getElementById("videoFeed");
+const svg = document.getElementById("compositionOverlay");
+
+function selectMode(mode) {
+  currentMode = mode;
   document.getElementById("menuScreen").classList.add("hidden");
   document.getElementById("cameraScreen").classList.remove("hidden");
 
-  const g = guides[key];
-  document.getElementById("phonePosTitle").textContent = g.posTitle;
-  document.getElementById("phonePosDetail").textContent = g.detail;
-  document.getElementById("zoomAdviceText").textContent = g.zoom;
-  document.getElementById("warningLegend").textContent =
-    key === "groupShot" ? "Leave space around the group." :
-    "Avoid cropping directly through joints.";
+  const data = modes[mode];
+  document.documentElement.style.setProperty("--accent", data.color);
+  document.getElementById("modeTitle").textContent = data.title;
+  document.getElementById("guideTitle").textContent = data.title;
+  document.getElementById("guideText").textContent = data.text;
+  document.getElementById("angleText").textContent = data.angle;
 
-  drawCompositionOverlay();
-  initCamera();
+  zoom = 1;
+  document.getElementById("zoomSlider").value = "1";
+  updateZoomUI();
+  drawGuides();
+  startCamera();
 }
 
 function returnToMenu() {
-  stopCameraStream();
+  stopCamera();
   document.getElementById("cameraScreen").classList.add("hidden");
   document.getElementById("menuScreen").classList.remove("hidden");
-  document.getElementById("previewModal").classList.add("hidden");
 }
 
-async function initCamera() {
-  const video = document.getElementById("videoFeed");
-  const error = document.getElementById("cameraErrorModal");
-  error.classList.add("hidden");
-  stopCameraStream();
+async function startCamera() {
+  document.getElementById("cameraError").classList.add("hidden");
+  stopCamera();
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    showCameraError("Camera access requires HTTPS. Open your GitHub Pages website.");
+    showCameraError("Camera access requires HTTPS or localhost and a supported browser.");
     return;
   }
 
   try {
-    mediaStream = await navigator.mediaDevices.getUserMedia({
+    stream = await navigator.mediaDevices.getUserMedia({
       audio: false,
       video: {
-        facingMode: facingMode,
+        facingMode: { ideal: facing },
         width: { ideal: 1920 },
         height: { ideal: 1080 }
       }
     });
 
-    video.srcObject = mediaStream;
+    video.srcObject = stream;
     await video.play();
-    videoTrack = mediaStream.getVideoTracks()[0];
-    supportsHardwareZoom = false;
-    minZoom = 1;
-    maxZoom = 5;
-
-    if (videoTrack && videoTrack.getCapabilities) {
-      const caps = videoTrack.getCapabilities();
-      if (caps.zoom) {
-        supportsHardwareZoom = true;
-        minZoom = caps.zoom.min || 1;
-        maxZoom = Math.min(caps.zoom.max || 5, 5);
-      }
-    }
-
-    const slider = document.getElementById("zoomSlider");
-    slider.min = minZoom;
-    slider.max = maxZoom;
-    currentZoom = Math.max(minZoom, Math.min(currentZoom, maxZoom));
-    updateZoomUI(currentZoom);
-    setupPinchZoom();
-    initOrientationSensor();
-  } catch (err) {
-    console.error(err);
-    showCameraError("Camera permission denied or camera unavailable. Check Chrome site permissions.");
+    activeTrack = stream.getVideoTracks()[0];
+    await detectHardwareZoom();
+    updateZoomUI();
+    drawGuides();
+  } catch (error) {
+    showCameraError("Allow camera permission in Chrome, then tap Try again. " + error.message);
   }
 }
 
-function stopCameraStream() {
-  if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
-  mediaStream = null;
-  videoTrack = null;
+function stopCamera() {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+  activeTrack = null;
+  video.srcObject = null;
+  hardwareZoom = false;
 }
 
 function showCameraError(message) {
-  document.getElementById("cameraErrorMessage").textContent = message;
-  document.getElementById("cameraErrorModal").classList.remove("hidden");
+  document.getElementById("errorMessage").textContent = message;
+  document.getElementById("cameraError").classList.remove("hidden");
 }
 
-function toggleCameraFacing() {
-  facingMode = facingMode === "environment" ? "user" : "environment";
-  initCamera();
-}
+async function detectHardwareZoom() {
+  hardwareZoom = false;
+  minHardwareZoom = 1;
+  maxHardwareZoom = 1;
+  if (!activeTrack || !activeTrack.getCapabilities) return;
 
-async function handleZoomChange(value) {
-  currentZoom = parseFloat(value);
-  updateZoomUI(currentZoom);
-
-  const video = document.getElementById("videoFeed");
-  if (supportsHardwareZoom && videoTrack) {
-    try {
-      await videoTrack.applyConstraints({ advanced: [{ zoom: currentZoom }] });
-      video.style.transform = "scale(1)";
-    } catch (e) {
-      video.style.transform = `scale(${currentZoom})`;
-    }
-  } else {
-    video.style.transform = `scale(${currentZoom})`;
+  const caps = activeTrack.getCapabilities();
+  if (caps.zoom) {
+    hardwareZoom = true;
+    minHardwareZoom = caps.zoom.min || 1;
+    maxHardwareZoom = Math.min(caps.zoom.max || 5, 5);
   }
 }
 
-function setZoomPreset(value) {
-  const slider = document.getElementById("zoomSlider");
-  slider.value = Math.max(minZoom, Math.min(maxZoom, value));
-  handleZoomChange(slider.value);
+async function setZoom(value) {
+  zoom = Math.max(1, Math.min(5, Number(value) || 1));
+  document.getElementById("zoomSlider").value = zoom;
+  updateZoomUI();
+
+  if (hardwareZoom && activeTrack) {
+    const requested = Math.max(minHardwareZoom,
+      Math.min(maxHardwareZoom, zoom));
+    try {
+      await activeTrack.applyConstraints({ advanced: [{ zoom: requested }] });
+    } catch (error) {
+      hardwareZoom = false;
+      video.style.transform = `scale(${zoom})`;
+    }
+  } else {
+    video.style.transform = `scale(${zoom})`;
+  }
 }
 
-function updateZoomUI(value) {
-  document.getElementById("zoomDisplay").textContent = `${Number(value).toFixed(1)}×`;
-  document.getElementById("zoomSlider").value = value;
+function updateZoomUI() {
+  document.getElementById("zoomDisplay").textContent = zoom.toFixed(1) + "×";
+  if (!hardwareZoom) video.style.transform = `scale(${zoom})`;
 }
 
-function setRatio(ratio) {
-  currentRatio = ratio;
-  document.querySelectorAll(".ratio-btn").forEach(button => {
-    button.classList.toggle("active", button.dataset.ratio === ratio);
-  });
-}
-
-function cycleOpacity() {
-  opacityIndex = (opacityIndex + 1) % opacityLevels.length;
-  const opacity = opacityLevels[opacityIndex];
-  document.getElementById("compositionOverlay").style.opacity = opacity;
-  document.getElementById("opacityLabel").textContent =
-    opacity === 0 ? "Off" : `${Math.round(opacity * 100)}%`;
+async function toggleCamera() {
+  facing = facing === "environment" ? "user" : "environment";
+  await startCamera();
 }
 
 function toggleGrid() {
-  showGrid = !showGrid;
-  drawCompositionOverlay();
+  gridOn = !gridOn;
+  document.getElementById("gridButton").textContent = gridOn ? "Grid ✓" : "Grid ✕";
+  drawGuides();
 }
 
-function drawCompositionOverlay() {
-  const svg = document.getElementById("compositionOverlay");
-  const color = guides[currentCategory].color;
-  let art = "";
+function cycleOpacity() {
+  const values = [.8, .5, .25, 0];
+  const next = values.findIndex(v => v === opacity);
+  opacity = values[(next + 1) % values.length];
+  svg.style.opacity = opacity;
+  document.getElementById("opacityButton").textContent =
+    opacity === 0 ? "Lines Off" : `Lines ${Math.round(opacity * 100)}%`;
+}
 
-  if (showGrid) {
-    art += `
-      <g stroke="white" stroke-width=".25" stroke-dasharray="1.5 1.5" opacity=".45">
-        <line x1="33.33" y1="0" x2="33.33" y2="100"/>
-        <line x1="66.66" y1="0" x2="66.66" y2="100"/>
-        <line x1="0" y1="33.33" x2="100" y2="33.33"/>
-        <line x1="0" y1="66.66" x2="100" y2="66.66"/>
-      </g>`;
+/*
+  Correct overlay geometry:
+  SVG viewBox is set to the actual rendered width and height.
+  The x/y helper functions convert percentages separately against
+  width and height, so circles and human silhouettes do not stretch
+  with the portrait screen's aspect ratio.
+*/
+function drawGuides() {
+  if (!svg) return;
+
+  const rect = svg.getBoundingClientRect();
+  const W = Math.max(1, rect.width);
+  const H = Math.max(1, rect.height);
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svg.setAttribute("preserveAspectRatio", "none");
+  svg.style.opacity = opacity;
+
+  const data = modes[currentMode];
+  const c = data.color;
+  const X = p => W * p / 100;
+  const Y = p => H * p / 100;
+  const sx = p => W * p / 100;
+  const sy = p => H * p / 100;
+  const line = (x1,y1,x2,y2,color=c,width=2,dash="") =>
+    `<line x1="${X(x1)}" y1="${Y(y1)}" x2="${X(x2)}" y2="${Y(y2)}"
+       stroke="${color}" stroke-width="${width}" ${dash ? `stroke-dasharray="${dash}"` : ""}
+       vector-effect="non-scaling-stroke" opacity=".9"/>`;
+  const ellipse = (cx,cy,rx,ry,color=c,width=2,dash="") =>
+    `<ellipse cx="${X(cx)}" cy="${Y(cy)}" rx="${sx(rx)}" ry="${sy(ry)}"
+       fill="none" stroke="${color}" stroke-width="${width}"
+       ${dash ? `stroke-dasharray="${dash}"` : ""}
+       vector-effect="non-scaling-stroke"/>`;
+  const path = (d,color=c,width=2,dash="") =>
+    `<path d="${d}" fill="none" stroke="${color}" stroke-width="${width}"
+      ${dash ? `stroke-dasharray="${dash}"` : ""}
+      vector-effect="non-scaling-stroke"/>`;
+  const text = (x,y,label,color=c,anchor="middle",size=12) =>
+    `<text x="${X(x)}" y="${Y(y)}" fill="${color}" font-size="${size}"
+      font-family="system-ui,sans-serif" font-weight="700"
+      text-anchor="${anchor}" paint-order="stroke" stroke="rgba(0,0,0,.75)"
+      stroke-width="3" stroke-linejoin="round">${label}</text>`;
+
+  let out = "";
+
+  if (gridOn) {
+    [33.333,66.666].forEach(p => {
+      out += line(p,0,p,100,"#ffffff",1,"5 7");
+      out += line(0,p,100,p,"#ffffff",1,"5 7");
+    });
   }
 
-  if (currentCategory === "fullBody") {
-    art += `
-      <ellipse cx="50" cy="19" rx="8" ry="9" fill="none" stroke="${color}" stroke-width="1.2"/>
-      <path d="M42 29 L38 53 L44 54 L43 88 M58 29 L62 53 L56 54 L57 88"
-        fill="none" stroke="${color}" stroke-width="1.2" stroke-dasharray="2 2"/>
-      <line x1="10" y1="68" x2="90" y2="68" stroke="#ef4444" stroke-dasharray="2 2"/>
-      <text x="50" y="66" fill="#ef4444" font-size="3" text-anchor="middle">AVOID KNEE CROP</text>
-      <line x1="25" y1="94" x2="75" y2="94" stroke="${color}" stroke-width="1.2"/>`;
-  } else if (currentCategory === "kneeShot") {
-    art += `
-      <ellipse cx="50" cy="23" rx="10" ry="12" fill="none" stroke="${color}" stroke-width="1.4"/>
-      <path d="M38 36 Q50 32 62 36 L67 76 L33 76 Z" fill="none" stroke="${color}" stroke-dasharray="2 2"/>
-      <line x1="10" y1="80" x2="90" y2="80" stroke="${color}" stroke-width="1.4"/>
-      <text x="50" y="78" fill="${color}" font-size="3" text-anchor="middle">SAFE CROP</text>
-      <line x1="10" y1="92" x2="90" y2="92" stroke="#ef4444" stroke-dasharray="2 2"/>`;
-  } else if (currentCategory === "halfBody") {
-    art += `
-      <ellipse cx="50" cy="28" rx="13" ry="16" fill="none" stroke="${color}" stroke-width="1.5"/>
-      <path d="M32 46 Q22 55 18 82 L82 82 Q78 55 68 46" fill="none" stroke="${color}" stroke-dasharray="2 2"/>
-      <line x1="15" y1="30" x2="85" y2="30" stroke="${color}" stroke-dasharray="2 2"/>
-      <text x="50" y="27" fill="${color}" font-size="3" text-anchor="middle">EYE LINE</text>`;
-  } else if (currentCategory === "closeUp") {
-    art += `
-      <ellipse cx="50" cy="39" rx="20" ry="25" fill="none" stroke="${color}" stroke-width="1.5"/>
-      <line x1="20" y1="36" x2="80" y2="36" stroke="${color}" stroke-dasharray="2 2"/>
-      <circle cx="40" cy="36" r="1.5" fill="${color}"/>
-      <circle cx="60" cy="36" r="1.5" fill="${color}"/>
-      <path d="M22 76 Q50 67 78 76" fill="none" stroke="${color}" stroke-dasharray="2 2"/>
-      <line x1="10" y1="86" x2="90" y2="86" stroke="${color}"/>`;
+  if (data.kind === "person") {
+    if (currentMode === "fullBody") {
+      // Whole-person guide: head, torso, legs and feet are separate proportions.
+      out += path(`M ${X(50)} ${Y(91)} L ${X(50)} ${Y(94)}`,c,2);
+      out += ellipse(50,18,7.5,5.2,c,2,"5 4");
+      out += path(`M ${X(44)} ${Y(24)} Q ${X(38)} ${Y(24)} ${X(37)} ${Y(31)}
+        L ${X(33)} ${Y(51)} Q ${X(50)} ${Y(55)} ${X(67)} ${Y(51)}
+        L ${X(63)} ${Y(31)} Q ${X(62)} ${Y(24)} ${X(56)} ${Y(24)}`,c,2,"6 5");
+      out += path(`M ${X(40)} ${Y(53)} L ${X(43)} ${Y(77)} L ${X(40)} ${Y(91)}
+        M ${X(60)} ${Y(53)} L ${X(57)} ${Y(77)} L ${X(60)} ${Y(91)}`,c,2,"6 5");
+      out += line(22,8,78,8,c,2);
+      out += text(50,6,"HEADROOM",c,"middle",11);
+      out += line(25,94,75,94,c,2);
+      out += text(50,98,"LEAVE SPACE BELOW FEET",c,"middle",11);
+      out += line(16,72,84,72,"#f87171",2,"5 5");
+      out += text(18,70,"Avoid cutting at knees", "#fecaca","start",11);
+    } else if (currentMode === "kneeShot") {
+      out += ellipse(50,17,8,5.8,c,2,"5 4");
+      out += path(`M ${X(43)} ${Y(24)} Q ${X(35)} ${Y(26)} ${X(35)} ${Y(37)}
+        L ${X(32)} ${Y(62)} Q ${X(50)} ${Y(66)} ${X(68)} ${Y(62)}
+        L ${X(65)} ${Y(37)} Q ${X(65)} ${Y(26)} ${X(57)} ${Y(24)}`,c,2,"6 5");
+      out += line(12,77,88,77,c,2);
+      out += text(50,75,"MID-THIGH CROP",c,"middle",11);
+      out += line(12,91,88,91,"#f87171",2,"5 5");
+      out += text(50,89,"Avoid cutting at knees","#fecaca","middle",11);
+    } else if (currentMode === "halfBody") {
+      out += ellipse(50,19,9,6.5,c,2,"5 4");
+      out += path(`M ${X(42)} ${Y(26)} Q ${X(34)} ${Y(29)} ${X(31)} ${Y(39)}
+        L ${X(25)} ${Y(62)} Q ${X(50)} ${Y(67)} ${X(75)} ${Y(62)}
+        L ${X(69)} ${Y(39)} Q ${X(66)} ${Y(29)} ${X(58)} ${Y(26)}`,c,2,"6 5");
+      out += line(13,67,87,67,c,2);
+      out += text(50,65,"WAIST-UP FRAME",c,"middle",11);
+      out += line(15,12,85,12,c,1.5,"4 5");
+      out += text(50,10,"HEADROOM",c,"middle",10);
+    } else if (currentMode === "closeUp") {
+      // A face guide with separate eye, headroom and shoulder references.
+      out += ellipse(50,27,15,11,c,2,"6 5");
+      out += line(25,27,75,27,c,2,"5 5");
+      out += ellipse(43.5,27,1.2,0.8,c,2);
+      out += ellipse(56.5,27,1.2,0.8,c,2);
+      out += text(50,24,"EYE GUIDE",c,"middle",11);
+      out += path(`M ${X(28)} ${Y(43)} Q ${X(50)} ${Y(36)} ${X(72)} ${Y(43)}`,c,2,"6 5");
+      out += path(`M ${X(22)} ${Y(45)} Q ${X(28)} ${Y(41)} ${X(35)} ${Y(43)}
+        M ${X(65)} ${Y(43)} Q ${X(72)} ${Y(41)} ${X(78)} ${Y(45)}`,c,2,"6 5");
+      out += line(17,49,83,49,c,2);
+      out += text(50,47,"SHOULDERS IN FRAME",c,"middle",10);
+      out += line(14,8,86,8,c,1.5,"5 5");
+      out += text(50,6,"LEAVE HEADROOM",c,"middle",10);
+    }
+  } else if (data.kind === "group") {
+    out += line(8,8,8,90,c,2,"5 5");
+    out += line(92,8,92,90,c,2,"5 5");
+    out += text(50,8,"SIDE SAFETY MARGINS",c,"middle",11);
+    out += ellipse(30,27,6.5,4.5,c,2,"5 4");
+    out += ellipse(50,25,7,5,c,2);
+    out += ellipse(70,27,6.5,4.5,c,2,"5 4");
+    out += path(`M ${X(21)} ${Y(34)} Q ${X(30)} ${Y(30)} ${X(39)} ${Y(34)}
+      M ${X(40)} ${Y(33)} Q ${X(50)} ${Y(29)} ${X(60)} ${Y(33)}
+      M ${X(61)} ${Y(34)} Q ${X(70)} ${Y(30)} ${X(79)} ${Y(34)}`,c,2,"5 4");
+    out += line(15,35,85,35,c,1.5,"5 5");
+    out += text(50,38,"KEEP FACES CLEAR",c,"middle",11);
+    out += text(50,88,"CHECK BOTH EDGES",c,"middle",11);
+  } else if (data.kind === "food1") {
+    // Main dish larger, drink smaller and diagonally offset.
+    out += ellipse(39,53,25,15,c,3,"7 5");
+    out += ellipse(39,53,20,12,c,1.5,"5 5");
+    out += text(39,53,"MAIN DISH",c,"middle",12);
+    out += ellipse(76,30,8,5,c,3,"6 5");
+    out += line(72,24,80,24,c,2);
+    out += text(76,39,"DRINK",c,"middle",11);
+    out += text(50,78,"KEEP BOTH ITEMS INSIDE",c,"middle",11);
+  } else if (data.kind === "food2") {
+    // Four separate item zones, with generous separation.
+    out += ellipse(30,35,19,11,c,3,"6 5");
+    out += ellipse(70,35,19,11,c,3,"6 5");
+    out += text(30,35,"DISH 1",c,"middle",12);
+    out += text(70,35,"DISH 2",c,"middle",12);
+    out += ellipse(32,69,8,5,c,2,"5 4");
+    out += ellipse(68,69,8,5,c,2,"5 4");
+    out += text(32,78,"DRINK 1",c,"middle",10);
+    out += text(68,78,"DRINK 2",c,"middle",10);
+    out += text(50,91,"LEAVE SPACE BETWEEN ITEMS",c,"middle",10);
+  }
+
+  svg.innerHTML = out;
+}
+
+function getCropRect(sourceWidth, sourceHeight) {
+  const ratio = document.getElementById("ratioSelect").value;
+  if (ratio === "full") {
+    return { sx: 0, sy: 0, sw: sourceWidth, sh: sourceHeight };
+  }
+
+  const targetRatio = ratio === "3:4" ? 3/4 : 9/16;
+  const sourceRatio = sourceWidth / sourceHeight;
+
+  if (sourceRatio > targetRatio) {
+    const sw = sourceHeight * targetRatio;
+    return { sx: (sourceWidth-sw)/2, sy: 0, sw, sh: sourceHeight };
   } else {
-    art += `
-      <line x1="50" y1="10" x2="50" y2="90" stroke="${color}" stroke-dasharray="2 2"/>
-      <ellipse cx="28" cy="35" rx="9" ry="12" fill="none" stroke="${color}"/>
-      <ellipse cx="50" cy="32" rx="9" ry="12" fill="none" stroke="${color}"/>
-      <ellipse cx="72" cy="35" rx="9" ry="12" fill="none" stroke="${color}"/>
-      <line x1="8" y1="10" x2="8" y2="90" stroke="${color}" stroke-dasharray="2 2"/>
-      <line x1="92" y1="10" x2="92" y2="90" stroke="${color}" stroke-dasharray="2 2"/>`;
-  }
-
-  svg.innerHTML = art;
-}
-
-function initOrientationSensor() {
-  if (!window.DeviceOrientationEvent) {
-    document.getElementById("levelerStatus").textContent = "Sensor unavailable";
-    return;
-  }
-  document.getElementById("levelerStatus").textContent = "Live sensor";
-  window.addEventListener("deviceorientation", handleOrientation, true);
-}
-
-async function requestSensorPermission() {
-  if (typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function") {
-    try {
-      const result = await DeviceOrientationEvent.requestPermission();
-      if (result === "granted") initOrientationSensor();
-    } catch (e) {
-      enableDemoMode();
-    }
-  } else if (!window.DeviceOrientationEvent) {
-    enableDemoMode();
+    const sh = sourceWidth / targetRatio;
+    return { sx: 0, sy: (sourceHeight-sh)/2, sw: sourceWidth, sh };
   }
 }
 
-function handleOrientation(event) {
-  if (demoMode) return;
-  const roll = Math.round(event.gamma || 0);
-  document.getElementById("levelerText").textContent = `Tilt: ${roll}°`;
-  const dot = document.getElementById("bubbleDot");
-  dot.style.transform = `translate(calc(-50% + ${Math.max(-10, Math.min(10, roll / 3))}px), -50%)`;
-  dot.style.background = Math.abs(roll) <= 2 ? "#34d399" :
-    Math.abs(roll) <= 6 ? "#fbbf24" : "#f87171";
-}
-
-function enableDemoMode() {
-  demoMode = true;
-  document.getElementById("levelerStatus").textContent = "Demo mode";
-  if (demoInterval) clearInterval(demoInterval);
-  let t = 0;
-  demoInterval = setInterval(() => {
-    t += .06;
-    const roll = Math.round(Math.sin(t) * 10);
-    document.getElementById("levelerText").textContent = `Tilt: ${roll}°`;
-    document.getElementById("bubbleDot").style.transform =
-      `translate(calc(-50% + ${roll}px), -50%)`;
-  }, 60);
-}
-
-function setupPinchZoom() {
-  const container = document.getElementById("cameraContainer");
-  container.ontouchstart = event => {
-    if (event.touches.length === 2) {
-      pinchDistance = Math.hypot(
-        event.touches[0].clientX - event.touches[1].clientX,
-        event.touches[0].clientY - event.touches[1].clientY
-      );
-      pinchStartZoom = currentZoom;
-    }
-  };
-  container.ontouchmove = event => {
-    if (event.touches.length === 2 && pinchDistance) {
-      const distance = Math.hypot(
-        event.touches[0].clientX - event.touches[1].clientX,
-        event.touches[0].clientY - event.touches[1].clientY
-      );
-      const value = Math.max(minZoom, Math.min(maxZoom,
-        pinchStartZoom * distance / pinchDistance));
-      handleZoomChange(value);
-    }
-  };
-  container.ontouchend = () => { pinchDistance = null; };
-}
-
-/* Capture a photo cropped to the selected aspect ratio.
-   "Full" uses the full available video frame. */
-function takeSnapshot() {
-  const video = document.getElementById("videoFeed");
-  const canvas = document.getElementById("photoCanvas");
+function takePhoto() {
   if (!video.videoWidth || !video.videoHeight) {
-    alert("Camera is not ready yet.");
+    alert("Please wait for the camera preview to start.");
     return;
   }
 
-  const vw = video.videoWidth;
-  const vh = video.videoHeight;
-  let targetRatio = vw / vh;
-
-  if (currentRatio === "3:4") targetRatio = 3 / 4;
-  if (currentRatio === "9:16") targetRatio = 9 / 16;
-
-  let cropW = vw;
-  let cropH = vh;
-  if (currentRatio !== "Full") {
-    if (vw / vh > targetRatio) cropW = vh * targetRatio;
-    else cropH = vw / targetRatio;
-  }
-
-  const sx = (vw - cropW) / 2;
-  const sy = (vh - cropH) / 2;
-
-  canvas.width = Math.round(cropW);
-  canvas.height = Math.round(cropH);
+  const canvas = document.getElementById("photoCanvas");
   const ctx = canvas.getContext("2d");
+  const crop = getCropRect(video.videoWidth, video.videoHeight);
 
-  if (facingMode === "user") {
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1);
-  }
+  canvas.width = Math.round(crop.sw);
+  canvas.height = Math.round(crop.sh);
 
-  if (supportsHardwareZoom) {
-    ctx.drawImage(video, sx, sy, cropW, cropH, 0, 0, canvas.width, canvas.height);
+  // Apply digital zoom to the captured image when hardware zoom is unavailable.
+  if (!hardwareZoom && zoom > 1) {
+    const sw = crop.sw / zoom;
+    const sh = crop.sh / zoom;
+    const sx = crop.sx + (crop.sw - sw) / 2;
+    const sy = crop.sy + (crop.sh - sh) / 2;
+    ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
   } else {
-    const zoomW = cropW / currentZoom;
-    const zoomH = cropH / currentZoom;
-    const zoomX = sx + (cropW - zoomW) / 2;
-    const zoomY = sy + (cropH - zoomH) / 2;
-    ctx.drawImage(video, zoomX, zoomY, zoomW, zoomH, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, canvas.width, canvas.height);
   }
 
-  document.getElementById("previewImage").src = canvas.toDataURL("image/jpeg", .92);
   document.getElementById("previewModal").classList.remove("hidden");
 }
 
@@ -777,18 +704,22 @@ function closePreview() {
   document.getElementById("previewModal").classList.add("hidden");
 }
 
-function downloadCapturedPhoto() {
+function downloadPhoto() {
+  const canvas = document.getElementById("photoCanvas");
   const link = document.createElement("a");
-  link.href = document.getElementById("photoCanvas").toDataURL("image/jpeg", .92);
-  link.download = `portrait_${currentCategory}_${Date.now()}.jpg`;
+  const safeName = modes[currentMode].title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+  link.download = `photo-${safeName}.jpg`;
+  link.href = canvas.toDataURL("image/jpeg", .95);
   link.click();
 }
 
-window.addEventListener("resize", () => {
-  if (!document.getElementById("cameraScreen").classList.contains("hidden")) {
-    drawCompositionOverlay();
-  }
-});
+window.addEventListener("resize", drawGuides);
+window.addEventListener("orientationchange", () => setTimeout(drawGuides, 250));
+
+if ("ResizeObserver" in window) {
+  resizeObserver = new ResizeObserver(drawGuides);
+  resizeObserver.observe(document.getElementById("cameraScreen"));
+}
 </script>
 </body>
 </html>
