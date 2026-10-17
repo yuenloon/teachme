@@ -2,724 +2,1798 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Camera Framing Guide</title>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10131a">
+  <title>Gemini Cam | Photography Guide</title>
 
-<style>
-:root {
-  --accent: #60a5fa;
-  --panel: rgba(12, 18, 30, .72);
-  --line: rgba(255,255,255,.8);
-}
-* { box-sizing: border-box; }
-html, body {
-  margin: 0;
-  width: 100%;
-  min-height: 100%;
-  background: #080c13;
-  color: white;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-}
-body { overflow-x: hidden; }
-button, select, input { font: inherit; }
-button {
-  color: white;
-  border: 1px solid rgba(255,255,255,.18);
-  background: rgba(255,255,255,.12);
-  border-radius: 12px;
-  padding: 10px 12px;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-button:active { transform: scale(.97); }
-button:focus-visible, select:focus-visible, input:focus-visible {
-  outline: 2px solid #60a5fa;
-  outline-offset: 2px;
-}
-.hidden { display: none !important; }
+  <style>
+    :root {
+      --bg: #10131a;
+      --panel: #1b202b;
+      --panel-light: #252c39;
+      --text: #f5f7fb;
+      --muted: #aab4c5;
+      --accent: #8be9fd;
+      --accent-dark: #193e49;
+      --line: #ffffff;
+      --danger: #ff8585;
+      --radius: 16px;
+    }
 
-#menuScreen {
-  width: min(100%, 620px);
-  margin: auto;
-  padding: 24px 16px 34px;
-}
-.header { text-align: center; padding: 10px 0 20px; }
-.header .symbol { font-size: 42px; }
-.header h1 { font-size: 27px; margin: 5px 0; }
-.header p { color: #aab5c6; font-size: 14px; line-height: 1.5; }
-.section-label {
-  color: #aab5c6;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 20px 2px 10px;
-}
-.mode-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-.mode-card {
-  display: flex;
-  align-items: center;
-  text-align: left;
-  gap: 12px;
-  padding: 15px;
-  background: rgba(255,255,255,.055);
-  border: 1px solid rgba(255,255,255,.12);
-  border-left: 4px solid var(--accent);
-  border-radius: 15px;
-}
-.mode-icon { font-size: 28px; width: 42px; text-align: center; }
-.mode-card strong { display: block; font-size: 15px; }
-.mode-card small { display: block; color: #b6c0cf; margin-top: 4px; line-height: 1.4; }
-.note {
-  margin-top: 18px;
-  padding: 13px;
-  color: #d5deeb;
-  background: rgba(96,165,250,.09);
-  border: 1px solid rgba(96,165,250,.22);
-  border-radius: 12px;
-  font-size: 12px;
-  line-height: 1.6;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-/* The camera area follows the visible webpage viewport in mobile Chrome. */
-#cameraScreen {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  height: 100dvh;
-  min-height: 440px;
-  overflow: hidden;
-  background: #000;
-  isolation: isolate;
-}
-#videoFeed {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform-origin: center;
-}
-#compositionOverlay {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 2;
-}
-.topbar, .guide-info, .zoom-panel, .bottom-controls {
-  position: absolute;
-  z-index: 5;
-  background: var(--panel);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,.12);
-}
-.topbar {
-  top: 8px; left: 8px; right: 8px;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 8px; padding: 8px; border-radius: 15px;
-}
-.topbar button { padding: 8px 11px; font-size: 12px; }
-#modeTitle {
-  font-size: 12px; font-weight: 700;
-  text-align: center; flex: 1;
-}
-#levelStatus { font-size: 11px; color: #d1d5db; white-space: nowrap; }
-.guide-info {
-  top: 65px; left: 10px; right: 10px;
-  padding: 10px 12px; border-radius: 13px;
-  pointer-events: none;
-}
-#guideTitle { font-size: 13px; font-weight: 750; margin-bottom: 3px; }
-#guideText { font-size: 11px; line-height: 1.45; color: #e0e7ef; }
-#angleText { color: #bfdbfe; font-size: 11px; margin-top: 4px; }
+    html {
+      background: var(--bg);
+      color-scheme: dark;
+    }
 
-.zoom-panel {
-  left: 10px; right: 10px; bottom: 91px;
-  padding: 10px 12px; border-radius: 15px;
-}
-.zoom-heading { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
-.zoom-row { display: flex; align-items: center; gap: 10px; }
-.zoom-row input { flex: 1; min-width: 0; accent-color: #60a5fa; }
-.zoom-row button { padding: 7px 10px; font-size: 11px; }
-.bottom-controls {
-  left: 10px; right: 10px;
-  bottom: 8px;
-  padding: 9px 12px;
-  border-radius: 18px;
-  display: flex; align-items: center; justify-content: space-between; gap: 9px;
-}
-.bottom-controls button { font-size: 12px; }
-#shutter {
-  width: 58px; height: 58px; padding: 0;
-  border-radius: 50%; background: white; color: #111827;
-  border: 4px solid rgba(255,255,255,.45);
-  box-shadow: 0 0 0 2px rgba(255,255,255,.18);
-  font-size: 25px; flex-shrink: 0;
-}
-.control-stack { display: flex; align-items: center; gap: 7px; }
-select {
-  color: white; background: #182235;
-  border: 1px solid rgba(255,255,255,.2);
-  border-radius: 10px; padding: 8px 6px; font-size: 11px;
-  max-width: 94px;
-}
-#previewModal {
-  position: fixed; inset: 0; z-index: 20;
-  background: rgba(0,0,0,.94);
-  display: flex; flex-direction: column; padding: 12px;
-}
-.preview-head { display:flex; justify-content:space-between; align-items:center; padding:8px 0; }
-#photoCanvas { display:block; max-width:100%; max-height:100%; object-fit:contain; }
-.preview-image { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; }
-.preview-actions { display:flex; gap:10px; padding:10px 0; }
-.preview-actions button { flex:1; }
-#cameraError {
-  position:absolute; z-index:10; inset:0;
-  background:rgba(0,0,0,.9); padding:24px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; line-height:1.5;
-}
-#cameraError p { color:#cbd5e1; font-size:13px; }
-@media (max-height: 600px) {
-  .guide-info { top: 58px; padding: 7px 10px; }
-  #guideText { font-size: 10px; }
-  .zoom-panel { bottom: 79px; padding: 7px 10px; }
-  .bottom-controls { padding: 5px 10px; }
-  #shutter { width: 48px; height: 48px; }
-}
-</style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                   "Segoe UI", sans-serif;
+    }
+
+    button, select, input {
+      font: inherit;
+    }
+
+    button, select {
+      min-height: 42px;
+      border: 1px solid #3b4557;
+      border-radius: 11px;
+      padding: 9px 12px;
+      background: var(--panel-light);
+      color: var(--text);
+    }
+
+    button {
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    button:active {
+      transform: scale(.98);
+    }
+
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 16px;
+      padding-top: max(16px, env(safe-area-inset-top));
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+    }
+
+    header {
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      border-radius: 13px;
+      background: var(--accent-dark);
+      font-size: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.45rem;
+      letter-spacing: -.5px;
+    }
+
+    .subtitle {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .panel {
+      margin-bottom: 14px;
+      padding: 14px;
+      border: 1px solid #303848;
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      font-size: .98rem;
+      font-weight: 750;
+    }
+
+    .mode-tabs,
+    .button-row,
+    .ratio-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .mode-tabs button {
+      flex: 1;
+    }
+
+    button.active {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: var(--accent-dark);
+    }
+
+    .field-label {
+      display: block;
+      margin: 14px 0 7px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .mode-select {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 9px;
+    }
+
+    .mode-card {
+      width: 100%;
+      text-align: left;
+      padding: 12px;
+      display: flex;
+      gap: 11px;
+      align-items: center;
+    }
+
+    .mode-card .emoji {
+      font-size: 25px;
+      width: 34px;
+      text-align: center;
+    }
+
+    .mode-card strong {
+      display: block;
+      font-size: .91rem;
+    }
+
+    .mode-card small {
+      display: block;
+      color: var(--muted);
+      margin-top: 3px;
+      line-height: 1.35;
+    }
+
+    .camera-shell {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      isolation: isolate;
+      border-radius: 18px;
+      background: #080a0f;
+      border: 1px solid #303848;
+    }
+
+    .camera-shell.ratio-916 {
+      aspect-ratio: 9 / 16;
+    }
+
+    .camera-shell.ratio-full {
+      aspect-ratio: auto;
+      height: min(72dvh, 720px);
+      min-height: 300px;
+    }
+
+    #videoFeed {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #080a0f;
+      z-index: 1;
+      opacity: 1;
+      transform-origin: center;
+    }
+
+    #guideSvg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .camera-top {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      z-index: 4;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .camera-top > * {
+      pointer-events: auto;
+    }
+
+    .camera-badge {
+      padding: 7px 10px;
+      border-radius: 9px;
+      background: #080a0fc9;
+      color: white;
+      font-size: .76rem;
+      backdrop-filter: blur(5px);
+    }
+
+    .camera-bottom {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      z-index: 4;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .camera-bottom button {
+      background: #080a0fd9;
+      backdrop-filter: blur(5px);
+    }
+
+    .camera-message {
+      position: absolute;
+      z-index: 3;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 28px;
+      color: var(--muted);
+      line-height: 1.5;
+      pointer-events: none;
+    }
+
+    .camera-message strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+    }
+
+    .camera-message.hidden {
+      display: none;
+    }
+
+    .camera-error {
+      display: none;
+      margin-top: 12px;
+      border: 1px solid #704747;
+      border-radius: 12px;
+      background: #321f25;
+      padding: 12px;
+    }
+
+    .camera-error.visible {
+      display: block;
+    }
+
+    .camera-error p {
+      margin: 0 0 10px;
+      color: #ffdada;
+      font-size: .88rem;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .control-item {
+      min-width: 0;
+    }
+
+    .control-item label {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 8px;
+      font-size: .83rem;
+      color: var(--muted);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    select {
+      width: 100%;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #303848;
+    }
+
+    .toggle-row:last-child {
+      border-bottom: 0;
+    }
+
+    .toggle-row label {
+      font-size: .9rem;
+    }
+
+    .toggle-row input {
+      width: 19px;
+      height: 19px;
+      accent-color: var(--accent);
+    }
+
+    .primary {
+      background: var(--accent);
+      color: #07151b;
+      border-color: var(--accent);
+      font-weight: 800;
+    }
+
+    .shutter {
+      width: 60px;
+      height: 60px;
+      min-height: 60px;
+      padding: 0;
+      border: 4px solid white;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 3px #0008;
+    }
+
+    .shutter:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .tip {
+      margin: 0;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.55;
+    }
+
+    .tip strong {
+      color: var(--text);
+    }
+
+    .preview-wrap {
+      display: none;
+    }
+
+    .preview-wrap.visible {
+      display: block;
+    }
+
+    .preview-image {
+      display: block;
+      max-width: 100%;
+      max-height: 70vh;
+      margin: 0 auto 12px;
+      border-radius: 12px;
+      background: #080a0f;
+    }
+
+    .level {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    .level-track {
+      position: relative;
+      flex: 1;
+      height: 5px;
+      background: #414b5e;
+      border-radius: 10px;
+    }
+
+    .level-bubble {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #08151b;
+      transform: translate(-50%, -50%);
+    }
+
+    .footnote {
+      text-align: center;
+      color: #8791a3;
+      font-size: .76rem;
+      line-height: 1.5;
+      padding: 8px 4px;
+    }
+
+    @media (min-width: 600px) {
+      .app {
+        padding: 24px;
+      }
+
+      .mode-select {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .camera-shell {
+        max-height: 76vh;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <main class="app">
+    <header>
+      <div class="brand">
+        <div class="brand-icon">📷</div>
+        <div>
+          <h1>Gemini Cam</h1>
+          <p class="subtitle">Your personal photography framing guide</p>
+        </div>
+      </div>
+    </header>
 
-<main id="menuScreen">
-  <header class="header">
-    <div class="symbol">📷</div>
-    <h1>Camera Framing Guide</h1>
-    <p>Choose a guide, line up your subject, then take your photo.</p>
-  </header>
+    <section class="panel">
+      <h2 class="section-title">1. Choose your photography type</h2>
 
-  <div class="section-label">People photography</div>
-  <div class="mode-grid">
-    <button class="mode-card" style="--accent:#60a5fa" onclick="selectMode('fullBody')">
-      <span class="mode-icon">🧍</span><span>
-        <strong>Full-body</strong>
-        <small>Head to toe, with space around the feet.</small>
-      </span>
-    </button>
-    <button class="mode-card" style="--accent:#34d399" onclick="selectMode('kneeShot')">
-      <span class="mode-icon">🚶</span><span>
-        <strong>Three-quarter / knee shot</strong>
-        <small>Head to mid-thigh, not cropped at the knees.</small>
-      </span>
-    </button>
-    <button class="mode-card" style="--accent:#fbbf24" onclick="selectMode('halfBody')">
-      <span class="mode-icon">👔</span><span>
-        <strong>Half-body</strong>
-        <small>Usually waist-up, with the face clearly visible.</small>
-      </span>
-    </button>
-    <button class="mode-card" style="--accent:#c084fc" onclick="selectMode('closeUp')">
-      <span class="mode-icon">🙂</span><span>
-        <strong>Close-up portrait</strong>
-        <small>Head and shoulders, natural headroom and eye placement.</small>
-      </span>
-    </button>
-    <button class="mode-card" style="--accent:#fb7185" onclick="selectMode('groupShot')">
-      <span class="mode-icon">👥</span><span>
-        <strong>Group photo</strong>
-        <small>Keep everyone inside the side margins.</small>
-      </span>
-    </button>
-  </div>
+      <div class="mode-tabs">
+        <button id="peopleTab" class="active" type="button">🧍 People</button>
+        <button id="foodTab" type="button">🍽️ Food</button>
+      </div>
 
-  <div class="section-label">Food photography</div>
-  <div class="mode-grid">
-    <button class="mode-card" style="--accent:#f59e0b" onclick="selectMode('oneMeal')">
-      <span class="mode-icon">🍛</span><span>
-        <strong>1 main dish + 1 drink</strong>
-        <small>One hero dish with the drink as a secondary subject.</small>
-      </span>
-    </button>
-    <button class="mode-card" style="--accent:#2dd4bf" onclick="selectMode('twoMeals')">
-      <span class="mode-icon">🍽️</span><span>
-        <strong>2 main dishes + 2 drinks</strong>
-        <small>Arrange four items with clear spacing and balance.</small>
-      </span>
-    </button>
-  </div>
+      <div class="mode-select" id="modeSelect" style="margin-top:12px">
+        <button class="mode-card active" type="button" data-mode="fullBody">
+          <span class="emoji">🧍</span>
+          <span>
+            <strong>Full body</strong>
+            <small>Include the entire person from head to feet.</small>
+          </span>
+        </button>
 
-  <div class="note">
-    <strong>Remember:</strong> These are flexible reference guides, not rigid templates.
-    Move the phone or the subject to suit the real scene.
-  </div>
-</main>
+        <button class="mode-card" type="button" data-mode="kneeShot">
+          <span class="emoji">🚶</span>
+          <span>
+            <strong>Knee-up shot</strong>
+            <small>Frame the person from the head to around the knees.</small>
+          </span>
+        </button>
 
-<section id="cameraScreen" class="hidden">
-  <video id="videoFeed" autoplay playsinline muted></video>
-  <svg id="compositionOverlay" aria-hidden="true"></svg>
+        <button class="mode-card" type="button" data-mode="halfBody">
+          <span class="emoji">👔</span>
+          <span>
+            <strong>Half-body shot</strong>
+            <small>Show the head, shoulders and upper body.</small>
+          </span>
+        </button>
 
-  <div class="topbar">
-    <button onclick="returnToMenu()">‹ Menu</button>
-    <div id="modeTitle">Framing Guide</div>
-    <button onclick="cycleOpacity()" id="opacityButton">Lines 80%</button>
-  </div>
+        <button class="mode-card" type="button" data-mode="closeUp">
+          <span class="emoji">🙂</span>
+          <span>
+            <strong>Head and shoulders</strong>
+            <small>Keep the eyes near the upper third of the frame.</small>
+          </span>
+        </button>
 
-  <div class="guide-info">
-    <div id="guideTitle"></div>
-    <div id="guideText"></div>
-    <div id="angleText"></div>
-  </div>
+        <button class="mode-card" type="button" data-mode="groupShot">
+          <span class="emoji">👨‍👩‍👧‍👦</span>
+          <span>
+            <strong>Group photo</strong>
+            <small>Leave space around everyone, including their heads.</small>
+          </span>
+        </button>
+      </div>
+    </section>
 
-  <div class="zoom-panel">
-    <div class="zoom-heading">
-      <span>Zoom</span><strong id="zoomDisplay">1.0×</strong>
-    </div>
-    <div class="zoom-row">
-      <button onclick="setZoom(1)">1×</button>
-      <button onclick="setZoom(2)">2×</button>
-      <input id="zoomSlider" type="range" min="1" max="5" step="0.1" value="1" oninput="setZoom(this.value)">
-      <button onclick="setZoom(3)">3×</button>
-    </div>
-  </div>
+    <section class="panel">
+      <h2 class="section-title">2. Camera view</h2>
 
-  <div class="bottom-controls">
-    <div class="control-stack">
-      <button onclick="toggleCamera()">🔄</button>
-      <button onclick="toggleGrid()" id="gridButton">Grid ✓</button>
-    </div>
-    <button id="shutter" onclick="takePhoto()" aria-label="Take photo">●</button>
-    <div class="control-stack">
-      <select id="ratioSelect" aria-label="Photo ratio" onchange="drawGuides()">
-        <option value="3:4" selected>3:4 photo</option>
-        <option value="9:16">9:16 photo</option>
-        <option value="full">Full frame</option>
-      </select>
-    </div>
-  </div>
+      <div class="camera-shell" id="cameraShell">
+        <video id="videoFeed" autoplay playsinline muted></video>
 
-  <div id="cameraError" class="hidden">
-    <h2>Camera unavailable</h2>
-    <p id="errorMessage">Allow camera access and try again.</p>
-    <button onclick="startCamera()">Try again</button>
-    <button onclick="returnToMenu()" style="margin-top:10px">Back to menu</button>
-  </div>
-</section>
+        <svg id="guideSvg"
+             xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 300 400"
+             preserveAspectRatio="none"
+             aria-hidden="true">
+          <g id="guideLayer"></g>
+        </svg>
 
-<section id="previewModal" class="hidden">
-  <div class="preview-head">
-    <strong>Photo preview</strong>
-    <button onclick="closePreview()">✕ Close</button>
-  </div>
-  <div class="preview-image"><canvas id="photoCanvas"></canvas></div>
-  <div class="preview-actions">
-    <button onclick="closePreview()">Retake</button>
-    <button onclick="downloadPhoto()" style="background:#2563eb">Save photo</button>
-  </div>
-</section>
+        <div class="camera-message" id="cameraMessage">
+          <div>
+            <strong>Ready to take a better picture?</strong>
+            Tap “Start camera” and allow camera access.
+          </div>
+        </div>
 
-<script>
-const modes = {
-  fullBody: {
-    title: "Full-body",
-    color: "#60a5fa",
-    text: "Fit the complete person inside the frame. Leave a little space above the head and below the feet.",
-    angle: "Phone: around waist to chest height; keep it level first.",
-    kind: "person"
-  },
-  kneeShot: {
-    title: "Three-quarter / knee shot",
-    color: "#34d399",
-    text: "Frame from the head to mid-thigh. Avoid cutting directly through the knee joint.",
-    angle: "Phone: around chest height; step back if the head or legs look distorted.",
-    kind: "person"
-  },
-  halfBody: {
-    title: "Half-body",
-    color: "#fbbf24",
-    text: "Usually frame from the waist up. Keep the head, shoulders and hands comfortably inside if visible.",
-    angle: "Phone: around eye level; keep the camera fairly level.",
-    kind: "person"
-  },
-  closeUp: {
-    title: "Close-up portrait",
-    color: "#c084fc",
-    text: "Frame the head and shoulders. Leave modest headroom and keep both eyes visible. Do not force the eyes onto one exact line.",
-    angle: "Phone: eye level or slightly above. Step back and zoom modestly rather than moving extremely close.",
-    kind: "person"
-  },
-  groupShot: {
-    title: "Group photo",
-    color: "#fb7185",
-    text: "Keep faces at comfortable heights, leave space at both sides and check that nobody is cut off.",
-    angle: "Phone: chest to eye level, straight and level. Take a step back for larger groups.",
-    kind: "group"
-  },
-  oneMeal: {
-    title: "1 main dish + 1 drink",
-    color: "#f59e0b",
-    text: "Make the dish the hero. Place the drink diagonally opposite with a visible gap. Keep both items fully inside the guide.",
-    angle: "Start around 45° for most meals. Try overhead for flat dishes or decorative toppings.",
-    kind: "food1"
-  },
-  twoMeals: {
-    title: "2 main dishes + 2 drinks",
-    color: "#2dd4bf",
-    text: "Arrange two dishes as the main pair, with one drink near each dish. Keep all four items distinct and avoid edge clipping.",
-    angle: "Overhead is a good starting point for the full arrangement. Try 45° if the dishes have height.",
-    kind: "food2"
-  }
-};
+        <div class="camera-top">
+          <span class="camera-badge" id="modeBadge">Full body</span>
+          <span class="camera-badge" id="cameraStatus">Camera off</span>
+        </div>
 
-let currentMode = "closeUp";
-let stream = null;
-let facing = "environment";
-let zoom = 1;
-let opacity = .8;
-let gridOn = true;
-let hardwareZoom = false;
-let minHardwareZoom = 1;
-let maxHardwareZoom = 1;
-let activeTrack = null;
-let resizeObserver = null;
+        <div class="camera-bottom">
+          <button type="button" id="flipButton">🔄 Switch camera</button>
+          <button type="button" id="gridButton">▦ Grid on</button>
+        </div>
+      </div>
 
-const video = document.getElementById("videoFeed");
-const svg = document.getElementById("compositionOverlay");
+      <div class="camera-error" id="cameraError" role="alert">
+        <p id="errorMessage"></p>
+        <button class="primary" type="button" id="retryButton">
+          Try again
+        </button>
+      </div>
 
-function selectMode(mode) {
-  currentMode = mode;
-  document.getElementById("menuScreen").classList.add("hidden");
-  document.getElementById("cameraScreen").classList.remove("hidden");
+      <div class="button-row" style="margin-top:12px">
+        <button class="primary" id="startButton" type="button">
+          ▶ Start camera
+        </button>
+        <button id="stopButton" type="button">■ Stop</button>
+      </div>
 
-  const data = modes[mode];
-  document.documentElement.style.setProperty("--accent", data.color);
-  document.getElementById("modeTitle").textContent = data.title;
-  document.getElementById("guideTitle").textContent = data.title;
-  document.getElementById("guideText").textContent = data.text;
-  document.getElementById("angleText").textContent = data.angle;
+      <div class="level">
+        <span>Level</span>
+        <div class="level-track">
+          <span class="level-bubble" id="levelBubble"></span>
+        </div>
+        <span id="levelText">Not available</span>
+      </div>
+    </section>
 
-  zoom = 1;
-  document.getElementById("zoomSlider").value = "1";
-  updateZoomUI();
-  drawGuides();
-  startCamera();
-}
+    <section class="panel">
+      <h2 class="section-title">3. Adjust your camera</h2>
 
-function returnToMenu() {
-  stopCamera();
-  document.getElementById("cameraScreen").classList.add("hidden");
-  document.getElementById("menuScreen").classList.remove("hidden");
-}
+      <div class="control-grid">
+        <div class="control-item">
+          <label for="ratioSelect">Photo framing</label>
+          <select id="ratioSelect">
+            <option value="3:4">3:4 Portrait</option>
+            <option value="9:16">9:16 Story / Shorts</option>
+            <option value="full">Full camera view</option>
+          </select>
+        </div>
 
-async function startCamera() {
-  document.getElementById("cameraError").classList.add("hidden");
-  stopCamera();
+        <div class="control-item">
+          <label for="zoomRange">
+            <span>Zoom</span>
+            <span id="zoomValue">1.0×</span>
+          </label>
+          <input id="zoomRange" type="range"
+                 min="1" max="4" step="0.1" value="1">
+        </div>
 
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    showCameraError("Camera access requires HTTPS or localhost and a supported browser.");
-    return;
-  }
+        <div class="control-item">
+          <label for="opacityRange">
+            <span>Guide opacity</span>
+            <span id="opacityValue">75%</span>
+          </label>
+          <input id="opacityRange" type="range"
+                 min="10" max="100" step="5" value="75">
+        </div>
 
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: {
-        facingMode: { ideal: facing },
-        width: { ideal: 1920 },
-        height: { ideal: 1080 }
+        <div class="control-item">
+          <label for="guideColour">Guide colour</label>
+          <select id="guideColour">
+            <option value="#ffffff">White</option>
+            <option value="#8be9fd">Cyan</option>
+            <option value="#ffe082">Yellow</option>
+            <option value="#8dffb1">Green</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <label for="thirdsToggle">Rule-of-thirds grid</label>
+        <input id="thirdsToggle" type="checkbox" checked>
+      </div>
+
+      <div class="toggle-row">
+        <label for="guideToggle">Framing guide</label>
+        <input id="guideToggle" type="checkbox" checked>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="section-title">4. Photography tip</h2>
+      <p class="tip" id="tipText">
+        <strong>Full body:</strong> Keep the head and feet inside the frame.
+        Avoid placing the feet directly against the bottom edge.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2 class="section-title">5. Capture your photo</h2>
+      <p class="tip" style="margin-bottom:12px">
+        The downloaded photo includes the composition guides currently
+        visible on your screen.
+      </p>
+
+      <div class="button-row" style="align-items:center">
+        <button class="shutter" id="captureButton"
+                type="button" aria-label="Take photo" disabled></button>
+        <span class="tip">Tap the shutter to capture</span>
+      </div>
+
+      <div class="preview-wrap" id="previewWrap" style="margin-top:16px">
+        <h3 class="section-title">Photo preview</h3>
+        <img class="preview-image" id="previewImage" alt="Captured photo">
+        <div class="button-row">
+          <button class="primary" id="downloadButton" type="button">
+            ⬇ Download photo
+          </button>
+          <button id="closePreviewButton" type="button">
+            Close preview
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <p class="footnote">
+      For the best results, clean your lens, find good light and keep
+      your phone steady. Framing guides are visual references, not
+      automatic subject detection.
+    </p>
+  </main>
+
+  <script>
+    "use strict";
+
+    const video = document.getElementById("videoFeed");
+    const shell = document.getElementById("cameraShell");
+    const guideSvg = document.getElementById("guideSvg");
+    const guideLayer = document.getElementById("guideLayer");
+    const cameraMessage = document.getElementById("cameraMessage");
+    const cameraStatus = document.getElementById("cameraStatus");
+    const cameraError = document.getElementById("cameraError");
+    const errorMessage = document.getElementById("errorMessage");
+    const captureButton = document.getElementById("captureButton");
+
+    let stream = null;
+    let activeTrack = null;
+    let facing = "environment";
+    let selectedMode = "fullBody";
+    let category = "people";
+    let showGrid = true;
+    let showGuide = true;
+    let hardwareZoom = false;
+    let digitalZoom = 1;
+    let cameraStartAttempt = 0;
+    let guideOpacity = 0.75;
+    let guideColour = "#ffffff";
+    let photoUrl = null;
+    let orientationListenerAttached = false;
+
+    const modes = {
+      fullBody: {
+        category: "people",
+        title: "Full body",
+        tip: "<strong>Full body:</strong> Keep the head and feet inside the frame. Leave a little breathing room above the head and below the feet.",
+        shape: "person",
+        head: [150, 95, 19],
+        body: "M150 117 L150 235 M150 145 L110 190 M150 145 L190 190 M150 235 L120 325 M150 235 L180 325"
+      },
+      kneeShot: {
+        category: "people",
+        title: "Knee-up shot",
+        tip: "<strong>Knee-up:</strong> Frame from the head to around the knees. Avoid cutting through the knee joints.",
+        shape: "person",
+        head: [150, 95, 19],
+        body: "M150 117 L150 230 M150 145 L110 185 M150 145 L190 185 M150 230 L125 290 M150 230 L175 290"
+      },
+      halfBody: {
+        category: "people",
+        title: "Half-body shot",
+        tip: "<strong>Half body:</strong> Keep the eyes near the upper third. Leave space around both shoulders and avoid cutting through the neck.",
+        shape: "person",
+        head: [150, 100, 20],
+        body: "M150 122 L150 250 M150 150 L105 185 M150 150 L195 185"
+      },
+      closeUp: {
+        category: "people",
+        title: "Head and shoulders",
+        tip: "<strong>Head and shoulders:</strong> Position the eyes close to the upper horizontal third. Keep the face centred or slightly to one side, and leave a little space above the head.",
+        shape: "person",
+        head: [150, 145, 44],
+        body: "M150 189 L150 320 M150 220 L65 280 M150 220 L235 280"
+      },
+      groupShot: {
+        category: "people",
+        title: "Group photo",
+        tip: "<strong>Group photo:</strong> Fit every face inside the frame. Keep people close together and check the edges for anyone accidentally cropped out.",
+        shape: "group"
+      },
+      oneDish: {
+        category: "food",
+        title: "1 dish + 1 drink",
+        tip: "<strong>One dish + one drink:</strong> Place the main dish slightly off-centre and the drink in a nearby corner. Leave some breathing room around both items.",
+        shape: "food1"
+      },
+      twoDishes: {
+        category: "food",
+        title: "2 dishes + 2 drinks",
+        tip: "<strong>Two dishes + two drinks:</strong> Arrange the dishes as the main visual anchors, with one drink near each dish. Check that all four items fit comfortably inside the frame.",
+        shape: "food2"
       }
-    });
+    };
 
-    video.srcObject = stream;
-    await video.play();
-    activeTrack = stream.getVideoTracks()[0];
-    await detectHardwareZoom();
-    updateZoomUI();
-    drawGuides();
-  } catch (error) {
-    showCameraError("Allow camera permission in Chrome, then tap Try again. " + error.message);
-  }
-}
+    function setCameraStatus(text) {
+      cameraStatus.textContent = text;
+    }
 
-function stopCamera() {
-  if (stream) {
-    stream.getTracks().forEach(track => track.stop());
-    stream = null;
-  }
-  activeTrack = null;
-  video.srcObject = null;
-  hardwareZoom = false;
-}
+    function setCameraMessage(title, description) {
+      cameraMessage.innerHTML = "";
 
-function showCameraError(message) {
-  document.getElementById("errorMessage").textContent = message;
-  document.getElementById("cameraError").classList.remove("hidden");
-}
+      const content = document.createElement("div");
+      const strong = document.createElement("strong");
+      strong.textContent = title;
+      const detail = document.createElement("span");
+      detail.textContent = description;
 
-async function detectHardwareZoom() {
-  hardwareZoom = false;
-  minHardwareZoom = 1;
-  maxHardwareZoom = 1;
-  if (!activeTrack || !activeTrack.getCapabilities) return;
+      content.append(strong, detail);
+      cameraMessage.appendChild(content);
+      cameraMessage.classList.remove("hidden");
+    }
 
-  const caps = activeTrack.getCapabilities();
-  if (caps.zoom) {
-    hardwareZoom = true;
-    minHardwareZoom = caps.zoom.min || 1;
-    maxHardwareZoom = Math.min(caps.zoom.max || 5, 5);
-  }
-}
+    function showCameraError(message) {
+      errorMessage.textContent = message;
+      cameraError.classList.add("visible");
+    }
 
-async function setZoom(value) {
-  zoom = Math.max(1, Math.min(5, Number(value) || 1));
-  document.getElementById("zoomSlider").value = zoom;
-  updateZoomUI();
+    function hideCameraError() {
+      cameraError.classList.remove("visible");
+      errorMessage.textContent = "";
+    }
 
-  if (hardwareZoom && activeTrack) {
-    const requested = Math.max(minHardwareZoom,
-      Math.min(maxHardwareZoom, zoom));
-    try {
-      await activeTrack.applyConstraints({ advanced: [{ zoom: requested }] });
-    } catch (error) {
+    function waitForVideoEvent(eventName, timeoutMs = 10000) {
+      return new Promise((resolve, reject) => {
+        if (eventName === "loadedmetadata" &&
+            video.videoWidth > 0 && video.videoHeight > 0) {
+          resolve();
+          return;
+        }
+
+        if (eventName === "playing" &&
+            !video.paused && video.readyState >= 2) {
+          resolve();
+          return;
+        }
+
+        let timer;
+
+        const cleanup = () => {
+          video.removeEventListener(eventName, onSuccess);
+          video.removeEventListener("error", onError);
+          clearTimeout(timer);
+        };
+
+        const onSuccess = () => {
+          cleanup();
+          resolve();
+        };
+
+        const onError = () => {
+          cleanup();
+          reject(new Error("The browser could not play the camera video."));
+        };
+
+        video.addEventListener(eventName, onSuccess, { once: true });
+        video.addEventListener("error", onError, { once: true });
+
+        timer = setTimeout(() => {
+          cleanup();
+          reject(new Error(
+            "Timed out waiting for " + eventName +
+            ". Video size: " + video.videoWidth +
+            " × " + video.videoHeight + "."
+          ));
+        }, timeoutMs);
+      });
+    }
+
+    function stopCamera() {
+      const oldStream = stream;
+
+      stream = null;
+      activeTrack = null;
       hardwareZoom = false;
-      video.style.transform = `scale(${zoom})`;
+
+      if (oldStream) {
+        oldStream.getTracks().forEach(track => track.stop());
+      }
+
+      video.pause();
+      video.srcObject = null;
+      video.style.transform = "none";
+
+      captureButton.disabled = true;
+      setCameraStatus("Camera off");
+      setCameraMessage(
+        "Camera is off",
+        "Tap Start camera to begin."
+      );
     }
-  } else {
-    video.style.transform = `scale(${zoom})`;
-  }
-}
 
-function updateZoomUI() {
-  document.getElementById("zoomDisplay").textContent = zoom.toFixed(1) + "×";
-  if (!hardwareZoom) video.style.transform = `scale(${zoom})`;
-}
+    async function detectHardwareZoom() {
+      hardwareZoom = false;
 
-async function toggleCamera() {
-  facing = facing === "environment" ? "user" : "environment";
-  await startCamera();
-}
+      if (!activeTrack || !activeTrack.getCapabilities) return;
 
-function toggleGrid() {
-  gridOn = !gridOn;
-  document.getElementById("gridButton").textContent = gridOn ? "Grid ✓" : "Grid ✕";
-  drawGuides();
-}
+      try {
+        const capabilities = activeTrack.getCapabilities();
 
-function cycleOpacity() {
-  const values = [.8, .5, .25, 0];
-  const next = values.findIndex(v => v === opacity);
-  opacity = values[(next + 1) % values.length];
-  svg.style.opacity = opacity;
-  document.getElementById("opacityButton").textContent =
-    opacity === 0 ? "Lines Off" : `Lines ${Math.round(opacity * 100)}%`;
-}
+        if (capabilities.zoom) {
+          hardwareZoom = true;
 
-/*
-  Correct overlay geometry:
-  SVG viewBox is set to the actual rendered width and height.
-  The x/y helper functions convert percentages separately against
-  width and height, so circles and human silhouettes do not stretch
-  with the portrait screen's aspect ratio.
-*/
-function drawGuides() {
-  if (!svg) return;
+          const min = Number(capabilities.zoom.min || 1);
+          const max = Math.min(Number(capabilities.zoom.max || 4), 10);
+          const step = Number(capabilities.zoom.step || 0.1);
 
-  const rect = svg.getBoundingClientRect();
-  const W = Math.max(1, rect.width);
-  const H = Math.max(1, rect.height);
-  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
-  svg.setAttribute("preserveAspectRatio", "none");
-  svg.style.opacity = opacity;
+          const slider = document.getElementById("zoomRange");
+          slider.min = min;
+          slider.max = max;
+          slider.step = step;
 
-  const data = modes[currentMode];
-  const c = data.color;
-  const X = p => W * p / 100;
-  const Y = p => H * p / 100;
-  const sx = p => W * p / 100;
-  const sy = p => H * p / 100;
-  const line = (x1,y1,x2,y2,color=c,width=2,dash="") =>
-    `<line x1="${X(x1)}" y1="${Y(y1)}" x2="${X(x2)}" y2="${Y(y2)}"
-       stroke="${color}" stroke-width="${width}" ${dash ? `stroke-dasharray="${dash}"` : ""}
-       vector-effect="non-scaling-stroke" opacity=".9"/>`;
-  const ellipse = (cx,cy,rx,ry,color=c,width=2,dash="") =>
-    `<ellipse cx="${X(cx)}" cy="${Y(cy)}" rx="${sx(rx)}" ry="${sy(ry)}"
-       fill="none" stroke="${color}" stroke-width="${width}"
-       ${dash ? `stroke-dasharray="${dash}"` : ""}
-       vector-effect="non-scaling-stroke"/>`;
-  const path = (d,color=c,width=2,dash="") =>
-    `<path d="${d}" fill="none" stroke="${color}" stroke-width="${width}"
-      ${dash ? `stroke-dasharray="${dash}"` : ""}
-      vector-effect="non-scaling-stroke"/>`;
-  const text = (x,y,label,color=c,anchor="middle",size=12) =>
-    `<text x="${X(x)}" y="${Y(y)}" fill="${color}" font-size="${size}"
-      font-family="system-ui,sans-serif" font-weight="700"
-      text-anchor="${anchor}" paint-order="stroke" stroke="rgba(0,0,0,.75)"
-      stroke-width="3" stroke-linejoin="round">${label}</text>`;
+          const settings = activeTrack.getSettings
+            ? activeTrack.getSettings()
+            : {};
 
-  let out = "";
+          digitalZoom = Math.max(min, Math.min(max,
+            Number(settings.zoom || min)));
 
-  if (gridOn) {
-    [33.333,66.666].forEach(p => {
-      out += line(p,0,p,100,"#ffffff",1,"5 7");
-      out += line(0,p,100,p,"#ffffff",1,"5 7");
+          slider.value = digitalZoom;
+        }
+      } catch (error) {
+        console.warn("Hardware zoom detection unavailable:", error);
+      }
+    }
+
+    async function startCamera() {
+      const attempt = ++cameraStartAttempt;
+
+      hideCameraError();
+      stopCamera();
+
+      video.muted = true;
+      video.playsInline = true;
+      video.setAttribute("playsinline", "");
+      video.setAttribute("autoplay", "");
+
+      if (!navigator.mediaDevices ||
+          !navigator.mediaDevices.getUserMedia) {
+        showCameraError(
+          "Camera access is unavailable.\n\n" +
+          "Open this page using HTTPS in Chrome. " +
+          "GitHub Pages normally provides HTTPS automatically."
+        );
+        return;
+      }
+
+      setCameraStatus("Starting…");
+      setCameraMessage(
+        "Starting camera",
+        "Please allow camera access if Chrome asks."
+      );
+
+      try {
+        let newStream;
+
+        try {
+          newStream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: {
+              facingMode: { ideal: facing },
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            }
+          });
+        } catch (firstError) {
+          if (attempt !== cameraStartAttempt) return;
+
+          console.warn(
+            "Preferred camera settings failed; trying basic settings.",
+            firstError
+          );
+
+          newStream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: true
+          });
+        }
+
+        if (attempt !== cameraStartAttempt) {
+          newStream.getTracks().forEach(track => track.stop());
+          return;
+        }
+
+        stream = newStream;
+        activeTrack = stream.getVideoTracks()[0];
+
+        if (!activeTrack || activeTrack.readyState !== "live") {
+          throw new Error("Chrome opened no active video track.");
+        }
+
+        activeTrack.addEventListener("ended", () => {
+          if (stream && activeTrack &&
+              activeTrack.readyState === "ended") {
+            captureButton.disabled = true;
+            setCameraStatus("Camera disconnected");
+            setCameraMessage(
+              "Camera disconnected",
+              "Tap Try again to restart the camera."
+            );
+          }
+        });
+
+        activeTrack.addEventListener("mute", () => {
+          if (stream) setCameraStatus("Camera temporarily paused");
+        });
+
+        activeTrack.addEventListener("unmute", () => {
+          if (stream) setCameraStatus("Camera on");
+        });
+
+        video.srcObject = stream;
+
+        await waitForVideoEvent("loadedmetadata");
+
+        if (attempt !== cameraStartAttempt) return;
+
+        await video.play();
+        await waitForVideoEvent("playing");
+
+        if (attempt !== cameraStartAttempt) return;
+
+        if (video.videoWidth === 0 || video.videoHeight === 0) {
+          throw new Error(
+            "The camera connected, but no video frames are available."
+          );
+        }
+
+        if (activeTrack.readyState !== "live") {
+          throw new Error("The camera track stopped unexpectedly.");
+        }
+
+        await detectHardwareZoom();
+
+        if (attempt !== cameraStartAttempt) return;
+
+        cameraMessage.classList.add("hidden");
+        setCameraStatus("Camera on");
+        captureButton.disabled = false;
+        updateZoomUI();
+        drawGuides();
+
+      } catch (error) {
+        if (attempt !== cameraStartAttempt) return;
+
+        console.error("Camera startup failed:", error);
+        stopCamera();
+
+        let advice =
+          "\n\nCheck Chrome's camera permission, close other apps " +
+          "using the camera, then tap Try again.";
+
+        if (error.name === "NotAllowedError" ||
+            error.name === "PermissionDeniedError") {
+          advice =
+            "\n\nAllow camera permission for this website in Chrome's " +
+            "site settings, then tap Try again.";
+        } else if (error.name === "NotFoundError") {
+          advice =
+            "\n\nNo available camera was found on this device.";
+        } else if (error.name === "NotReadableError") {
+          advice =
+            "\n\nAnother app may be using the camera. Close it and retry.";
+        } else if (error.name === "OverconstrainedError") {
+          advice =
+            "\n\nThe requested camera settings are not supported. " +
+            "Try again.";
+        } else if (error.name === "SecurityError") {
+          advice =
+            "\n\nCheck that this page is opened over HTTPS and that " +
+            "Chrome permits camera access.";
+        }
+
+        showCameraError(
+          (error.name || "CameraError") + ": " +
+          (error.message || "Unknown camera startup error.") + advice
+        );
+      }
+    }
+
+    function setCategory(nextCategory) {
+      category = nextCategory;
+
+      document.getElementById("peopleTab")
+        .classList.toggle("active", category === "people");
+
+      document.getElementById("foodTab")
+        .classList.toggle("active", category === "food");
+
+      document.querySelectorAll(".mode-card").forEach(button => {
+        button.style.display =
+          modes[button.dataset.mode].category === category
+            ? "flex" : "none";
+      });
+
+      const firstMode = category === "people" ? "fullBody" : "oneDish";
+      selectMode(firstMode);
+    }
+
+    function selectMode(mode) {
+      selectedMode = mode;
+
+      document.querySelectorAll(".mode-card").forEach(button => {
+        button.classList.toggle(
+          "active", button.dataset.mode === selectedMode
+        );
+      });
+
+      const data = modes[selectedMode];
+
+      document.getElementById("modeBadge").textContent = data.title;
+      document.getElementById("tipText").innerHTML = data.tip;
+
+      drawGuides();
+    }
+
+    function svgElement(name, attributes = {}) {
+      const el = document.createElementNS(
+        "http://www.w3.org/2000/svg", name
+      );
+
+      Object.entries(attributes).forEach(([key, value]) => {
+        el.setAttribute(key, String(value));
+      });
+
+      return el;
+    }
+
+    function addLine(x1, y1, x2, y2, extra = {}) {
+      guideLayer.appendChild(svgElement("line", {
+        x1, y1, x2, y2,
+        stroke: guideColour,
+        "stroke-width": 1.2,
+        "stroke-dasharray": "5 5",
+        ...extra
+      }));
+    }
+
+    function addEllipse(cx, cy, rx, ry, extra = {}) {
+      guideLayer.appendChild(svgElement("ellipse", {
+        cx, cy, rx, ry,
+        fill: "none",
+        stroke: guideColour,
+        "stroke-width": 1.5,
+        ...extra
+      }));
+    }
+
+    function addCircle(cx, cy, r, extra = {}) {
+      guideLayer.appendChild(svgElement("circle", {
+        cx, cy, r,
+        fill: "none",
+        stroke: guideColour,
+        "stroke-width": 1.5,
+        ...extra
+      }));
+    }
+
+    function addPath(d, extra = {}) {
+      guideLayer.appendChild(svgElement("path", {
+        d,
+        fill: "none",
+        stroke: guideColour,
+        "stroke-width": 1.5,
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+        ...extra
+      }));
+    }
+
+    function addText(x, y, text, extra = {}) {
+      const el = svgElement("text", {
+        x, y,
+        fill: guideColour,
+        "font-size": 8,
+        "font-family": "system-ui, sans-serif",
+        "text-anchor": "middle",
+        ...extra
+      });
+      el.textContent = text;
+      guideLayer.appendChild(el);
+    }
+
+    function drawPerson(cx, headY, headR, bodyPath, scale = 1) {
+      addCircle(cx, headY, headR, {
+        "stroke-dasharray": "4 3"
+      });
+
+      addPath(bodyPath, {
+        transform: "translate(" + cx * (1 - scale) + " " +
+          headY * (1 - scale) + ") scale(" + scale + ")",
+        "stroke-dasharray": "5 4"
+      });
+    }
+
+    function drawPeopleGuide(mode) {
+      if (mode === "groupShot") {
+        [75, 150, 225].forEach((cx, index) => {
+          addCircle(cx, 130 + (index === 1 ? -8 : 0), 18, {
+            "stroke-dasharray": "4 3"
+          });
+        });
+
+        addPath(
+          "M55 205 Q55 160 75 158 Q95 160 95 205 " +
+          "M130 205 Q130 150 150 150 Q170 150 170 205 " +
+          "M205 205 Q205 160 225 158 Q245 160 245 205"
+        );
+
+        addText(150, 245, "KEEP ALL FACES INSIDE");
+        return;
+      }
+
+      const data = modes[mode];
+      addCircle(data.head[0], data.head[1], data.head[2], {
+        "stroke-dasharray": "5 4"
+      });
+      addPath(data.body);
+
+      if (mode === "closeUp") {
+        addLine(20, 133, 280, 133, {
+          "stroke-dasharray": "3 4",
+          opacity: 0.9
+        });
+        addText(150, 124, "EYE LINE");
+        addPath("M42 80 Q150 28 258 80", {
+          "stroke-dasharray": "5 4",
+          opacity: 0.65
+        });
+      } else {
+        addLine(65, 45, 65, 350, { opacity: 0.45 });
+        addLine(235, 45, 235, 350, { opacity: 0.45 });
+      }
+
+      if (mode === "fullBody") {
+        addLine(80, 350, 220, 350, {
+          "stroke-dasharray": "3 4"
+        });
+        addText(150, 365, "LEAVE SPACE BELOW FEET");
+      } else if (mode === "kneeShot") {
+        addLine(95, 290, 205, 290, {
+          "stroke-dasharray": "3 4"
+        });
+        addText(150, 306, "KNEE AREA");
+      } else if (mode === "halfBody") {
+        addText(150, 275, "UPPER BODY");
+      }
+    }
+
+    function drawFoodGuide(mode) {
+      if (mode === "food1") {
+        // Main dish, slightly off-centre.
+        addEllipse(125, 215, 78, 78, {
+          "stroke-width": 2,
+          "stroke-dasharray": "6 4"
+        });
+        addEllipse(125, 215, 62, 62, {
+          opacity: 0.7
+        });
+
+        // Drink, placed in the upper-right area.
+        addPath(
+          "M205 90 L245 90 L239 145 Q225 155 211 145 Z",
+          { "stroke-dasharray": "5 4" }
+        );
+        addEllipse(225, 90, 20, 6);
+
+        addText(125, 315, "MAIN DISH");
+        addText(225, 165, "DRINK");
+        addText(150, 365, "KEEP BOTH ITEMS INSIDE");
+      }
+
+      if (mode === "food2") {
+        // Four-item composition.
+        addEllipse(92, 135, 55, 55, {
+          "stroke-width": 2,
+          "stroke-dasharray": "5 4"
+        });
+        addEllipse(208, 265, 55, 55, {
+          "stroke-width": 2,
+          "stroke-dasharray": "5 4"
+        });
+
+        addPath(
+          "M180 75 L215 75 L210 120 Q198 128 185 120 Z",
+          { "stroke-dasharray": "5 4" }
+        );
+        addEllipse(197, 75, 17, 5);
+
+        addPath(
+          "M65 280 L95 280 L91 322 Q80 330 69 322 Z",
+          { "stroke-dasharray": "5 4" }
+        );
+        addEllipse(80, 280, 15, 5);
+
+        addText(92, 205, "DISH 1");
+        addText(208, 335, "DISH 2");
+        addText(198, 140, "DRINK 1");
+        addText(80, 344, "DRINK 2");
+      }
+    }
+
+    function drawGuides() {
+      const rect = shell.getBoundingClientRect();
+      const width = Math.max(1, rect.width);
+      const height = Math.max(1, rect.height);
+
+      guideSvg.setAttribute("viewBox", "0 0 " + width + " " + height);
+      guideLayer.replaceChildren();
+
+      guideLayer.setAttribute("opacity", guideOpacity);
+      guideLayer.setAttribute("stroke", guideColour);
+
+      // Grid lines are scaled to the actual displayed camera area.
+      if (showGrid && document.getElementById("thirdsToggle").checked) {
+        [1 / 3, 2 / 3].forEach(fraction => {
+          addLine(width * fraction, 0, width * fraction, height, {
+            "stroke-width": 1,
+            "stroke-dasharray": "4 6",
+            opacity: 0.75
+          });
+
+          addLine(0, height * fraction, width, height * fraction, {
+            "stroke-width": 1,
+            "stroke-dasharray": "4 6",
+            opacity: 0.75
+          });
+        });
+      }
+
+      if (showGuide) {
+        // Draw the guides in a normalized 300 × 400 coordinate space,
+        // scaled independently to match the displayed preview.
+        const guideGroup = svgElement("g", {
+          transform: "scale(" + width / 300 + " " + height / 400 + ")"
+        });
+
+        guideLayer.appendChild(guideGroup);
+
+        // Draw into the normalized group by temporarily redirecting
+        // guide elements into it.
+        const originalLayer = guideLayer;
+        const normalizedDraw = () => {
+          if (category === "food") {
+            drawFoodGuide(selectedMode);
+          } else {
+            drawPeopleGuide(selectedMode);
+          }
+        };
+
+        // Use a temporary drawing layer, then place it in the normalized group.
+        const temp = svgElement("g");
+        guideGroup.appendChild(temp);
+
+        const oldAppend = guideLayer.appendChild.bind(guideLayer);
+        // Render the mode guide using the same drawing functions in a
+        // temporary normalized SVG layer.
+        const oldLayer = guideLayer;
+        // Build normalized guide using explicit SVG geometry below.
+        temp.replaceChildren();
+
+        const data = modes[selectedMode];
+
+        if (category === "people") {
+          if (selectedMode === "groupShot") {
+            [75, 150, 225].forEach((cx, index) => {
+              temp.appendChild(svgElement("circle", {
+                cx, cy: 130 + (index === 1 ? -8 : 0), r: 18,
+                fill: "none", stroke: guideColour,
+                "stroke-width": 1.5, "stroke-dasharray": "4 3"
+              }));
+            });
+            temp.appendChild(svgElement("path", {
+              d: "M55 205 Q55 160 75 158 Q95 160 95 205 " +
+                 "M130 205 Q130 150 150 150 Q170 150 170 205 " +
+                 "M205 205 Q205 160 225 158 Q245 160 245 205",
+              fill: "none", stroke: guideColour, "stroke-width": 1.5
+            }));
+            addTextTo(temp, 150, 245, "KEEP ALL FACES INSIDE");
+          } else {
+            temp.appendChild(svgElement("circle", {
+              cx: data.head[0], cy: data.head[1], r: data.head[2],
+              fill: "none", stroke: guideColour, "stroke-width": 1.5,
+              "stroke-dasharray": "5 4"
+            }));
+            temp.appendChild(svgElement("path", {
+              d: data.body,
+              fill: "none", stroke: guideColour, "stroke-width": 1.5,
+              "stroke-linecap": "round", "stroke-linejoin": "round",
+              "stroke-dasharray": "5 4"
+            }));
+
+            if (selectedMode === "closeUp") {
+              temp.appendChild(svgElement("line", {
+                x1: 20, y1: 133, x2: 280, y2: 133,
+                stroke: guideColour, "stroke-width": 1.2,
+                "stroke-dasharray": "3 4"
+              }));
+              addTextTo(temp, 150, 124, "EYE LINE");
+            } else {
+              temp.appendChild(svgElement("line", {
+                x1: 65, y1: 45, x2: 65, y2: 350,
+                stroke: guideColour, "stroke-width": 1,
+                "stroke-dasharray": "5 5", opacity: 0.45
+              }));
+              temp.appendChild(svgElement("line", {
+                x1: 235, y1: 45, x2: 235, y2: 350,
+                stroke: guideColour, "stroke-width": 1,
+                "stroke-dasharray": "5 5", opacity: 0.45
+              }));
+            }
+
+            if (selectedMode === "fullBody") {
+              addLineTo(temp, 80, 350, 220, 350);
+              addTextTo(temp, 150, 365, "LEAVE SPACE BELOW FEET");
+            } else if (selectedMode === "kneeShot") {
+              addLineTo(temp, 95, 290, 205, 290);
+              addTextTo(temp, 150, 306, "KNEE AREA");
+            } else if (selectedMode === "halfBody") {
+              addTextTo(temp, 150, 275, "UPPER BODY");
+            }
+          }
+        } else if (selectedMode === "oneDish") {
+          temp.appendChild(svgElement("ellipse", {
+            cx: 125, cy: 215, rx: 78, ry: 78,
+            fill: "none", stroke: guideColour,
+            "stroke-width": 2, "stroke-dasharray": "6 4"
+          }));
+          temp.appendChild(svgElement("ellipse", {
+            cx: 125, cy: 215, rx: 62, ry: 62,
+            fill: "none", stroke: guideColour,
+            "stroke-width": 1.5, opacity: 0.7
+          }));
+          temp.appendChild(svgElement("path", {
+            d: "M205 90 L245 90 L239 145 Q225 155 211 145 Z",
+            fill: "none", stroke: guideColour,
+            "stroke-width": 1.5, "stroke-dasharray": "5 4"
+          }));
+          temp.appendChild(svgElement("ellipse", {
+            cx: 225, cy: 90, rx: 20, ry: 6,
+            fill: "none", stroke: guideColour, "stroke-width": 1.5
+          }));
+          addTextTo(temp, 125, 315, "MAIN DISH");
+          addTextTo(temp, 225, 165, "DRINK");
+          addTextTo(temp, 150, 365, "KEEP BOTH ITEMS INSIDE");
+        } else if (selectedMode === "twoDishes") {
+          temp.appendChild(svgElement("ellipse", {
+            cx: 92, cy: 135, rx: 55, ry: 55,
+            fill: "none", stroke: guideColour,
+            "stroke-width": 2, "stroke-dasharray": "5 4"
+          }));
+          temp.appendChild(svgElement("ellipse", {
+            cx: 208, cy: 265, rx: 55, ry: 55,
+            fill: "none", stroke: guideColour,
+            "stroke-width": 2, "stroke-dasharray": "5 4"
+          }));
+          temp.appendChild(svgElement("path", {
+            d: "M180 75 L215 75 L210 120 Q198 128 185 120 Z",
+            fill: "none", stroke: guideColour,
+            "stroke-width": 1.5, "stroke-dasharray": "5 4"
+          }));
+          temp.appendChild(svgElement("ellipse", {
+            cx: 197, cy: 75, rx: 17, ry: 5,
+            fill: "none", stroke: guideColour, "stroke-width": 1.5
+          }));
+          temp.appendChild(svgElement("path", {
+            d: "M65 280 L95 280 L91 322 Q80 330 69 322 Z",
+            fill: "none", stroke: guideColour,
+            "stroke-width": 1.5, "stroke-dasharray": "5 4"
+          }));
+          temp.appendChild(svgElement("ellipse", {
+            cx: 80, cy: 280, rx: 15, ry: 5,
+            fill: "none", stroke: guideColour, "stroke-width": 1.5
+          }));
+          addTextTo(temp, 92, 205, "DISH 1");
+          addTextTo(temp, 208, 335, "DISH 2");
+          addTextTo(temp, 198, 140, "DRINK 1");
+          addTextTo(temp, 80, 344, "DRINK 2");
+        }
+      }
+
+      guideLayer.setAttribute("opacity", guideOpacity);
+    }
+
+    function addTextTo(parent, x, y, text) {
+      const el = svgElement("text", {
+        x, y,
+        fill: guideColour,
+        "font-size": 8,
+        "font-family": "system-ui, sans-serif",
+        "text-anchor": "middle"
+      });
+      el.textContent = text;
+      parent.appendChild(el);
+    }
+
+    function addLineTo(parent, x1, y1, x2, y2) {
+      parent.appendChild(svgElement("line", {
+        x1, y1, x2, y2,
+        stroke: guideColour,
+        "stroke-width": 1.2,
+        "stroke-dasharray": "3 4"
+      }));
+    }
+
+    function updateZoomUI() {
+      const slider = document.getElementById("zoomRange");
+      digitalZoom = Number(slider.value);
+
+      document.getElementById("zoomValue").textContent =
+        digitalZoom.toFixed(1) + "×";
+
+      if (hardwareZoom && activeTrack &&
+          activeTrack.applyConstraints) {
+        activeTrack.applyConstraints({
+          advanced: [{ zoom: digitalZoom }]
+        }).then(() => {
+          video.style.transform = "none";
+        }).catch(error => {
+          console.warn("Hardware zoom adjustment failed:", error);
+          hardwareZoom = false;
+          video.style.transform = "scale(" + digitalZoom + ")";
+        });
+      } else {
+        video.style.transform = "scale(" + digitalZoom + ")";
+      }
+    }
+
+    async function switchCamera() {
+      facing = facing === "environment" ? "user" : "environment";
+      await startCamera();
+    }
+
+    function updateRatio() {
+      const ratio = document.getElementById("ratioSelect").value;
+
+      shell.classList.remove("ratio-916", "ratio-full");
+
+      if (ratio === "9:16") {
+        shell.classList.add("ratio-916");
+      } else if (ratio === "full") {
+        shell.classList.add("ratio-full");
+      }
+
+      requestAnimationFrame(drawGuides);
+    }
+
+    function capturePhoto() {
+      if (!stream || !activeTrack ||
+          activeTrack.readyState !== "live" ||
+          video.videoWidth === 0 || video.videoHeight === 0) {
+        showCameraError(
+          "The camera is not ready to capture a photo. " +
+          "Start the camera and try again."
+        );
+        return;
+      }
+
+      const ratio = document.getElementById("ratioSelect").value;
+      const sourceWidth = video.videoWidth;
+      const sourceHeight = video.videoHeight;
+
+      let targetRatio;
+
+      if (ratio === "3:4") {
+        targetRatio = 3 / 4;
+      } else if (ratio === "9:16") {
+        targetRatio = 9 / 16;
+      } else {
+        targetRatio = sourceWidth / sourceHeight;
+      }
+
+      const sourceRatio = sourceWidth / sourceHeight;
+      let cropWidth = sourceWidth;
+      let cropHeight = sourceHeight;
+
+      if (sourceRatio > targetRatio) {
+        cropWidth = sourceHeight * targetRatio;
+      } else {
+        cropHeight = sourceWidth / targetRatio;
+      }
+
+      const cropX = (sourceWidth - cropWidth) / 2;
+      const cropY = (sourceHeight - cropHeight) / 2;
+
+      const canvas = document.createElement("canvas");
+      const outputWidth = 1080;
+      const outputHeight = Math.round(outputWidth / targetRatio);
+
+      canvas.width = outputWidth;
+      canvas.height = outputHeight;
+
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) {
+        showCameraError("Unable to create the photo. Please try again.");
+        return;
+      }
+
+      // Mirror the front camera in the saved image.
+      if (facing === "user") {
+        ctx.translate(outputWidth, 0);
+        ctx.scale(-1, 1);
+      }
+
+      // Zoom is applied to the captured crop as well.
+      const zoom = Math.max(1, digitalZoom);
+      const zoomWidth = cropWidth / zoom;
+      const zoomHeight = cropHeight / zoom;
+      const zoomX = cropX + (cropWidth - zoomWidth) / 2;
+      const zoomY = cropY + (cropHeight - zoomHeight) / 2;
+
+      ctx.drawImage(
+        video,
+        zoomX, zoomY, zoomWidth, zoomHeight,
+        0, 0, outputWidth, outputHeight
+      );
+
+      // Add the currently visible guide overlay to the saved photo.
+      if (showGrid || showGuide) {
+        const svgCopy = guideSvg.cloneNode(true);
+        svgCopy.setAttribute("width", outputWidth);
+        svgCopy.setAttribute("height", outputHeight);
+        svgCopy.setAttribute("viewBox",
+          "0 0 " + shell.clientWidth + " " + shell.clientHeight);
+
+        const svgString = new XMLSerializer().serializeToString(svgCopy);
+        const svgBlob = new Blob([svgString], {
+          type: "image/svg+xml;charset=utf-8"
+        });
+
+        const svgUrl = URL.createObjectURL(svgBlob);
+        const overlayImage = new Image();
+
+        overlayImage.onload = () => {
+          ctx.drawImage(
+            overlayImage, 0, 0, outputWidth, outputHeight
+          );
+          URL.revokeObjectURL(svgUrl);
+          finishCapture(canvas);
+        };
+
+        overlayImage.onerror = () => {
+          URL.revokeObjectURL(svgUrl);
+          finishCapture(canvas);
+        };
+
+        overlayImage.src = svgUrl;
+      } else {
+        finishCapture(canvas);
+      }
+    }
+
+    function finishCapture(canvas) {
+      canvas.toBlob(blob => {
+        if (!blob) {
+          showCameraError("The photo could not be saved. Please try again.");
+          return;
+        }
+
+        if (photoUrl) URL.revokeObjectURL(photoUrl);
+
+        photoUrl = URL.createObjectURL(blob);
+
+        const previewImage = document.getElementById("previewImage");
+        previewImage.src = photoUrl;
+
+        document.getElementById("previewWrap")
+          .classList.add("visible");
+
+        document.getElementById("previewWrap")
+          .scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, "image/jpeg", 0.94);
+    }
+
+    function downloadPhoto() {
+      if (!photoUrl) return;
+
+      const link = document.createElement("a");
+      const safeMode = selectedMode.replace(/[^a-z0-9]/gi, "-");
+
+      link.href = photoUrl;
+      link.download = "geminicam-" + safeMode + "-" +
+        new Date().toISOString().replace(/[:.]/g, "-") + ".jpg";
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function setGrid(value) {
+      showGrid = value;
+      document.getElementById("gridButton").textContent =
+        showGrid ? "▦ Grid on" : "▦ Grid off";
+      drawGuides();
+    }
+
+    function setGuideOpacity(value) {
+      guideOpacity = Number(value) / 100;
+      document.getElementById("opacityValue").textContent = value + "%";
+      drawGuides();
+    }
+
+    document.getElementById("peopleTab").addEventListener("click", () => {
+      setCategory("people");
     });
-  }
 
-  if (data.kind === "person") {
-    if (currentMode === "fullBody") {
-      // Whole-person guide: head, torso, legs and feet are separate proportions.
-      out += path(`M ${X(50)} ${Y(91)} L ${X(50)} ${Y(94)}`,c,2);
-      out += ellipse(50,18,7.5,5.2,c,2,"5 4");
-      out += path(`M ${X(44)} ${Y(24)} Q ${X(38)} ${Y(24)} ${X(37)} ${Y(31)}
-        L ${X(33)} ${Y(51)} Q ${X(50)} ${Y(55)} ${X(67)} ${Y(51)}
-        L ${X(63)} ${Y(31)} Q ${X(62)} ${Y(24)} ${X(56)} ${Y(24)}`,c,2,"6 5");
-      out += path(`M ${X(40)} ${Y(53)} L ${X(43)} ${Y(77)} L ${X(40)} ${Y(91)}
-        M ${X(60)} ${Y(53)} L ${X(57)} ${Y(77)} L ${X(60)} ${Y(91)}`,c,2,"6 5");
-      out += line(22,8,78,8,c,2);
-      out += text(50,6,"HEADROOM",c,"middle",11);
-      out += line(25,94,75,94,c,2);
-      out += text(50,98,"LEAVE SPACE BELOW FEET",c,"middle",11);
-      out += line(16,72,84,72,"#f87171",2,"5 5");
-      out += text(18,70,"Avoid cutting at knees", "#fecaca","start",11);
-    } else if (currentMode === "kneeShot") {
-      out += ellipse(50,17,8,5.8,c,2,"5 4");
-      out += path(`M ${X(43)} ${Y(24)} Q ${X(35)} ${Y(26)} ${X(35)} ${Y(37)}
-        L ${X(32)} ${Y(62)} Q ${X(50)} ${Y(66)} ${X(68)} ${Y(62)}
-        L ${X(65)} ${Y(37)} Q ${X(65)} ${Y(26)} ${X(57)} ${Y(24)}`,c,2,"6 5");
-      out += line(12,77,88,77,c,2);
-      out += text(50,75,"MID-THIGH CROP",c,"middle",11);
-      out += line(12,91,88,91,"#f87171",2,"5 5");
-      out += text(50,89,"Avoid cutting at knees","#fecaca","middle",11);
-    } else if (currentMode === "halfBody") {
-      out += ellipse(50,19,9,6.5,c,2,"5 4");
-      out += path(`M ${X(42)} ${Y(26)} Q ${X(34)} ${Y(29)} ${X(31)} ${Y(39)}
-        L ${X(25)} ${Y(62)} Q ${X(50)} ${Y(67)} ${X(75)} ${Y(62)}
-        L ${X(69)} ${Y(39)} Q ${X(66)} ${Y(29)} ${X(58)} ${Y(26)}`,c,2,"6 5");
-      out += line(13,67,87,67,c,2);
-      out += text(50,65,"WAIST-UP FRAME",c,"middle",11);
-      out += line(15,12,85,12,c,1.5,"4 5");
-      out += text(50,10,"HEADROOM",c,"middle",10);
-    } else if (currentMode === "closeUp") {
-      // A face guide with separate eye, headroom and shoulder references.
-      out += ellipse(50,27,15,11,c,2,"6 5");
-      out += line(25,27,75,27,c,2,"5 5");
-      out += ellipse(43.5,27,1.2,0.8,c,2);
-      out += ellipse(56.5,27,1.2,0.8,c,2);
-      out += text(50,24,"EYE GUIDE",c,"middle",11);
-      out += path(`M ${X(28)} ${Y(43)} Q ${X(50)} ${Y(36)} ${X(72)} ${Y(43)}`,c,2,"6 5");
-      out += path(`M ${X(22)} ${Y(45)} Q ${X(28)} ${Y(41)} ${X(35)} ${Y(43)}
-        M ${X(65)} ${Y(43)} Q ${X(72)} ${Y(41)} ${X(78)} ${Y(45)}`,c,2,"6 5");
-      out += line(17,49,83,49,c,2);
-      out += text(50,47,"SHOULDERS IN FRAME",c,"middle",10);
-      out += line(14,8,86,8,c,1.5,"5 5");
-      out += text(50,6,"LEAVE HEADROOM",c,"middle",10);
+    document.getElementById("foodTab").addEventListener("click", () => {
+      setCategory("food");
+    });
+
+    document.querySelectorAll(".mode-card").forEach(button => {
+      button.addEventListener("click", () => {
+        selectMode(button.dataset.mode);
+      });
+    });
+
+    document.getElementById("startButton")
+      .addEventListener("click", startCamera);
+
+    document.getElementById("retryButton")
+      .addEventListener("click", startCamera);
+
+    document.getElementById("stopButton").addEventListener("click", () => {
+      cameraStartAttempt++;
+      stopCamera();
+      hideCameraError();
+    });
+
+    document.getElementById("flipButton")
+      .addEventListener("click", switchCamera);
+
+    document.getElementById("gridButton").addEventListener("click", () => {
+      setGrid(!showGrid);
+    });
+
+    document.getElementById("ratioSelect")
+      .addEventListener("change", updateRatio);
+
+    document.getElementById("zoomRange")
+      .addEventListener("input", updateZoomUI);
+
+    document.getElementById("opacityRange")
+      .addEventListener("input", event => {
+        setGuideOpacity(event.target.value);
+      });
+
+    document.getElementById("guideColour")
+      .addEventListener("change", event => {
+        guideColour = event.target.value;
+        drawGuides();
+      });
+
+    document.getElementById("thirdsToggle")
+      .addEventListener("change", event => {
+        showGrid = event.target.checked;
+        document.getElementById("gridButton").textContent =
+          showGrid ? "▦ Grid on" : "▦ Grid off";
+        drawGuides();
+      });
+
+    document.getElementById("guideToggle")
+      .addEventListener("change", event => {
+        showGuide = event.target.checked;
+        drawGuides();
+      });
+
+    captureButton.addEventListener("click", capturePhoto);
+
+    document.getElementById("downloadButton")
+      .addEventListener("click", downloadPhoto);
+
+    document.getElementById("closePreviewButton")
+      .addEventListener("click", () => {
+        document.getElementById("previewWrap")
+          .classList.remove("visible");
+      });
+
+    window.addEventListener("resize", drawGuides);
+
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(drawGuides).observe(shell);
     }
-  } else if (data.kind === "group") {
-    out += line(8,8,8,90,c,2,"5 5");
-    out += line(92,8,92,90,c,2,"5 5");
-    out += text(50,8,"SIDE SAFETY MARGINS",c,"middle",11);
-    out += ellipse(30,27,6.5,4.5,c,2,"5 4");
-    out += ellipse(50,25,7,5,c,2);
-    out += ellipse(70,27,6.5,4.5,c,2,"5 4");
-    out += path(`M ${X(21)} ${Y(34)} Q ${X(30)} ${Y(30)} ${X(39)} ${Y(34)}
-      M ${X(40)} ${Y(33)} Q ${X(50)} ${Y(29)} ${X(60)} ${Y(33)}
-      M ${X(61)} ${Y(34)} Q ${X(70)} ${Y(30)} ${X(79)} ${Y(34)}`,c,2,"5 4");
-    out += line(15,35,85,35,c,1.5,"5 5");
-    out += text(50,38,"KEEP FACES CLEAR",c,"middle",11);
-    out += text(50,88,"CHECK BOTH EDGES",c,"middle",11);
-  } else if (data.kind === "food1") {
-    // Main dish larger, drink smaller and diagonally offset.
-    out += ellipse(39,53,25,15,c,3,"7 5");
-    out += ellipse(39,53,20,12,c,1.5,"5 5");
-    out += text(39,53,"MAIN DISH",c,"middle",12);
-    out += ellipse(76,30,8,5,c,3,"6 5");
-    out += line(72,24,80,24,c,2);
-    out += text(76,39,"DRINK",c,"middle",11);
-    out += text(50,78,"KEEP BOTH ITEMS INSIDE",c,"middle",11);
-  } else if (data.kind === "food2") {
-    // Four separate item zones, with generous separation.
-    out += ellipse(30,35,19,11,c,3,"6 5");
-    out += ellipse(70,35,19,11,c,3,"6 5");
-    out += text(30,35,"DISH 1",c,"middle",12);
-    out += text(70,35,"DISH 2",c,"middle",12);
-    out += ellipse(32,69,8,5,c,2,"5 4");
-    out += ellipse(68,69,8,5,c,2,"5 4");
-    out += text(32,78,"DRINK 1",c,"middle",10);
-    out += text(68,78,"DRINK 2",c,"middle",10);
-    out += text(50,91,"LEAVE SPACE BETWEEN ITEMS",c,"middle",10);
-  }
 
-  svg.innerHTML = out;
-}
+    // Optional phone tilt indicator.
+    async function enableTilt() {
+      if (!("DeviceOrientationEvent" in window)) return;
 
-function getCropRect(sourceWidth, sourceHeight) {
-  const ratio = document.getElementById("ratioSelect").value;
-  if (ratio === "full") {
-    return { sx: 0, sy: 0, sw: sourceWidth, sh: sourceHeight };
-  }
+      try {
+        if (typeof DeviceOrientationEvent.requestPermission === "function") {
+          const permission =
+            await DeviceOrientationEvent.requestPermission();
 
-  const targetRatio = ratio === "3:4" ? 3/4 : 9/16;
-  const sourceRatio = sourceWidth / sourceHeight;
+          if (permission !== "granted") return;
+        }
 
-  if (sourceRatio > targetRatio) {
-    const sw = sourceHeight * targetRatio;
-    return { sx: (sourceWidth-sw)/2, sy: 0, sw, sh: sourceHeight };
-  } else {
-    const sh = sourceWidth / targetRatio;
-    return { sx: 0, sy: (sourceHeight-sh)/2, sw: sourceWidth, sh };
-  }
-}
+        if (orientationListenerAttached) return;
+        orientationListenerAttached = true;
 
-function takePhoto() {
-  if (!video.videoWidth || !video.videoHeight) {
-    alert("Please wait for the camera preview to start.");
-    return;
-  }
+        window.addEventListener("deviceorientation", event => {
+          if (event.gamma == null) return;
 
-  const canvas = document.getElementById("photoCanvas");
-  const ctx = canvas.getContext("2d");
-  const crop = getCropRect(video.videoWidth, video.videoHeight);
+          const gamma = Math.max(-35, Math.min(35, event.gamma));
+          const bubble = document.getElementById("levelBubble");
 
-  canvas.width = Math.round(crop.sw);
-  canvas.height = Math.round(crop.sh);
+          bubble.style.left = (50 + gamma / 35 * 45) + "%";
 
-  // Apply digital zoom to the captured image when hardware zoom is unavailable.
-  if (!hardwareZoom && zoom > 1) {
-    const sw = crop.sw / zoom;
-    const sh = crop.sh / zoom;
-    const sx = crop.sx + (crop.sw - sw) / 2;
-    const sy = crop.sy + (crop.sh - sh) / 2;
-    ctx.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
-  } else {
-    ctx.drawImage(video, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, canvas.width, canvas.height);
-  }
+          document.getElementById("levelText").textContent =
+            Math.abs(gamma) < 3 ? "Level" :
+            gamma < 0 ? "Tilt left" : "Tilt right";
+        });
+      } catch (error) {
+        console.warn("Tilt indicator unavailable:", error);
+      }
+    }
 
-  document.getElementById("previewModal").classList.remove("hidden");
-}
+    // Request tilt permission only after a user interaction.
+    document.getElementById("startButton")
+      .addEventListener("click", enableTilt, { once: true });
 
-function closePreview() {
-  document.getElementById("previewModal").classList.add("hidden");
-}
-
-function downloadPhoto() {
-  const canvas = document.getElementById("photoCanvas");
-  const link = document.createElement("a");
-  const safeName = modes[currentMode].title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-  link.download = `photo-${safeName}.jpg`;
-  link.href = canvas.toDataURL("image/jpeg", .95);
-  link.click();
-}
-
-window.addEventListener("resize", drawGuides);
-window.addEventListener("orientationchange", () => setTimeout(drawGuides, 250));
-
-if ("ResizeObserver" in window) {
-  resizeObserver = new ResizeObserver(drawGuides);
-  resizeObserver.observe(document.getElementById("cameraScreen"));
-}
-</script>
+    // Initial setup.
+    setCategory("people");
+    updateRatio();
+    drawGuides();
+  </script>
 </body>
 </html>
