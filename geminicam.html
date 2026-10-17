@@ -74,13 +74,32 @@
     }
 
     .shutter-btn {
-      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
-      transition: all 0.2s ease;
+      /* Larger physical touch target for easier tapping on phones */
+      width: 88px;
+      height: 88px;
+      min-width: 88px;
+      min-height: 88px;
+      padding: 10px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.3);
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .shutter-btn:active {
-      transform: scale(0.9);
+      /* Keep the full hit area in place while giving clear press feedback */
+      transform: scale(0.97);
       box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.5);
+    }
+
+    .shutter-btn:focus-visible {
+      outline: 3px solid #60a5fa;
+      outline-offset: 8px;
     }
 
     /* Custom Zoom Range Slider Styling */
@@ -421,9 +440,9 @@
       </button>
 
       <!-- Main Shutter Button -->
-      <button onclick="takeSnapshot()" class="shutter-btn w-16 h-16 rounded-full bg-white flex items-center justify-center text-slate-900 text-xl font-bold hover:bg-slate-100 transition">
-        <div class="w-12 h-12 rounded-full border-2 border-slate-900 flex items-center justify-center">
-          <div class="w-2.5 h-2.5 rounded-full bg-blue-600"></div>
+      <button type="button" onclick="takeSnapshot()" aria-label="Take photo" title="Take photo" class="shutter-btn rounded-full bg-white text-slate-900 text-xl font-bold hover:bg-slate-100">
+        <div class="w-14 h-14 rounded-full border-[3px] border-slate-900 flex items-center justify-center pointer-events-none">
+          <div class="w-3 h-3 rounded-full bg-blue-600"></div>
         </div>
       </button>
 
