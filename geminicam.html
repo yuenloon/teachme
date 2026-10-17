@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#10131a">
-<title>Gemini Cam | Photography Guide</title>
+<title>Gemini Cam | Camera Guide</title>
 
 <style>
 :root {
@@ -15,118 +15,80 @@
   --text:#f5f7fb;
   --muted:#aab4c5;
   --accent:#8be9fd;
-  --accent-dark:#193e49;
   --border:#364154;
   --danger:#ff8585;
 }
 * { box-sizing:border-box; }
 body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
+  margin:0; background:var(--bg); color:var(--text);
   font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 button,select,input { font:inherit; }
 button,select {
-  border:1px solid var(--border);
-  border-radius:11px;
-  padding:10px 12px;
-  min-height:42px;
-  background:var(--panel2);
-  color:var(--text);
+  border:1px solid var(--border); border-radius:11px;
+  padding:10px 12px; min-height:44px;
+  background:var(--panel2); color:var(--text);
 }
 button { cursor:pointer; touch-action:manipulation; }
-button:disabled { opacity:.45; cursor:not-allowed; }
+button:disabled { opacity:.5; cursor:not-allowed; }
 button:focus-visible,select:focus-visible,input:focus-visible {
-  outline:2px solid var(--accent);
-  outline-offset:2px;
+  outline:2px solid var(--accent); outline-offset:2px;
 }
 .app {
-  width:100%;
-  max-width:720px;
-  margin:auto;
-  padding:16px;
+  max-width:740px; margin:auto; padding:16px;
   padding-top:max(16px,env(safe-area-inset-top));
   padding-bottom:max(24px,env(safe-area-inset-bottom));
 }
 header { margin-bottom:16px; }
 .brand { display:flex; align-items:center; gap:12px; }
 .brand-icon {
-  width:44px; height:44px;
-  display:grid; place-items:center;
-  border-radius:13px;
-  background:var(--accent-dark);
-  font-size:24px;
+  width:44px; height:44px; display:grid; place-items:center;
+  border-radius:13px; background:#193e49; font-size:24px;
 }
 h1 { margin:0; font-size:1.4rem; }
 .subtitle { margin:4px 0 0; color:var(--muted); font-size:.88rem; }
 .panel {
-  background:var(--panel);
-  border:1px solid #303848;
-  border-radius:16px;
-  padding:14px;
-  margin-bottom:14px;
+  background:var(--panel); border:1px solid #303848;
+  border-radius:16px; padding:14px; margin-bottom:14px;
 }
 h2 { margin:0 0 12px; font-size:1rem; }
-.small { color:var(--muted); font-size:.86rem; line-height:1.5; }
+.small,.tip {
+  color:var(--muted); font-size:.88rem; line-height:1.55;
+}
+.tip strong { color:var(--text); }
 .row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
 .row > button { flex:1; }
 .primary { background:var(--accent); color:#07151b; border-color:var(--accent); font-weight:800; }
-.active { border-color:var(--accent); color:var(--accent); background:var(--accent-dark); }
 .tabs { display:flex; gap:8px; margin-bottom:12px; }
 .tabs button { flex:1; }
+.active { border-color:var(--accent); color:var(--accent); background:#193e49; }
 .modes { display:grid; grid-template-columns:1fr; gap:8px; }
-.mode {
-  width:100%;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  text-align:left;
-}
+.mode { display:flex; align-items:center; gap:10px; text-align:left; width:100%; }
 .mode .emoji { font-size:23px; }
 .mode strong,.mode small { display:block; }
 .mode small { color:var(--muted); margin-top:3px; font-size:.78rem; }
+.mode[hidden] { display:none; }
+
 .camera {
-  position:relative;
-  width:100%;
-  aspect-ratio:3/4;
-  overflow:hidden;
-  isolation:isolate;
-  background:#05070b;
-  border:1px solid var(--border);
-  border-radius:16px;
+  position:relative; width:100%; aspect-ratio:3/4;
+  overflow:hidden; isolation:isolate;
+  background:#05070b; border:1px solid var(--border); border-radius:16px;
 }
 .camera.ratio916 { aspect-ratio:9/16; }
 .camera.ratioFull { aspect-ratio:auto; height:min(72dvh,720px); min-height:300px; }
 #video {
-  position:absolute;
-  inset:0;
-  display:block;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  background:#05070b;
-  z-index:1;
-  opacity:1;
+  position:absolute; inset:0; width:100%; height:100%;
+  display:block; object-fit:cover; background:#05070b;
+  z-index:1; opacity:1;
 }
-#overlay {
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  z-index:2;
-  pointer-events:none;
-}
+#overlay { position:absolute; inset:0; width:100%; height:100%; z-index:2; pointer-events:none; }
 .camera-top {
   position:absolute; z-index:4; top:10px; left:10px; right:10px;
   display:flex; justify-content:space-between; gap:8px;
 }
 .pill {
-  background:#080a0fd9;
-  border-radius:9px;
-  padding:7px 9px;
-  font-size:.75rem;
-  backdrop-filter:blur(5px);
+  background:#080a0fd9; border-radius:9px;
+  padding:7px 9px; font-size:.75rem; backdrop-filter:blur(5px);
 }
 .camera-bottom {
   position:absolute; z-index:4; bottom:10px; left:10px; right:10px;
@@ -135,38 +97,28 @@ h2 { margin:0 0 12px; font-size:1rem; }
 .camera-bottom button { background:#080a0fd9; }
 .camera-message {
   position:absolute; inset:0; z-index:3;
-  display:flex; justify-content:center; align-items:center;
-  padding:28px; text-align:center; color:var(--muted);
+  display:flex; align-items:center; justify-content:center;
+  text-align:center; padding:28px; color:var(--muted);
   line-height:1.5; pointer-events:none;
 }
 .camera-message strong { display:block; color:white; margin-bottom:8px; }
 .camera-message.hidden { display:none; }
-.error {
-  display:none;
-  margin-top:12px;
-  padding:12px;
-  background:#321f25;
-  border:1px solid #704747;
-  border-radius:12px;
-}
-.error.visible { display:block; }
-.error p { white-space:pre-wrap; overflow-wrap:anywhere; color:#ffdada; font-size:.85rem; line-height:1.5; }
+
 .status {
-  margin-top:10px;
-  padding:10px;
-  border-radius:10px;
-  background:#111722;
-  color:var(--muted);
-  font-size:.82rem;
-  line-height:1.5;
-  overflow-wrap:anywhere;
+  margin-top:12px; padding:12px; border-radius:11px;
+  background:#111722; color:var(--muted);
+  font-size:.84rem; line-height:1.55; overflow-wrap:anywhere;
 }
 .status strong { color:var(--text); }
-.controls {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
+.error {
+  display:none; margin-top:12px; padding:12px;
+  background:#321f25; border:1px solid #704747; border-radius:12px;
 }
+.error.visible { display:block; }
+.error p { white-space:pre-wrap; overflow-wrap:anywhere; color:#ffdada; font-size:.85rem; line-height:1.55; }
+.error ol { color:#ffdada; font-size:.85rem; line-height:1.6; padding-left:22px; }
+
+.controls { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .field label {
   display:flex; justify-content:space-between; gap:6px;
   margin-bottom:7px; font-size:.82rem; color:var(--muted);
@@ -180,12 +132,9 @@ input[type=range] { width:100%; accent-color:var(--accent); }
 }
 .toggle:last-child { border-bottom:0; }
 .toggle input { width:19px; height:19px; accent-color:var(--accent); }
-.tip { font-size:.9rem; line-height:1.55; color:var(--muted); }
-.tip strong { color:var(--text); }
 .shutter {
   width:62px; height:62px; min-height:62px; padding:0;
-  border:4px solid white; border-radius:50%;
-  background:var(--accent); box-shadow:0 0 0 3px #0008;
+  border:4px solid white; border-radius:50%; background:var(--accent);
 }
 .preview { display:none; margin-top:16px; }
 .preview.visible { display:block; }
@@ -200,149 +149,149 @@ input[type=range] { width:100%; accent-color:var(--accent); }
 
 <body>
 <main class="app">
-  <header>
-    <div class="brand">
-      <div class="brand-icon">📷</div>
-      <div>
-        <h1>Gemini Cam</h1>
-        <p class="subtitle">Your personal photography framing guide</p>
-      </div>
+<header>
+  <div class="brand">
+    <div class="brand-icon">📷</div>
+    <div>
+      <h1>Gemini Cam</h1>
+      <p class="subtitle">Your personal photography framing guide</p>
     </div>
-  </header>
+  </div>
+</header>
 
-  <section class="panel">
-    <h2>1. Choose your photography type</h2>
-    <div class="tabs">
-      <button id="peopleTab" class="active" type="button">🧍 People</button>
-      <button id="foodTab" type="button">🍽️ Food</button>
+<section class="panel">
+  <h2>1. Choose photography type</h2>
+  <div class="tabs">
+    <button id="peopleTab" class="active" type="button">🧍 People</button>
+    <button id="foodTab" type="button">🍽️ Food</button>
+  </div>
+  <div class="modes">
+    <button class="mode active" data-mode="fullBody" type="button">
+      <span class="emoji">🧍</span><span><strong>Full body</strong><small>Head to feet inside the frame.</small></span>
+    </button>
+    <button class="mode" data-mode="kneeShot" type="button">
+      <span class="emoji">🚶</span><span><strong>Knee-up</strong><small>Head to around the knees.</small></span>
+    </button>
+    <button class="mode" data-mode="halfBody" type="button">
+      <span class="emoji">👔</span><span><strong>Half body</strong><small>Head, shoulders and upper body.</small></span>
+    </button>
+    <button class="mode" data-mode="closeUp" type="button">
+      <span class="emoji">🙂</span><span><strong>Head and shoulders</strong><small>Keep the eyes near the upper third.</small></span>
+    </button>
+    <button class="mode" data-mode="groupShot" type="button">
+      <span class="emoji">👨‍👩‍👧‍👦</span><span><strong>Group photo</strong><small>Fit every face inside the frame.</small></span>
+    </button>
+    <button class="mode" data-mode="oneDish" type="button" hidden>
+      <span class="emoji">🍜</span><span><strong>1 dish + 1 drink</strong><small>Arrange one dish and one drink.</small></span>
+    </button>
+    <button class="mode" data-mode="twoDishes" type="button" hidden>
+      <span class="emoji">🍽️</span><span><strong>2 dishes + 2 drinks</strong><small>Fit all four items into the frame.</small></span>
+    </button>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>2. Camera</h2>
+  <div class="camera" id="camera">
+    <video id="video" autoplay muted playsinline></video>
+    <svg id="overlay" viewBox="0 0 300 400" preserveAspectRatio="none"><g id="guideLayer"></g></svg>
+    <div class="camera-message" id="cameraMessage">
+      <div><strong>Camera is off</strong>Tap Allow Camera Access to request permission.</div>
     </div>
-    <div class="modes" id="modes">
-      <button class="mode active" data-mode="fullBody" type="button">
-        <span class="emoji">🧍</span><span><strong>Full body</strong><small>Head to feet inside the frame.</small></span>
-      </button>
-      <button class="mode" data-mode="kneeShot" type="button">
-        <span class="emoji">🚶</span><span><strong>Knee-up shot</strong><small>Head to around the knees.</small></span>
-      </button>
-      <button class="mode" data-mode="halfBody" type="button">
-        <span class="emoji">👔</span><span><strong>Half body</strong><small>Head, shoulders and upper body.</small></span>
-      </button>
-      <button class="mode" data-mode="closeUp" type="button">
-        <span class="emoji">🙂</span><span><strong>Head and shoulders</strong><small>Keep the eyes near the upper third.</small></span>
-      </button>
-      <button class="mode" data-mode="groupShot" type="button">
-        <span class="emoji">👨‍👩‍👧‍👦</span><span><strong>Group photo</strong><small>Fit every face inside the frame.</small></span>
-      </button>
-      <button class="mode" data-mode="oneDish" type="button" hidden>
-        <span class="emoji">🍜</span><span><strong>1 dish + 1 drink</strong><small>One main dish and one drink.</small></span>
-      </button>
-      <button class="mode" data-mode="twoDishes" type="button" hidden>
-        <span class="emoji">🍽️</span><span><strong>2 dishes + 2 drinks</strong><small>Arrange four items in the frame.</small></span>
-      </button>
+    <div class="camera-top">
+      <span class="pill" id="modeBadge">Full body</span>
+      <span class="pill" id="cameraBadge">Camera off</span>
     </div>
-  </section>
-
-  <section class="panel">
-    <h2>2. Camera view</h2>
-    <div class="camera" id="camera">
-      <video id="video" autoplay muted playsinline></video>
-      <svg id="overlay" viewBox="0 0 300 400" preserveAspectRatio="none">
-        <g id="guideLayer"></g>
-      </svg>
-      <div class="camera-message" id="cameraMessage">
-        <div><strong>Camera is not running</strong>Tap “Allow Camera Access” below to request permission.</div>
-      </div>
-      <div class="camera-top">
-        <span class="pill" id="modeBadge">Full body</span>
-        <span class="pill" id="cameraBadge">Camera off</span>
-      </div>
-      <div class="camera-bottom">
-        <button type="button" id="switchButton">🔄 Switch camera</button>
-        <button type="button" id="gridButton">▦ Grid on</button>
-      </div>
+    <div class="camera-bottom">
+      <button id="switchButton" type="button">🔄 Switch camera</button>
+      <button id="gridButton" type="button">▦ Grid on</button>
     </div>
+  </div>
 
-    <div class="row" style="margin-top:12px">
-      <button class="primary" type="button" id="startButton">🔐 Allow Camera Access</button>
-      <button type="button" id="stopButton">■ Stop camera</button>
+  <div class="row" style="margin-top:12px">
+    <button class="primary" id="startButton" type="button">🔐 Allow Camera Access</button>
+    <button id="stopButton" type="button">■ Stop camera</button>
+  </div>
+
+  <div class="status" id="diagnostics" aria-live="polite">
+    Checking browser camera support…
+  </div>
+
+  <div class="error" id="errorBox" role="alert">
+    <strong>Camera needs attention</strong>
+    <p id="errorText"></p>
+    <ol>
+      <li>Tap the icon to the left of the website address in Chrome.</li>
+      <li>Open Permissions or Site settings, and set Camera to Allow if available.</li>
+      <li>Also check Android Settings → Apps → Chrome → Permissions → Camera.</li>
+      <li>Return to this page, reload it, then tap Allow Camera Access.</li>
+    </ol>
+    <button class="primary" id="retryButton" type="button">Try again</button>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>3. Camera controls</h2>
+  <div class="controls">
+    <div class="field">
+      <label for="ratio">Photo framing</label>
+      <select id="ratio">
+        <option value="3:4">3:4 Portrait</option>
+        <option value="9:16">9:16 Story / Shorts</option>
+        <option value="full">Full camera view</option>
+      </select>
     </div>
-
-    <div class="error" id="errorBox" role="alert">
-      <strong>Camera problem</strong>
-      <p id="errorText"></p>
-      <button class="primary" type="button" id="retryButton">Try again</button>
+    <div class="field">
+      <label for="zoom"><span>Zoom</span><span id="zoomLabel">1.0×</span></label>
+      <input id="zoom" type="range" min="1" max="4" step=".1" value="1">
     </div>
-
-    <div class="status" id="diagnostics">
-      <strong>Camera check:</strong> Waiting for you to start the camera.
+    <div class="field">
+      <label for="opacity"><span>Guide opacity</span><span id="opacityLabel">75%</span></label>
+      <input id="opacity" type="range" min="10" max="100" step="5" value="75">
     </div>
-  </section>
-
-  <section class="panel">
-    <h2>3. Adjust your camera</h2>
-    <div class="controls">
-      <div class="field">
-        <label for="ratio">Photo framing</label>
-        <select id="ratio">
-          <option value="3:4">3:4 Portrait</option>
-          <option value="9:16">9:16 Story / Shorts</option>
-          <option value="full">Full camera view</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="zoom"><span>Zoom</span><span id="zoomLabel">1.0×</span></label>
-        <input id="zoom" type="range" min="1" max="4" step=".1" value="1">
-      </div>
-      <div class="field">
-        <label for="opacity"><span>Guide opacity</span><span id="opacityLabel">75%</span></label>
-        <input id="opacity" type="range" min="10" max="100" step="5" value="75">
-      </div>
-      <div class="field">
-        <label for="colour">Guide colour</label>
-        <select id="colour">
-          <option value="#ffffff">White</option>
-          <option value="#8be9fd">Cyan</option>
-          <option value="#ffe082">Yellow</option>
-          <option value="#8dffb1">Green</option>
-        </select>
-      </div>
+    <div class="field">
+      <label for="colour">Guide colour</label>
+      <select id="colour">
+        <option value="#ffffff">White</option>
+        <option value="#8be9fd">Cyan</option>
+        <option value="#ffe082">Yellow</option>
+        <option value="#8dffb1">Green</option>
+      </select>
     </div>
-    <div class="toggle"><label for="gridToggle">Rule-of-thirds grid</label><input id="gridToggle" type="checkbox" checked></div>
-    <div class="toggle"><label for="guideToggle">Composition guide</label><input id="guideToggle" type="checkbox" checked></div>
-  </section>
+  </div>
+  <div class="toggle"><label for="gridToggle">Rule-of-thirds grid</label><input id="gridToggle" type="checkbox" checked></div>
+  <div class="toggle"><label for="guideToggle">Composition guide</label><input id="guideToggle" type="checkbox" checked></div>
+</section>
 
-  <section class="panel">
-    <h2>4. Photography tip</h2>
-    <p class="tip" id="tipText"><strong>Full body:</strong> Keep the head and feet inside the frame.</p>
-  </section>
+<section class="panel">
+  <h2>4. Photography tip</h2>
+  <p class="tip" id="tipText"><strong>Full body:</strong> Keep the head and feet inside the frame.</p>
+</section>
 
-  <section class="panel">
-    <h2>5. Take a photo</h2>
-    <p class="small">The photo is captured from the video feed and saved to your device.</p>
+<section class="panel">
+  <h2>5. Capture photo</h2>
+  <p class="small">Capture the camera preview and download the photo to your device.</p>
+  <div class="row">
+    <button class="shutter" id="captureButton" type="button" aria-label="Take photo" disabled></button>
+    <span class="small">Tap the shutter to capture.</span>
+  </div>
+  <div class="preview" id="preview">
+    <h2 style="margin-top:16px">Photo preview</h2>
+    <img id="previewImage" alt="Captured photo">
     <div class="row">
-      <button class="shutter" type="button" id="captureButton" aria-label="Take photo" disabled></button>
-      <span class="small">Tap the shutter to capture.</span>
+      <button class="primary" id="downloadButton" type="button">⬇ Download photo</button>
+      <button id="closePreview" type="button">Close preview</button>
     </div>
-    <div class="preview" id="preview">
-      <h2 style="margin-top:16px">Photo preview</h2>
-      <img id="previewImage" alt="Captured photo preview">
-      <div class="row">
-        <button class="primary" id="downloadButton" type="button">⬇ Download photo</button>
-        <button id="closePreview" type="button">Close preview</button>
-      </div>
-    </div>
-  </section>
+  </div>
+</section>
 
-  <p class="footnote">
-    Camera access is controlled by your browser. If permission was previously blocked,
-    you may need to change the website's camera permission in Chrome settings.
-  </p>
+<p class="footnote">The browser controls camera permission. This page cannot override a permission denied in Chrome or Android.</p>
 </main>
 
 <script>
 "use strict";
 
 const $ = id => document.getElementById(id);
-
 const video = $("video");
 const camera = $("camera");
 const overlay = $("overlay");
@@ -365,27 +314,27 @@ let photoUrl = null;
 const modes = {
   fullBody: {
     category:"people", title:"Full body",
-    tip:"<strong>Full body:</strong> Keep the head and feet inside the frame. Leave a little space above the head and below the feet."
+    tip:"<strong>Full body:</strong> Keep the head and feet inside the frame. Leave some space above the head and below the feet."
   },
   kneeShot: {
-    category:"people", title:"Knee-up shot",
-    tip:"<strong>Knee-up:</strong> Frame from the head to around the knees. Avoid cutting directly through the knee joints."
+    category:"people", title:"Knee-up",
+    tip:"<strong>Knee-up:</strong> Frame from the head to around the knees. Avoid cutting through the knee joints."
   },
   halfBody: {
     category:"people", title:"Half body",
-    tip:"<strong>Half body:</strong> Keep the eyes near the upper third. Leave space around the shoulders."
+    tip:"<strong>Half body:</strong> Keep the eyes near the upper third and leave room around the shoulders."
   },
   closeUp: {
     category:"people", title:"Head and shoulders",
-    tip:"<strong>Head and shoulders:</strong> Place the eyes near the upper horizontal third. Leave a little space above the head."
+    tip:"<strong>Head and shoulders:</strong> Place the eyes near the upper horizontal third and leave a little space above the head."
   },
   groupShot: {
     category:"people", title:"Group photo",
-    tip:"<strong>Group photo:</strong> Fit every face inside the frame. Check the edges so nobody is accidentally cropped out."
+    tip:"<strong>Group photo:</strong> Keep everyone's face inside the frame and check the edges for accidental cropping."
   },
   oneDish: {
     category:"food", title:"1 dish + 1 drink",
-    tip:"<strong>One dish + one drink:</strong> Place the dish slightly off-centre and position the drink nearby. Leave breathing room around both."
+    tip:"<strong>One dish + one drink:</strong> Place the dish slightly off-centre and position the drink nearby."
   },
   twoDishes: {
     category:"food", title:"2 dishes + 2 drinks",
@@ -393,30 +342,25 @@ const modes = {
   }
 };
 
-function setDiagnostic(message) {
+function setStatus(message) {
   $("diagnostics").textContent = message;
 }
 
-function setCameraBadge(message) {
+function setBadge(message) {
   $("cameraBadge").textContent = message;
 }
 
-function showMessage(title, description) {
+function showMessage(title, detail) {
   const box = $("cameraMessage");
   box.replaceChildren();
-  const inner = document.createElement("div");
+  const div = document.createElement("div");
   const strong = document.createElement("strong");
-  strong.textContent = title;
   const span = document.createElement("span");
-  span.textContent = description;
-  inner.append(strong, span);
-  box.append(inner);
+  strong.textContent = title;
+  span.textContent = detail;
+  div.append(strong,span);
+  box.append(div);
   box.classList.remove("hidden");
-}
-
-function hideError() {
-  $("errorBox").classList.remove("visible");
-  $("errorText").textContent = "";
 }
 
 function showError(message) {
@@ -424,71 +368,159 @@ function showError(message) {
   $("errorBox").classList.add("visible");
 }
 
+function hideError() {
+  $("errorBox").classList.remove("visible");
+  $("errorText").textContent = "";
+}
+
 function stopCamera() {
-  const oldStream = stream;
+  const old = stream;
   stream = null;
   track = null;
   hardwareZoom = false;
 
-  if (oldStream) {
-    oldStream.getTracks().forEach(t => t.stop());
-  }
+  if (old) old.getTracks().forEach(t => t.stop());
 
   video.pause();
   video.srcObject = null;
   video.style.transform = "none";
   $("captureButton").disabled = true;
-  setCameraBadge("Camera off");
-  showMessage("Camera is not running", "Tap Allow Camera Access to start.");
+  setBadge("Camera off");
+  showMessage("Camera is off","Tap Allow Camera Access to start.");
 }
 
-function waitForVideo(timeoutMs = 12000) {
-  return new Promise((resolve, reject) => {
-    if (video.videoWidth > 0 && video.videoHeight > 0 &&
-        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
-        !video.paused) {
-      resolve();
-      return;
-    }
+function permissionHelp(error) {
+  const name = error && error.name ? error.name : "CameraError";
+  const message = error && error.message ? error.message : "No additional browser details.";
 
+  let advice = "";
+
+  if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+    advice = "Chrome or Android denied the request. Change the website Camera permission to Allow, and check Android's Chrome app permission.";
+  } else if (name === "NotFoundError") {
+    advice = "No camera was found. Check whether the camera works in your phone's normal Camera app.";
+  } else if (name === "NotReadableError" || name === "AbortError") {
+    advice = "The camera may be in use by another app. Close apps using the camera and retry.";
+  } else if (name === "SecurityError") {
+    advice = "The browser blocked camera access for security reasons. Use the HTTPS GitHub Pages address.";
+  } else if (name === "OverconstrainedError") {
+    advice = "The requested camera settings were not supported. Try again with basic camera settings.";
+  } else {
+    advice = "Check Chrome's site settings and Android's Chrome camera permission, then reload the page.";
+  }
+
+  return name + ": " + message + "\n\n" + advice;
+}
+
+function timeoutPromise(ms) {
+  return new Promise((_,reject) => {
+    setTimeout(() => {
+      const error = new Error(
+        "Chrome has not completed the camera request after " +
+        ms/1000 + " seconds. A permission prompt may be blocked, " +
+        "or the browser may be waiting for a response."
+      );
+      error.name = "CameraRequestTimeout";
+      reject(error);
+    },ms);
+  });
+}
+
+async function inspectPermission() {
+  if (!navigator.permissions || !navigator.permissions.query) {
+    return "Permission status cannot be queried by this browser. The camera request will still be attempted.";
+  }
+
+  try {
+    const result = await navigator.permissions.query({name:"camera"});
+    return "Current browser camera permission: " + result.state + ".";
+  } catch (error) {
+    return "Chrome does not expose camera permission status on this page. The camera request will still be attempted.";
+  }
+}
+
+async function requestCamera(constraints, token) {
+  // The timeout stops the page waiting forever. getUserMedia itself
+  // cannot be cancelled, so any stream arriving late is stopped.
+  let settled = false;
+  let timer;
+
+  const request = navigator.mediaDevices.getUserMedia(constraints).then(
+    result => {
+      if (settled || token !== startToken) {
+        result.getTracks().forEach(t => t.stop());
+        throw new Error("This camera request was superseded. Tap Start again.");
+      }
+      settled = true;
+      clearTimeout(timer);
+      return result;
+    },
+    error => {
+      if (!settled) {
+        settled = true;
+        clearTimeout(timer);
+      }
+      throw error;
+    }
+  );
+
+  const timeout = new Promise((_,reject) => {
+    timer = setTimeout(() => {
+      if (!settled) {
+        settled = true;
+        const error = new Error(
+          "No response after 15 seconds. Chrome did not complete the permission request. Check website and Android camera permissions, then reload the page."
+        );
+        error.name = "CameraRequestTimeout";
+        reject(error);
+      }
+    },15000);
+  });
+
+  return Promise.race([request,timeout]);
+}
+
+async function waitForFrames(ms = 10000) {
+  if (video.videoWidth > 0 && video.videoHeight > 0 &&
+      video.readyState >= 2 && !video.paused) return;
+
+  return new Promise((resolve,reject) => {
     let timer;
 
     const cleanup = () => {
-      video.removeEventListener("loadedmetadata", check);
-      video.removeEventListener("loadeddata", check);
-      video.removeEventListener("playing", check);
-      video.removeEventListener("error", fail);
+      ["loadedmetadata","loadeddata","canplay","playing","error"].forEach(name => {
+        video.removeEventListener(name,check);
+      });
       clearTimeout(timer);
     };
 
     const check = () => {
       if (video.videoWidth > 0 && video.videoHeight > 0 &&
-          video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
-          !video.paused) {
+          video.readyState >= 2 && !video.paused) {
         cleanup();
         resolve();
       }
     };
 
-    const fail = () => {
-      cleanup();
-      reject(new Error("Chrome reported a video playback error."));
-    };
+    ["loadedmetadata","loadeddata","canplay","playing"].forEach(name => {
+      video.addEventListener(name,check);
+    });
 
-    video.addEventListener("loadedmetadata", check);
-    video.addEventListener("loadeddata", check);
-    video.addEventListener("playing", check);
-    video.addEventListener("error", fail);
+    video.addEventListener("error",() => {
+      cleanup();
+      reject(new Error("The camera connected but Chrome could not play its video."));
+    },{once:true});
 
     timer = setTimeout(() => {
       cleanup();
       reject(new Error(
-        "No video frames arrived within " + timeoutMs / 1000 +
-        " seconds. Video dimensions: " +
-        video.videoWidth + " × " + video.videoHeight +
+        "The camera request completed, but no video frames appeared. " +
+        "Video dimensions: " + video.videoWidth + " × " + video.videoHeight +
         "; readyState: " + video.readyState + "."
       ));
-    }, timeoutMs);
+    },ms);
+
+    check();
   });
 }
 
@@ -496,57 +528,58 @@ async function startCamera() {
   const token = ++startToken;
   hideError();
 
-  if (!window.isSecureContext) {
-    const message =
-      "This page is not in a secure context. Open the GitHub Pages URL " +
-      "starting with https://, not a local file or an insecure http:// page.";
-    setDiagnostic(message);
-    showError(message);
-    return;
-  }
-
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    const message =
-      "This browser does not provide camera access to this page. " +
-      "Open the HTTPS page in Chrome and reload it.";
-    setDiagnostic(message);
-    showError(message);
-    return;
-  }
-
+  // Reset the previous camera before requesting another one.
   stopCamera();
-  setCameraBadge("Requesting permission…");
-  setDiagnostic("Requesting camera permission from Chrome…");
-  showMessage("Waiting for camera permission", "Please respond to any Chrome prompt.");
 
-  video.muted = true;
-  video.playsInline = true;
-  video.setAttribute("playsinline", "");
-  video.setAttribute("autoplay", "");
+  if (!window.isSecureContext || location.protocol !== "https:") {
+    const message = "This page is not using HTTPS. Open your GitHub Pages address starting with https://.";
+    setStatus(message);
+    showError(message);
+    return;
+  }
+
+  if (!navigator.mediaDevices ||
+      typeof navigator.mediaDevices.getUserMedia !== "function") {
+    const message = "Camera access is unavailable in this browser context. Open the HTTPS page directly in Chrome, not inside a preview or embedded browser.";
+    setStatus(message);
+    showError(message);
+    return;
+  }
+
+  setBadge("Checking permission…");
+  setStatus("Checking permission status…");
 
   try {
+    const permissionInfo = await inspectPermission();
+    if (token !== startToken) return;
+
+    setStatus(permissionInfo + " Requesting access to the camera…");
+    setBadge("Requesting permission…");
+    showMessage("Waiting for camera permission","If Chrome shows a prompt, tap Allow.");
+
+    // Request a camera. Use ideal rather than exact facing mode.
     let newStream;
 
-    // First attempt: request the rear-facing camera.
     try {
-      newStream = await navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: {
-          facingMode: { ideal: facing },
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
+      newStream = await requestCamera({
+        audio:false,
+        video:{
+          facingMode:{ideal:facing},
+          width:{ideal:1280},
+          height:{ideal:720}
         }
-      });
+      },token);
     } catch (firstError) {
       if (token !== startToken) return;
 
-      // Fallback: allow Chrome to choose an available camera.
-      setDiagnostic("The preferred camera could not start. Trying another available camera…");
+      if (firstError.name === "CameraRequestTimeout") throw firstError;
 
-      newStream = await navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: true
-      });
+      setStatus("The preferred camera request failed. Trying basic camera access…");
+
+      newStream = await requestCamera({
+        audio:false,
+        video:true
+      },token);
     }
 
     if (token !== startToken) {
@@ -558,122 +591,66 @@ async function startCamera() {
     track = stream.getVideoTracks()[0];
 
     if (!track || track.readyState !== "live") {
-      throw new Error("No active camera video track was returned.");
+      throw new Error("No live camera video track was returned.");
     }
 
     video.srcObject = stream;
-    setCameraBadge("Camera connected");
-    setDiagnostic(
-      "Camera permission granted. Waiting for video frames…"
-    );
+    video.muted = true;
+    video.playsInline = true;
 
-    // Calling play explicitly helps on mobile browsers.
     await video.play();
-
-    // Wait until actual frames and dimensions are available.
-    await waitForVideo();
+    await waitForFrames();
 
     if (token !== startToken) return;
 
-    // Detect hardware zoom if the browser supports it.
-    hardwareZoom = false;
     try {
       const caps = track.getCapabilities ? track.getCapabilities() : {};
       if (caps.zoom) {
         hardwareZoom = true;
         $("zoom").min = caps.zoom.min || 1;
-        $("zoom").max = Math.min(caps.zoom.max || 4, 10);
-        $("zoom").step = caps.zoom.step || 0.1;
+        $("zoom").max = Math.min(caps.zoom.max || 4,10);
+        $("zoom").step = caps.zoom.step || .1;
       }
     } catch (e) {
-      console.warn("Hardware zoom not available", e);
+      hardwareZoom = false;
     }
 
-    setZoom($("zoom").value);
+    await setZoom($("zoom").value);
+
     $("cameraMessage").classList.add("hidden");
     $("captureButton").disabled = false;
-    setCameraBadge("Camera on");
-    setDiagnostic(
-      "Camera is working. Video size: " +
+    setBadge("Camera on");
+    setStatus(
+      "Camera working. Permission granted. Video: " +
       video.videoWidth + " × " + video.videoHeight + "."
     );
+    drawGuides();
 
-    track.addEventListener("ended", () => {
+    track.addEventListener("ended",() => {
       if (stream) {
         $("captureButton").disabled = true;
-        setCameraBadge("Camera disconnected");
-        setDiagnostic("The camera track ended. Tap Try again.");
+        setBadge("Camera disconnected");
+        setStatus("The camera track ended. Tap Try again.");
       }
     });
-
-    drawGuides();
 
   } catch (error) {
     if (token !== startToken) return;
 
-    console.error("Camera start error:", error);
+    console.error("Camera error:",error);
     stopCamera();
 
-    let advice = "";
-
-    switch (error.name) {
-      case "NotAllowedError":
-      case "PermissionDeniedError":
-        advice =
-          "\n\nChrome has blocked camera access or permission was denied. " +
-          "In Chrome, open this website's site settings, set Camera to Allow, " +
-          "then reload the page and try again.";
-        break;
-
-      case "NotFoundError":
-        advice =
-          "\n\nNo available camera was found. Check that your phone's camera " +
-          "works in the normal Camera app.";
-        break;
-
-      case "NotReadableError":
-      case "AbortError":
-        advice =
-          "\n\nThe camera may be in use by another app, or the camera could " +
-          "not start. Close other apps using the camera and retry.";
-        break;
-
-      case "OverconstrainedError":
-        advice =
-          "\n\nThe requested camera settings are unsupported. Reload and retry.";
-        break;
-
-      case "SecurityError":
-        advice =
-          "\n\nThe browser's security settings prevented camera access. " +
-          "Use the HTTPS GitHub Pages address.";
-        break;
-
-      default:
-        advice =
-          "\n\nCheck Chrome's site camera permission, close other apps " +
-          "using the camera, reload the page, and try again.";
-    }
-
-    const message =
-      (error.name || "CameraError") + ": " +
-      (error.message || "Unknown camera error.") + advice;
-
-    setDiagnostic(message);
-    showError(message);
-    showMessage("Camera could not start", "Read the error message below.");
+    const details = permissionHelp(error);
+    setStatus(details);
+    showError(details);
+    showMessage("Camera could not start","Read the camera diagnostic below.");
   }
-}
-
-function switchCamera() {
-  facing = facing === "environment" ? "user" : "environment";
-  startCamera();
 }
 
 function setCategory(next) {
   category = next;
-  $("peopleTab").classList.toggle("active", next === "people");
-  $("foodTab").classList.toggle("active", next === "food");
+  $("peopleTab").classList.toggle("active",next === "people");
+  $("foodTab").classList.toggle("active",next === "food");
 
   document.querySelectorAll(".mode").forEach(button => {
     button.hidden = modes[button.dataset.mode].category !== next;
@@ -684,63 +661,50 @@ function setCategory(next) {
 
 function selectMode(mode) {
   currentMode = mode;
-
   document.querySelectorAll(".mode").forEach(button => {
-    button.classList.toggle("active", button.dataset.mode === mode);
+    button.classList.toggle("active",button.dataset.mode === mode);
   });
-
   $("modeBadge").textContent = modes[mode].title;
   $("tipText").innerHTML = modes[mode].tip;
   drawGuides();
 }
 
-function svg(name, attrs = {}) {
-  const el = document.createElementNS("http://www.w3.org/2000/svg", name);
-  Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+function svg(name,attrs={}) {
+  const el = document.createElementNS("http://www.w3.org/2000/svg",name);
+  Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k,v));
   return el;
 }
 
-function line(parent, x1, y1, x2, y2, dashed = true) {
-  parent.appendChild(svg("line", {
-    x1, y1, x2, y2,
-    stroke: guideColour,
-    "stroke-width": 1.4,
-    "stroke-dasharray": dashed ? "5 5" : "none"
+function line(parent,x1,y1,x2,y2,dashed=true) {
+  parent.appendChild(svg("line",{
+    x1,y1,x2,y2,stroke:guideColour,
+    "stroke-width":1.4,
+    "stroke-dasharray":dashed?"5 5":"none"
   }));
 }
-
-function circle(parent, cx, cy, r) {
-  parent.appendChild(svg("circle", {
-    cx, cy, r, fill:"none",
-    stroke:guideColour,
-    "stroke-width":1.6,
+function circle(parent,cx,cy,r) {
+  parent.appendChild(svg("circle",{
+    cx,cy,r,fill:"none",stroke:guideColour,
+    "stroke-width":1.6,"stroke-dasharray":"5 4"
+  }));
+}
+function ellipse(parent,cx,cy,rx,ry) {
+  parent.appendChild(svg("ellipse",{
+    cx,cy,rx,ry,fill:"none",stroke:guideColour,
+    "stroke-width":1.6,"stroke-dasharray":"5 4"
+  }));
+}
+function path(parent,d) {
+  parent.appendChild(svg("path",{
+    d,fill:"none",stroke:guideColour,"stroke-width":1.6,
+    "stroke-linecap":"round","stroke-linejoin":"round",
     "stroke-dasharray":"5 4"
   }));
 }
-
-function ellipse(parent, cx, cy, rx, ry) {
-  parent.appendChild(svg("ellipse", {
-    cx, cy, rx, ry, fill:"none",
-    stroke:guideColour,
-    "stroke-width":1.6,
-    "stroke-dasharray":"5 4"
-  }));
-}
-
-function path(parent, d) {
-  parent.appendChild(svg("path", {
-    d, fill:"none", stroke:guideColour,
-    "stroke-width":1.6,
-    "stroke-linecap":"round",
-    "stroke-linejoin":"round",
-    "stroke-dasharray":"5 4"
-  }));
-}
-
-function text(parent, x, y, value) {
-  const el = svg("text", {
-    x, y, fill:guideColour, "font-size":8,
-    "font-family":"system-ui,sans-serif", "text-anchor":"middle"
+function label(parent,x,y,value) {
+  const el = svg("text",{
+    x,y,fill:guideColour,"font-size":8,
+    "font-family":"system-ui,sans-serif","text-anchor":"middle"
   });
   el.textContent = value;
   parent.appendChild(el);
@@ -748,45 +712,34 @@ function text(parent, x, y, value) {
 
 function drawGuides() {
   const rect = camera.getBoundingClientRect();
-  const width = Math.max(rect.width, 1);
-  const height = Math.max(rect.height, 1);
+  const w = Math.max(1,rect.width);
+  const h = Math.max(1,rect.height);
 
-  overlay.setAttribute("viewBox", "0 0 " + width + " " + height);
+  overlay.setAttribute("viewBox","0 0 "+w+" "+h);
   guideLayer.replaceChildren();
-  guideLayer.setAttribute("opacity", guideOpacity);
+  guideLayer.setAttribute("opacity",guideOpacity);
 
-  // Grid is drawn in the actual preview's coordinate system.
   if (gridEnabled && $("gridToggle").checked) {
-    [1/3, 2/3].forEach(f => {
-      line(guideLayer, width*f, 0, width*f, height);
-      line(guideLayer, 0, height*f, width, height*f);
+    [1/3,2/3].forEach(f => {
+      line(guideLayer,w*f,0,w*f,h);
+      line(guideLayer,0,h*f,w,h*f);
     });
   }
 
   if (!guideEnabled || !$("guideToggle").checked) return;
 
-  // Scale the composition guide to fit the current preview.
-  const g = svg("g", {
-    transform:"scale(" + width/300 + " " + height/400 + ")"
-  });
+  const g = svg("g",{transform:"scale("+w/300+" "+h/400+")"});
   guideLayer.appendChild(g);
 
   if (currentMode === "groupShot") {
     [75,150,225].forEach((x,i) => circle(g,x,130+(i===1?-8:0),18));
-    path(g,
-      "M55 205 Q55 160 75 158 Q95 160 95 205 " +
-      "M130 205 Q130 150 150 150 Q170 150 170 205 " +
-      "M205 205 Q205 160 225 158 Q245 160 245 205");
-    text(g,150,245,"KEEP ALL FACES INSIDE");
+    path(g,"M55 205 Q55 160 75 158 Q95 160 95 205 M130 205 Q130 150 150 150 Q170 150 170 205 M205 205 Q205 160 225 158 Q245 160 245 205");
+    label(g,150,245,"KEEP ALL FACES INSIDE");
     return;
   }
 
-  if (currentMode === "fullBody" ||
-      currentMode === "kneeShot" ||
-      currentMode === "halfBody" ||
-      currentMode === "closeUp") {
-    let head, body;
-
+  if (["fullBody","kneeShot","halfBody","closeUp"].includes(currentMode)) {
+    let head,body;
     if (currentMode === "fullBody") {
       head=[150,95,19];
       body="M150 117 L150 235 M150 145 L110 190 M150 145 L190 190 M150 235 L120 325 M150 235 L180 325";
@@ -806,7 +759,7 @@ function drawGuides() {
 
     if (currentMode === "closeUp") {
       line(g,20,133,280,133);
-      text(g,150,124,"EYE LINE");
+      label(g,150,124,"EYE LINE");
     } else {
       line(g,65,45,65,350);
       line(g,235,45,235,350);
@@ -814,13 +767,13 @@ function drawGuides() {
 
     if (currentMode === "fullBody") {
       line(g,80,350,220,350);
-      text(g,150,365,"LEAVE SPACE BELOW FEET");
+      label(g,150,365,"LEAVE SPACE BELOW FEET");
     }
     if (currentMode === "kneeShot") {
       line(g,95,290,205,290);
-      text(g,150,306,"KNEE AREA");
+      label(g,150,306,"KNEE AREA");
     }
-    if (currentMode === "halfBody") text(g,150,275,"UPPER BODY");
+    if (currentMode === "halfBody") label(g,150,275,"UPPER BODY");
     return;
   }
 
@@ -829,10 +782,9 @@ function drawGuides() {
     ellipse(g,125,215,62,62);
     path(g,"M205 90 L245 90 L239 145 Q225 155 211 145 Z");
     ellipse(g,225,90,20,6);
-    text(g,125,315,"MAIN DISH");
-    text(g,225,165,"DRINK");
-    text(g,150,365,"KEEP BOTH ITEMS INSIDE");
-    return;
+    label(g,125,315,"MAIN DISH");
+    label(g,225,165,"DRINK");
+    label(g,150,365,"KEEP BOTH ITEMS INSIDE");
   }
 
   if (currentMode === "twoDishes") {
@@ -842,29 +794,28 @@ function drawGuides() {
     ellipse(g,197,75,17,5);
     path(g,"M65 280 L95 280 L91 322 Q80 330 69 322 Z");
     ellipse(g,80,280,15,5);
-    text(g,92,205,"DISH 1");
-    text(g,208,335,"DISH 2");
-    text(g,198,140,"DRINK 1");
-    text(g,80,344,"DRINK 2");
+    label(g,92,205,"DISH 1");
+    label(g,208,335,"DISH 2");
+    label(g,198,140,"DRINK 1");
+    label(g,80,344,"DRINK 2");
   }
 }
 
 async function setZoom(value) {
   zoomValue = Number(value);
-  $("zoomLabel").textContent = zoomValue.toFixed(1) + "×";
+  $("zoomLabel").textContent = zoomValue.toFixed(1)+"×";
 
   if (hardwareZoom && track && track.applyConstraints) {
     try {
       await track.applyConstraints({advanced:[{zoom:zoomValue}]});
       video.style.transform = "none";
       return;
-    } catch (error) {
-      console.warn("Hardware zoom failed; using digital zoom.", error);
+    } catch (e) {
       hardwareZoom = false;
     }
   }
 
-  video.style.transform = "scale(" + zoomValue + ")";
+  video.style.transform = "scale("+zoomValue+")";
 }
 
 function updateRatio() {
@@ -877,36 +828,32 @@ function updateRatio() {
 function capturePhoto() {
   if (!stream || !track || track.readyState !== "live" ||
       video.videoWidth === 0 || video.videoHeight === 0) {
-    showError("The camera is not ready. Start the camera before taking a photo.");
+    showError("The camera is not ready. Start the camera first.");
     return;
   }
 
-  const sourceW = video.videoWidth;
-  const sourceH = video.videoHeight;
-  const ratioChoice = $("ratio").value;
-  const targetRatio = ratioChoice === "3:4" ? 3/4 :
-                      ratioChoice === "9:16" ? 9/16 : sourceW/sourceH;
+  const sw = video.videoWidth;
+  const sh = video.videoHeight;
+  const choice = $("ratio").value;
+  const ratio = choice === "3:4" ? 3/4 :
+                choice === "9:16" ? 9/16 : sw/sh;
 
-  let cropW = sourceW;
-  let cropH = sourceH;
+  let cw = sw, ch = sh;
+  if (sw/sh > ratio) cw = sh*ratio;
+  else ch = sw/ratio;
 
-  if (sourceW/sourceH > targetRatio) cropW = sourceH*targetRatio;
-  else cropH = sourceW/targetRatio;
+  cw /= zoomValue;
+  ch /= zoomValue;
 
-  const zoom = Math.max(1,zoomValue);
-  cropW /= zoom;
-  cropH /= zoom;
-
-  const cropX = (sourceW-cropW)/2;
-  const cropY = (sourceH-cropH)/2;
-
+  const cx = (sw-cw)/2;
+  const cy = (sh-ch)/2;
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
-  canvas.height = Math.round(1080/targetRatio);
-  const ctx = canvas.getContext("2d");
+  canvas.height = Math.round(1080/ratio);
 
+  const ctx = canvas.getContext("2d");
   if (!ctx) {
-    showError("Unable to create the photo. Please try again.");
+    showError("Could not create the photo.");
     return;
   }
 
@@ -915,32 +862,30 @@ function capturePhoto() {
     ctx.scale(-1,1);
   }
 
-  ctx.drawImage(video,cropX,cropY,cropW,cropH,0,0,canvas.width,canvas.height);
+  ctx.drawImage(video,cx,cy,cw,ch,0,0,canvas.width,canvas.height);
 
-  // Add guides to the saved image using the current overlay.
   if (gridEnabled || guideEnabled) {
-    const svgCopy = overlay.cloneNode(true);
-    svgCopy.setAttribute("width",canvas.width);
-    svgCopy.setAttribute("height",canvas.height);
-    svgCopy.setAttribute("viewBox","0 0 "+camera.clientWidth+" "+camera.clientHeight);
+    const copy = overlay.cloneNode(true);
+    copy.setAttribute("width",canvas.width);
+    copy.setAttribute("height",canvas.height);
+    copy.setAttribute("viewBox","0 0 "+camera.clientWidth+" "+camera.clientHeight);
 
-    const blob = new Blob(
-      [new XMLSerializer().serializeToString(svgCopy)],
+    const url = URL.createObjectURL(new Blob(
+      [new XMLSerializer().serializeToString(copy)],
       {type:"image/svg+xml;charset=utf-8"}
-    );
-    const url = URL.createObjectURL(blob);
-    const image = new Image();
+    ));
+    const img = new Image();
 
-    image.onload = () => {
-      ctx.drawImage(image,0,0,canvas.width,canvas.height);
+    img.onload = () => {
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
       URL.revokeObjectURL(url);
       finishPhoto(canvas);
     };
-    image.onerror = () => {
+    img.onerror = () => {
       URL.revokeObjectURL(url);
       finishPhoto(canvas);
     };
-    image.src = url;
+    img.src = url;
   } else {
     finishPhoto(canvas);
   }
@@ -949,10 +894,9 @@ function capturePhoto() {
 function finishPhoto(canvas) {
   canvas.toBlob(blob => {
     if (!blob) {
-      showError("The photo could not be created. Please try again.");
+      showError("The photo could not be saved.");
       return;
     }
-
     if (photoUrl) URL.revokeObjectURL(photoUrl);
     photoUrl = URL.createObjectURL(blob);
     $("previewImage").src = photoUrl;
@@ -965,84 +909,74 @@ function downloadPhoto() {
   if (!photoUrl) return;
   const a = document.createElement("a");
   a.href = photoUrl;
-  a.download = "geminicam-" + currentMode + "-" +
-    new Date().toISOString().replace(/[:.]/g,"-") + ".jpg";
+  a.download = "geminicam-"+currentMode+".jpg";
   document.body.appendChild(a);
   a.click();
   a.remove();
 }
 
-// Events
+// Event handlers
 $("peopleTab").addEventListener("click",() => setCategory("people"));
 $("foodTab").addEventListener("click",() => setCategory("food"));
-
-document.querySelectorAll(".mode").forEach(button => {
-  button.addEventListener("click",() => selectMode(button.dataset.mode));
+document.querySelectorAll(".mode").forEach(b => {
+  b.addEventListener("click",() => selectMode(b.dataset.mode));
 });
-
 $("startButton").addEventListener("click",startCamera);
 $("retryButton").addEventListener("click",startCamera);
-$("switchButton").addEventListener("click",switchCamera);
-
+$("switchButton").addEventListener("click",() => {
+  facing = facing === "environment" ? "user" : "environment";
+  startCamera();
+});
 $("stopButton").addEventListener("click",() => {
   startToken++;
   stopCamera();
   hideError();
-  setDiagnostic("Camera stopped. Tap Allow Camera Access to restart it.");
+  setStatus("Camera stopped. Tap Allow Camera Access to restart.");
 });
-
 $("gridButton").addEventListener("click",() => {
   gridEnabled = !gridEnabled;
   $("gridToggle").checked = gridEnabled;
   $("gridButton").textContent = gridEnabled ? "▦ Grid on" : "▦ Grid off";
   drawGuides();
 });
-
 $("ratio").addEventListener("change",updateRatio);
-$("zoom").addEventListener("input",event => setZoom(event.target.value));
-
-$("opacity").addEventListener("input",event => {
-  guideOpacity = Number(event.target.value)/100;
-  $("opacityLabel").textContent = event.target.value+"%";
+$("zoom").addEventListener("input",e => setZoom(e.target.value));
+$("opacity").addEventListener("input",e => {
+  guideOpacity = Number(e.target.value)/100;
+  $("opacityLabel").textContent = e.target.value+"%";
   drawGuides();
 });
-
-$("colour").addEventListener("change",event => {
-  guideColour = event.target.value;
+$("colour").addEventListener("change",e => {
+  guideColour = e.target.value;
   drawGuides();
 });
-
-$("gridToggle").addEventListener("change",event => {
-  gridEnabled = event.target.checked;
+$("gridToggle").addEventListener("change",e => {
+  gridEnabled = e.target.checked;
   $("gridButton").textContent = gridEnabled ? "▦ Grid on" : "▦ Grid off";
   drawGuides();
 });
-
-$("guideToggle").addEventListener("change",event => {
-  guideEnabled = event.target.checked;
+$("guideToggle").addEventListener("change",e => {
+  guideEnabled = e.target.checked;
   drawGuides();
 });
-
 $("captureButton").addEventListener("click",capturePhoto);
 $("downloadButton").addEventListener("click",downloadPhoto);
 $("closePreview").addEventListener("click",() => $("preview").classList.remove("visible"));
 
 window.addEventListener("resize",drawGuides);
-if ("ResizeObserver" in window) {
-  new ResizeObserver(drawGuides).observe(camera);
-}
+if ("ResizeObserver" in window) new ResizeObserver(drawGuides).observe(camera);
 
-// Initial screen
+// Initial setup
 setCategory("people");
 updateRatio();
 drawGuides();
 
-if (!window.isSecureContext) {
-  setDiagnostic("This page is not secure. Use the HTTPS GitHub Pages address.");
+if (!window.isSecureContext || location.protocol !== "https:") {
+  setStatus("This page needs HTTPS. Open your GitHub Pages address beginning with https://.");
 } else if (!navigator.mediaDevices?.getUserMedia) {
-  setDiagnostic("Camera API unavailable. Open this page in Chrome over HTTPS.");
+  setStatus("Camera API unavailable. Open this page directly in Chrome over HTTPS.");
 } else {
-  setDiagnostic("Ready. Tap Allow Camera Access to request camera permission.");
+  setStatus("Browser supports camera access. Tap Allow Camera Access to begin.");
 }
 </script>
 </body>
